@@ -5,9 +5,7 @@ export const getInventoryDetails = async () => {
     cache: "no-store",
   });
   const productCategories = await res.json();
-  const medicineProducts = productCategories;
-  // const medicineProducts = productCategories.medicine;
-  return medicineProducts;
+  return productCategories;
 };
 
 export const updateProduct = async (
