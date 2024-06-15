@@ -13,10 +13,10 @@ const OptionBar = () => {
           <summary>Medicines</summary>
           <ul className="p-2">
             <li>
-              <a>Submenu 1</a>
+              <a>OTC Medicines</a>
             </li>
             <li>
-              <a>Submenu 2</a>
+              <a>Prescription Medicines</a>
             </li>
           </ul>
         </details>
@@ -26,10 +26,19 @@ const OptionBar = () => {
           <summary>Products</summary>
           <ul className="p-2">
             <li>
-              <a>Submenu 1</a>
+              <a>Healthcare Products</a>
             </li>
             <li>
-              <a>Submenu 2</a>
+              <a>Men's Products</a>
+            </li>
+            <li>
+              <a>Women's Products</a>
+            </li>
+            <li>
+              <a>Kids' Items</a>
+            </li>
+            <li>
+              <a>Baby Care</a>
             </li>
           </ul>
         </details>
@@ -39,10 +48,7 @@ const OptionBar = () => {
           <summary>Equipment</summary>
           <ul className="p-2">
             <li>
-              <a>Submenu 1</a>
-            </li>
-            <li>
-              <a>Submenu 2</a>
+              <a>Device & Equipments</a>
             </li>
           </ul>
         </details>

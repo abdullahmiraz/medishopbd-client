@@ -1,0 +1,241 @@
+{
+  "product_categories": {
+    "medicineList": [
+      {
+        "id": 1,
+        "name": "Fluoxetine",
+        "measure": "20mg",
+        "userArea": "healthcare",
+        "category": "Anti-Depressant",
+        "type": "Tablet",
+        "price": 80,
+        "stock": 120,
+        "manufacturer": "ABC Pharma",
+        "expiry_date": "2024-10-31",
+        "batch_number": "FZ1001",
+        "aisle_location": "B1",
+        "prescription_required": true,
+        "image": "https://via.placeholder.com/300x200?text=Fluoxetine+20+mg"
+      },
+      {
+        "id": 2,
+        "name": "Sertraline",
+        "measure": "50mg",
+        "userArea": "healthcare",
+        "category": "Anti-Depressant",
+        "type": "Tablet",
+        "price": 100,
+        "stock": 110,
+        "manufacturer": "XYZ Pharma",
+        "expiry_date": "2024-09-30",
+        "batch_number": "SZ5002",
+        "aisle_location": "B3",
+        "prescription_required": true,
+        "image": "https://via.placeholder.com/300x200?text=Sertraline+50+mg"
+      },
+      {
+        "id": 3,
+        "name": "Paroxetine",
+        "measure": "30mg",
+        "userArea": "healthcare",
+        "category": "Anti-Depressant",
+        "type": "Tablet",
+        "price": 90,
+        "stock": 130,
+        "manufacturer": "PQR Pharma",
+        "expiry_date": "2024-11-30",
+        "batch_number": "PZ3001",
+        "aisle_location": "B2",
+        "prescription_required": true,
+        "image": "https://via.placeholder.com/300x200?text=Paroxetine+30+mg"
+      },
+      {
+        "id": 4,
+        "name": "Citalopram",
+        "measure": "40mg",
+        "userArea": "healthcare",
+        "category": "Anti-Depressant",
+        "type": "Tablet",
+        "price": 110,
+        "stock": 140,
+        "manufacturer": "XYZ Pharma",
+        "expiry_date": "2024-12-31",
+        "batch_number": "SZ5003",
+        "aisle_location": "B4",
+        "prescription_required": true,
+        "image": "https://via.placeholder.com/300x200?text=Citalopram+40+mg"
+      },
+      {
+        "id": 5,
+        "name": "Venlafaxine",
+        "measure": "60mg",
+        "userArea": "healthcare",
+        "category": "Anti-Depressant",
+        "type": "Tablet",
+        "price": 130,
+        "stock": 150,
+        "manufacturer": "PQR Pharma",
+        "expiry_date": "2025-01-31",
+        "batch_number": "PZ5004",
+        "aisle_location": "B5",
+        "prescription_required": true,
+        "image": "https://via.placeholder.com/300x200?text=Venlafaxine+60+mg"
+      },
+      {
+        "id": 6,
+        "name": "Fluoxetine",
+        "measure": "20mg",
+        "userArea": "healthcare",
+        "category": "Anti-Depressant",
+        "type": "Tablet",
+        "price": 140,
+        "stock": 160,
+        "manufacturer": "ABC Pharma",
+        "expiry_date": "2026-01-31",
+        "batch_number": "FZ1002",
+        "aisle_location": "B6",
+        "prescription_required": true,
+        "image": "https://via.placeholder.com/300x200?text=Fluoxetine+20+mg"
+      },
+      {
+        "id": 7,
+        "name": "Sertraline",
+        "measure": "50mg",
+        "userArea": "healthcare",
+        "category": "Anti-Depressant",
+        "type": "Tablet",
+        "price": 170,
+        "stock": 180,
+        "manufacturer": "PQR Pharma",
+        "expiry_date": "2027-01-31",
+        "batch_number": "PZ5005",
+        "aisle_location": "B7",
+        "prescription_required": true,
+        "image": "https://via.placeholder.com/300x200?text=Sertraline+50+mg"
+      }
+    ],
+
+    "healthcare": [
+      {
+        "id": 1,
+        "name": "Neurobions 2 ml",
+        "category": "Analgesic/Antipyretic",
+        "type": "Injection",
+        "price": 45,
+        "stock": 250,
+        "manufacturer": "ABC Pharmaceuticals",
+        "expiry_date": "2025-12-31",
+        "batch_number": "NB2101",
+        "aisle_location": "A1",
+        "prescription_required": false
+      }
+    ]
+  },
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+1234567890",
+      "address": "123 Main St, City, Country",
+      "orders": [
+        {
+          "orderId": "ORD001",
+          "date": "2024-06-10",
+          "total": 50.99,
+          "status": "Delivered",
+          "items": [
+            {
+              "id": 1,
+              "name": "Product A",
+              "quantity": 2,
+              "price": 20.99
+            },
+            {
+              "id": 2,
+              "name": "Product B",
+              "quantity": 1,
+              "price": 10.0
+            }
+          ]
+        },
+        {
+          "orderId": "ORD002",
+          "date": "2024-06-05",
+          "total": 75.5,
+          "status": "Pending",
+          "items": [
+            {
+              "id": 3,
+              "name": "Product C",
+              "quantity": 3,
+              "price": 15.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "phone": "+1987654321",
+      "address": "456 Oak St, Town, Country",
+      "orders": [
+        {
+          "orderId": "ORD003",
+          "date": "2024-06-08",
+          "total": 35.75,
+          "status": "Delivered",
+          "items": [
+            {
+              "id": 4,
+              "name": "Product D",
+              "quantity": 1,
+              "price": 15.75
+            },
+            {
+              "id": 5,
+              "name": "Product E",
+              "quantity": 2,
+              "price": 10.0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "sales": [
+    {
+      "id": 1,
+      "customer": {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone": "+1234567890",
+        "address": "123 Main St, City, Country"
+      },
+      "order": {
+        "orderId": "ORD001",
+        "date": "2024-06-10",
+        "total": 50.99,
+        "status": "Delivered",
+        "items": [
+          {
+            "id": 1,
+            "name": "Product A",
+            "quantity": 2,
+            "price": 20.99
+          },
+          {
+            "id": 2,
+            "name": "Product B",
+            "quantity": 1,
+            "price": 10.0
+          }
+        ]
+      }
+    }
+  ]
+}

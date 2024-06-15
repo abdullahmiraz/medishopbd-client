@@ -75,7 +75,7 @@ const CategoryCard = () => {
       <TitleStyle
         title={"MedicShopBD: The Leading Online Medicine Sellers in Bangladesh"}
       />
-      <div className="flex flex-wrap gap-6 justify-center items-center px-6">
+      <div className="flex flex-wrap gap-6 justify-center mt-8 items-center px-6">
         {rewardList.map((item, index) => (
           <div
             key={index}

@@ -13,6 +13,8 @@
     "@splidejs/react-splide": "^0.7.12",
     "@splidejs/splide": "^4.1.4",
     "@splidejs/splide-extension-auto-scroll": "^0.5.3",
+    "axios": "^1.7.2",
+    "json-server": "^1.0.0-beta.1",
     "next": "14.2.4",
     "react": "^18",
     "react-alice-carousel": "^2.9.1",
@@ -22,7 +24,8 @@
     "react-slick": "^0.30.2",
     "react-swipeable": "^7.0.1",
     "slick-carousel": "^1.8.1",
-    "swiper": "^11.1.4"
+    "swiper": "^11.1.4",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
