@@ -7,6 +7,7 @@ import CategoryCard from "./CategoryCard/CategoryCard";
 import Footer from "../Shared/Footer/Footer";
 import CardCarousel from "./CardCarousel/CardCarousel";
 import TestComp from "../../components/TestComp";
+import PrescriptionMedicine from "./PrescriptionMedicines/PrescriptionMedicine";
 
 const HomeView = () => {
   return (
@@ -19,7 +20,7 @@ const HomeView = () => {
 
       {/* <CardCarousel /> */}
 
-      <TestComp />
+      <PrescriptionMedicine />
       <Footer />
     </div>
   );

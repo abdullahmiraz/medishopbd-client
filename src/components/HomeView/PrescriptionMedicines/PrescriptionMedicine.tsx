@@ -43,7 +43,7 @@ const rewardList = [
   },
 ];
 
-export default function Slider() {
+export default function PrescriptionMedicine() {
   return (
     <Splide
       options={{
@@ -51,34 +51,35 @@ export default function Slider() {
         autoStart: true,
         pauseOnHover: true,
         rewind: true,
-        perPage: 3,
+        perPage: 4,
         autoScroll: {
-          speed: 2,
+          speed: 1,
         },
         gap: "2rem",
       }}
       aria-label="React Splide Example"
-      extensions={{ AutoScroll }}
+    //   extensions={{ AutoScroll }}
+      className=" mb-10"
     >
       {rewardList.map((item, index) => (
-        <SplideSlide key={index} className="   w-80 bg-base-100 shadow-xl">
-          <figure>
-            <div
-              className="relative w-full"
-              style={{ paddingBottom: "36.25%" }}
-            >
-              <Image
-                src={item.imgLink}
-                alt="slide"
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
-          </figure>
-          <div className="card-body">
-            <h2 className="card-title">{item.cardTitle}</h2>
-            <div className="card-actions justify-end">
-              <button className="btn btn-primary">{item.buttonTitle}</button>
+        <SplideSlide key={index}>
+          <div className=" rounded-md w-56  my-8 shadow-2xl">
+            <figure>
+              <div className="relative " style={{ paddingBottom: "60%" }}>
+                <Image
+                  src={item.imgLink}
+                  alt="slide"
+                  layout="fill"
+                  objectFit="cover"
+                  className=" rounded-t-md "
+                />
+              </div>
+            </figure>
+            <div className="card-body p-2">
+              <h2 className="card-title">{item.cardTitle}</h2>
+              <p>Type: Injection/Tablet</p>
+              <p>Details: </p>
+              <h3>Best Price: Tk. </h3>
             </div>
           </div>
         </SplideSlide>
