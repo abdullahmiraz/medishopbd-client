@@ -55,11 +55,12 @@ export default function PrescriptionMedicine() {
         autoScroll: {
           speed: 1,
         },
-        gap: "2rem",
+        gap: "1rem",
+        fixedWidth: "15rem",
       }}
       aria-label="React Splide Example"
-    //   extensions={{ AutoScroll }}
-      className=" mb-10"
+      extensions={{ AutoScroll }}
+      className=" mb-10 mx-8"
     >
       {rewardList.map((item, index) => (
         <SplideSlide key={index}>
@@ -79,7 +80,10 @@ export default function PrescriptionMedicine() {
               <h2 className="card-title">{item.cardTitle}</h2>
               <p>Type: Injection/Tablet</p>
               <p>Details: </p>
-              <h3>Best Price: Tk. </h3>
+              <h3>
+                Best Price:{" "}
+                <span className="text-green-500 font-medium">Tk.{"Money"}</span>{" "}
+              </h3>
             </div>
           </div>
         </SplideSlide>
