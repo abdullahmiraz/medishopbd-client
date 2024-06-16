@@ -1,4 +1,5 @@
 import { FaUtensils } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa6";
 
 const AddProducts = () => {
   return (
@@ -64,12 +65,13 @@ const AddProducts = () => {
           ></textarea>
         </div>
 
-        <div className="form-control w-full my-6">
+        <div className="form-control w-full my-6 border">
           <input type="file" className="file-input w-full max-w-xs" />
         </div>
 
         <button className="btn">
-          Add Item <FaUtensils className="ml-4"></FaUtensils>
+          <FaPlus className="ml-4" />
+          Add Medicine
         </button>
       </form>
     </div>
