@@ -32,7 +32,7 @@ const menuItems = {
     {
       href: "productlist",
       icon: FaList,
-      text: "Product List",
+      text: "Products List",
     },
     {
       href: "sales",
@@ -59,7 +59,7 @@ const menuItems = {
     {
       href: "productlist",
       icon: FaList,
-      text: "Product List",
+      text: "Products List",
     },
     {
       href: "sales",

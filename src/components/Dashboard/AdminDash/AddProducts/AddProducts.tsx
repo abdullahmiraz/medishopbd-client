@@ -61,7 +61,7 @@ const AddProducts = () => {
           </label>
           <textarea
             className="textarea textarea-bordered h-24"
-            placeholder="Bio"
+            placeholder="Details"
           ></textarea>
         </div>
 

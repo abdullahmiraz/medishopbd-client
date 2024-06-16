@@ -1,23 +1,21 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { getInventoryDetails } from "../../../../../api";
+import { useEffect, useState } from "react";
+import { baseUrl, getAllProducts } from "../../../../../api";
+import axios from "axios";
 
 const ProductsList = () => {
-  const [products, setProducts] = useState([]);
-  const [medicineProducts, setMedicineProducts] = useState([]);
-  const [healthcareProducts, setHealthcareProducts] = useState([]);
-
+  const [products, setProducts] = useState();
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUsers = async () => {
       try {
-        const productsData = await getInventoryDetails();
-        setProducts(productsData);
+        const res = await axios.get(`${baseUrl}/products`);
+        setProducts(res.data);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching users", error);
       }
     };
 
-    fetchData();
+    fetchUsers();
   }, []);
 
   console.log(products);
