@@ -2,32 +2,30 @@ import Image from "next/image";
 import React from "react";
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 
-const rewardList = [
+const serviceCardList = [
   {
     cardTitle: "Upload Prescription",
     buttonTitle: "Upload Now",
-    imgLink: "https://loremflickr.com/640/340",
+    imgLink: "https://i.ibb.co/yPQJrdg/prescription-Upload.png",
   },
   {
     cardTitle: "Healthcare Products",
     buttonTitle: "Order Now",
-    imgLink: "https://loremflickr.com/640/340",
+    imgLink: "https://i.ibb.co/qWzq6t1/healthcare-Products.jpg",
   },
   {
     cardTitle: "Help Line",
     buttonTitle: "Call Now",
-    imgLink: "https://loremflickr.com/640/340",
+    imgLink: "https://i.ibb.co/wrVfR7T/helpline.png",
   },
 ];
 
 const ReviewCard = () => {
   return (
     <>
-      <TitleStyle
-        title={"MedicShopBD: Services"}
-      />
+      <TitleStyle title={"MedicShopBD: Services"} />
       <div className="mt-6 flex  flex-wrap gap-6 justify-between items-center px-6">
-        {rewardList.map((item, index) => (
+        {serviceCardList.map((item, index) => (
           <div
             key={index}
             className="  grow marker:  flex  w-80 bg-base-100 shadow-xl"

@@ -82,12 +82,12 @@ const CategoryCard = () => {
     <>
       <TitleStyle title={"Shop by Category"} />
       <div className="w-full">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6   mt-8 px-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6   mt-8 px-6  ">
           {categoryList.map((item) => (
             <Link href={`/#`}>
               <div
                 key={item.id}
-                className="bg-base-100 h-max shadow-xl flex flex-col cursor-pointer"
+                className="bg-base-100 min-h-56 shadow-xl flex flex-col cursor-pointer border"
               >
                 <figure>
                   <div
