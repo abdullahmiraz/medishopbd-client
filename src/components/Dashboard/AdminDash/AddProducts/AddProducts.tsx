@@ -12,11 +12,11 @@ const AddProducts = () => {
       <form>
         <div className="form-control w-full my-6">
           <label className="label">
-            <span className="label-text">Recipe Name*</span>
+            <span className="label-text">Product Name*</span>
           </label>
           <input
             type="text"
-            placeholder="Recipe Name"
+            placeholder="Product Name"
             required
             className="input input-bordered w-full"
           />
@@ -54,10 +54,10 @@ const AddProducts = () => {
             />
           </div>
         </div>
-        {/* recipe details */}
+        {/* Product details */}
         <div className="form-control">
           <label className="label">
-            <span className="label-text">Recipe Details</span>
+            <span className="label-text">Product Details</span>
           </label>
           <textarea
             className="textarea textarea-bordered h-24"
@@ -71,7 +71,7 @@ const AddProducts = () => {
 
         <button className="btn">
           <FaPlus className="ml-4" />
-          Add Medicine
+          Add Product
         </button>
       </form>
     </div>

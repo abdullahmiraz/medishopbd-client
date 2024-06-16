@@ -6,8 +6,8 @@ interface TitleProps {
 
 const TitleStyle: React.FC<TitleProps> = ({ title }) => {
   return (
-    <div className="text-xl font-bold text-center mt-12 selection: text-green-700">
-      {title}
+    <div className="text-xl md:text-2xl font-bold text-center mt-24 selection: text-cyan-600 uppercase mx-auto">
+      <span className="   border-b-2 border-b-cyan-500 w-80">{title}</span>
     </div>
   );
 };

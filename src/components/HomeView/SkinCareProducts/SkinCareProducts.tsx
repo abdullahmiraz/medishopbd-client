@@ -4,9 +4,9 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
 import Image from "next/image";
+import Link from "next/link";
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
-import Link from "next/link";
 
 const rewardList = [
   {
@@ -46,10 +46,10 @@ const rewardList = [
   },
 ];
 
-export default function PrescriptionMedicine() {
+export default function SkinCareProducts() {
   return (
-    <div className="shadow-md  pb-4">
-      <TitleStyle title={"Prescription Medicines"} />
+    <div className="shadow-md  py-4">
+      <TitleStyle title={"Skin Care"} />
       <Splide
         options={{
           type: "loop",

@@ -25,7 +25,7 @@ export default function HeroCarousel() {
       }}
       navigation={true}
       modules={[Autoplay, Pagination, Navigation]}
-      className="mySwiper my-6"
+      className="mySwiper my-6 shadow-md"
     >
       <SwiperSlide>
         <div className="relative w-full" style={{ paddingBottom: "36.25%" }}>
