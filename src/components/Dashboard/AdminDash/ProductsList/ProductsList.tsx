@@ -11,12 +11,7 @@ const ProductsList = () => {
     const fetchData = async () => {
       try {
         const productsData = await getInventoryDetails();
-        setMedicineProducts(productsData?.medicineList);
-        setHealthcareProducts(productsData?.healthcare);
-        setProducts([
-          ...productsData?.medicineList,
-          ...productsData?.healthcare,
-        ]);
+        setProducts(productsData);
       } catch (error) {
         console.error(error);
       }
@@ -41,17 +36,13 @@ const ProductsList = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Measure</th>
-              <th>User Area</th>
-              <th>Category</th>
               <th>Type</th>
               <th>Price</th>
               <th>Stock</th>
               <th>Manufacturer</th>
               <th>Expiry </th>
               <th>Batch</th>
-
               <th>Aisle</th>
-              <th>Prescription?</th>
             </tr>
           </thead>
           <tbody>
@@ -60,8 +51,6 @@ const ProductsList = () => {
                 <th>{product?.id}</th>
                 <td>{product?.name}</td>
                 <td>{product?.measure}</td>
-                <td>{product?.userArea}</td>
-                <td>{product?.category}</td>
                 <td>{product?.type}</td>
                 <td>{product?.price}</td>
                 <td>{product?.stock}</td>
@@ -69,7 +58,6 @@ const ProductsList = () => {
                 <td>{product?.expiry_date}</td>
                 <td>{product?.batch_number}</td>
                 <td>{product?.aisle_location}</td>
-                <td>{product?.prescription_required ? "true" : "false"}</td>
               </tr>
             ))}
           </tbody>

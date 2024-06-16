@@ -23,16 +23,16 @@ const serviceCardList = [
 const ReviewCard = () => {
   return (
     <>
-      <TitleStyle title={"MedicShopBD: Services"} />
+      <TitleStyle title={"MediShopBD: Services"} />
       <div className="mt-6 flex  flex-wrap gap-6 justify-between items-center px-6">
         {serviceCardList.map((item, index) => (
           <div
             key={index}
-            className="  grow marker:  flex  w-80 bg-base-100 shadow-xl"
+            className=" border grow  flex  w-80  min-h-48 bg-base-100 shadow-xl"
           >
             <div
-              className="relative w-full"
-              style={{ paddingBottom: "36.25%" }}
+              className="relative w-[70%] mr-2"
+              style={{ paddingBottom: "38.25%" }}
             >
               <Image
                 src={item.imgLink}
@@ -41,13 +41,11 @@ const ReviewCard = () => {
                 objectFit="cover"
               />
             </div>
-            <div className="card-body flex flex-col items-center justify-center text-center">
+            <div className="card-body flex flex-col items-center justify-center text-center ">
               <h2 className="card-title">{item.cardTitle}</h2>
               {/* <p>Dynamic content for each card goes here...</p> */}
               <div className="card-actions  ">
-                <button className="btn btn-warning p-2">
-                  {item.buttonTitle}
-                </button>
+                <button className="btn btn-warning ">{item.buttonTitle}</button>
               </div>
             </div>
           </div>

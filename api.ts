@@ -1,7 +1,7 @@
 const baseUrl = `http://localhost:3002`;
 
 export const getInventoryDetails = async () => {
-  const res = await fetch(`${baseUrl}/product_categories/`, {
+  const res = await fetch(`${baseUrl}/products`, {
     cache: "no-store",
   });
   const productCategories = await res.json();

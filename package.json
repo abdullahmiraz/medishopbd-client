@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "json-server": "json-server --watch data/medicshop.json --port 3002"
+    "json-server": "json-server --watch data/medishopbd.json --port 3002"
   },
   "dependencies": {
     "@glidejs/glide": "^3.6.1",
