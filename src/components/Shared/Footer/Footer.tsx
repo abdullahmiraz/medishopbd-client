@@ -8,7 +8,7 @@ const Footer = () => {
         <aside>
           <FiAirplay size={52} />
           <p className="font-bold">
-            medishopbdBD <br />
+            MediShopBD <br />
             Dhaka, Bangladesh
           </p>
           <p>Copyright © 2024 - All right reserved</p>
