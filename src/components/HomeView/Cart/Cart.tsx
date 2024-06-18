@@ -57,9 +57,11 @@ const Cart = () => {
                 className="border p-4 rounded-md flex justify-between items-center"
               >
                 <div>
-                  <h2 className="font-semibold">{item.name}</h2>
-                  <p>Price per strip: Tk. {item.pricePerStrip}</p>
-                  <p>Total Price: Tk. {item.totalPrice}</p>
+                  <h2 className="font-semibold">
+                    {item?.name} {item?.measure}
+                  </h2>
+                  <p>Price per strip: Tk. {item?.pricePerStrip}</p>
+                  <p>Total Price: Tk. {item?.totalPrice}</p>
                 </div>
                 <div className="flex items-center">
                   <button

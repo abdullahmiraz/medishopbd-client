@@ -30,6 +30,7 @@ const ProductSingleView = ({ productId }) => {
     const cartItem = {
       productId: product.id,
       name: product.name,
+      measure: product.measure,
       stripCount: stripCount,
       pricePerStrip: product.unit_price,
       totalPrice: product.unit_price * stripCount,
