@@ -1,7 +1,7 @@
 "use client";
-// pages/checkout.tsx
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import jsPDF from "jspdf";
 
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -27,8 +27,9 @@ const Checkout = () => {
   };
 
   const handleOrder = () => {
-    // Handle the order placement logic here
-    alert(`Order placed with payment method: ${paymentMethod}`);
+    // Placeholder for handling order logic, e.g., sending to backend, etc.
+    // Simulate redirect to confirmation page after order is placed
+    window.location.href = "../checkout/confirmation";
   };
 
   if (cartItems.length === 0) {
@@ -131,7 +132,7 @@ const Checkout = () => {
             <ul className="space-y-4 mb-4">
               {cartItems.map((item, index) => (
                 <li key={index} className="flex justify-between">
-                  <div className="border w-full p-2 rounded-md bg-blue-100">
+                  <div>
                     <h3 className="font-semibold">
                       {item?.name} {item?.measure}
                     </h3>
