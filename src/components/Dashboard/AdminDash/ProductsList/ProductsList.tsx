@@ -35,7 +35,7 @@ const ProductsList = () => {
               <th>Name</th>
               <th>Measure</th>
               <th>Type</th>
-              <th>Price</th>
+              <th>Price/U</th>
               <th>Stock</th>
               <th>Manufacturer</th>
               <th>Expiry </th>
@@ -50,7 +50,7 @@ const ProductsList = () => {
                 <td>{product?.name}</td>
                 <td>{product?.measure}</td>
                 <td>{product?.type}</td>
-                <td>{product?.price}</td>
+                <td>{product?.unit_price}</td>
                 <td>{product?.stock}</td>
                 <td>{product?.manufacturer}</td>
                 <td>{product?.expiry_date}</td>

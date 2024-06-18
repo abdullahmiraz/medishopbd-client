@@ -1,8 +1,12 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { FaCartPlus, FaTruck, FaUserCircle } from "react-icons/fa";
+import { FaCartPlus, FaSearch, FaTruck, FaUserCircle } from "react-icons/fa";
 
 const SearchBarTop = () => {
+  const cartItemsJson = localStorage.getItem("medicine_cart");
+  const cartItems = cartItemsJson ? JSON.parse(cartItemsJson) : [];
+  console.log(cartItems);
   return (
     <div className="flex items-center justify-between bg-green-100 px-6 py-4">
       <div className="brand-icon flex items-center gap-2">
@@ -12,23 +16,14 @@ const SearchBarTop = () => {
           height={20}
           alt="Brand"
         />
-        <p className="text-2xl font-extrabold">MediShopBD</p>
+        <Link href={"/"} className="text-2xl font-extrabold">
+          MediShopBD
+        </Link>
       </div>
       <div className="search-bar">
         <label className="input input-bordered flex items-center gap-2">
           <input type="text" className="grow" placeholder="Search" />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="w-4 h-4 opacity-70"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <FaSearch />
         </label>
       </div>
       <div className="user-need-section flex items-center gap-6">
@@ -41,11 +36,16 @@ const SearchBarTop = () => {
           </p>
         </div>
         <Link href={"../cart"}>
-          <div className="card-top-nav  w-25 flex  items-center gap-2">
+          <div className="card-top-nav  w-25 flex  items-center gap-2 relative">
             <div className="card-icon-top">
               <FaCartPlus size={40} />
             </div>
-            <p>Cart</p>
+            <p>
+              Cart
+              <div className="badge badge-warning badge-md absolute top-0 left-0">
+                {cartItems.length}
+              </div>
+            </p>
           </div>
         </Link>{" "}
         <div className="user-section-top flex items-center gap-2">

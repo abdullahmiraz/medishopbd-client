@@ -44,7 +44,7 @@ const Cart = () => {
   };
 
   if (cartItems.length === 0) {
-    return <p className="text-center">Your cart is empty.</p>;
+    return <p className="text-center my-12">Your cart is empty.</p>;
   }
 
   return (

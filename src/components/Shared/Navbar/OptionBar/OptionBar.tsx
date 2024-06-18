@@ -6,7 +6,7 @@ const OptionBar = () => {
   const navOptions = (
     <>
       <li>
-        <a>Home</a>
+        <Link href={"/"}>Home</Link>
       </li>
       <li>
         <details>

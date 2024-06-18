@@ -1,6 +1,7 @@
 "use client";
 import { FaGoogle } from "react-icons/fa";
 import { useState } from "react";
+import Link from "next/link";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -136,6 +137,12 @@ const SignUp = () => {
                 <FaGoogle /> SignUp By Google
               </button>
             </div>
+            <p>
+              Already Have an account ?{" "}
+              <Link className="text-blue-700" href={"../login"}>
+                Login
+              </Link>
+            </p>
           </form>
         </div>
       </div>
