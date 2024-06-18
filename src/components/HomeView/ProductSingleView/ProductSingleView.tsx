@@ -15,7 +15,7 @@ const ProductSingleView = ({ productId }) => {
       } catch (error) {
         console.error("Error fetching product", error);
       }
-    };
+    }; 
 
     if (productId) {
       fetchProduct();
