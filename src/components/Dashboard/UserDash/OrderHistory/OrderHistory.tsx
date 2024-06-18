@@ -35,25 +35,41 @@ const OrderHistory: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Order History</h1>
+    <div className="p-6  rounded-lg shadow-md m-4">
+      <h1 className="text-2xl font-bold mb-4">Order History</h1>
       {orderHistory.length > 0 ? (
-        orderHistory.map((order) => (
-          <div key={order.orderId}>
-            <p>Order ID: {order.orderId}</p>
-            <p>Date: {order.date}</p>
-            <p>Total: ${order.total}</p>
-            <p>Status: {order.status}</p>
-            <h3>Items:</h3>
-            <ul>
-              {order.items.map((item) => (
-                <li key={item.id}>
-                  {item.name} - Quantity: {item.quantity} - Price: ${item.price}
-                </li>
+        <div className="overflow-x-auto">
+          <table className="table table-xs table-zebra">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderHistory.map((order) => (
+                <tr key={order.orderId}>
+                  <td>{order.orderId}</td>
+                  <td>{order.date}</td>
+                  <td>${order.total}</td>
+                  <td>{order.status}</td>
+                  <td>
+                    <ul>
+                      {order.items.map((item) => (
+                        <li key={item.id}>
+                          {item.name} - {item.quantity} x ${item.price}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                </tr>
               ))}
-            </ul>
-          </div>
-        ))
+            </tbody>
+          </table>
+        </div>
       ) : (
         <p>No orders found.</p>
       )}
