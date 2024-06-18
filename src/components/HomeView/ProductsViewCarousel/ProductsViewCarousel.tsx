@@ -55,7 +55,7 @@ export default function ProductsViewCarousel({ title, products }) {
                     <p>
                       Price:
                       <span className="font-bold">
-                        Tk. {product.pack_price}
+                        Tk. {product.unit_price}
                       </span>
                     </p>
                   </div>

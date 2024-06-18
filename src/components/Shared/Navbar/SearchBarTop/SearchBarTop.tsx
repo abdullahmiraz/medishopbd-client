@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FaCartPlus, FaTruck, FaUserCircle } from "react-icons/fa";
 
 const SearchBarTop = () => {
@@ -39,13 +40,14 @@ const SearchBarTop = () => {
             Track <br /> Order
           </p>
         </div>
-        <div className="card-top-nav  w-25 flex  items-center gap-2">
-          <div className="card-icon-top">
-            <FaCartPlus size={40} />
+        <Link href={"../cart"}>
+          <div className="card-top-nav  w-25 flex  items-center gap-2">
+            <div className="card-icon-top">
+              <FaCartPlus size={40} />
+            </div>
+            <p>Cart</p>
           </div>
-          <p>Cart</p>
-        </div>
-
+        </Link>{" "}
         <div className="user-section-top flex items-center gap-2">
           <p className="user-name border-l-4 pl-4 border-cyan-800  ">
             User <br />

@@ -10,17 +10,18 @@
       "category": "Anti-Asthmatic",
       "type": "Tablet",
       "pack_details": {
-        "strip_count": 2,
+        "strip_unit": 10,
         "strip_in_box": 3
       },
-      "pack_price": 80,
+      "unit_price": 80,
       "stock": 120,
       "manufacturer": " ACME Laboratories Ltd.",
       "expiry_date": "2024-10-31",
       "batch_number": "FZ1001",
       "aisle_location": "B1",
       "prescription_required": 1,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp",
+      "page": "prescription_medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png",
       "usage_details": {
         "indications": {
           "title": "Monas 10 is prescribed for the prevention and treatment of asthma.",
@@ -70,14 +71,15 @@
       "userArea": "healthcare",
       "category": "Anti-Depressant",
       "type": "Tablet",
-      "pack_price": 100,
+      "unit_price": 100,
       "stock": 110,
       "manufacturer": "Square Pharmaceuticals Ltd.",
       "expiry_date": "2024-09-30",
       "batch_number": "SZ5002",
       "aisle_location": "B3",
       "prescription_required": 1,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"
+      "page": "prescription_medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png"
     },
     {
       "id": 3,
@@ -87,14 +89,15 @@
       "userArea": "healthcare",
       "category": "Anti-Depressant",
       "type": "Tablet",
-      "pack_price": 90,
+      "unit_price": 90,
       "stock": 130,
       "manufacturer": "Eskayef Pharmaceuticals Ltd.",
       "expiry_date": "2024-11-30",
       "batch_number": "PZ3001",
       "aisle_location": "B2",
       "prescription_required": 1,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"
+      "page": "prescription_medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png"
     },
     {
       "id": 4,
@@ -104,14 +107,15 @@
       "userArea": "healthcare",
       "category": "Anti-Depressant",
       "type": "Tablet",
-      "pack_price": 110,
+      "unit_price": 110,
       "stock": 140,
       "manufacturer": "Incepta Pharmaceuticals Ltd.",
       "expiry_date": "2024-12-31",
       "batch_number": "SZ5003",
       "aisle_location": "B4",
       "prescription_required": 1,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"
+      "page": "prescription_medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png"
     },
     {
       "id": 5,
@@ -121,14 +125,15 @@
       "userArea": "healthcare",
       "category": "Anti-Depressant",
       "type": "Tablet",
-      "pack_price": 130,
+      "unit_price": 130,
       "stock": 150,
       "manufacturer": "Beximco Pharmaceuticals Ltd.",
       "expiry_date": "2025-01-31",
       "batch_number": "PZ5004",
       "aisle_location": "B5",
       "prescription_required": 1,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"
+      "page": "prescription_medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png"
     },
     {
       "id": 6,
@@ -138,14 +143,15 @@
       "userArea": "healthcare",
       "category": "Anti-Depressant",
       "type": "Tablet",
-      "pack_price": 140,
+      "unit_price": 140,
       "stock": 160,
       "manufacturer": "Renata Limited",
       "expiry_date": "2026-01-31",
       "batch_number": "FZ1002",
       "aisle_location": "B6",
       "prescription_required": 1,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"
+      "page": "prescription_medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png"
     },
     {
       "id": 7,
@@ -155,14 +161,15 @@
       "userArea": "healthcare",
       "category": "Anti-Depressant",
       "type": "Tablet",
-      "pack_price": 170,
+      "unit_price": 170,
       "stock": 180,
       "manufacturer": "Square Pharmaceuticals Ltd.",
       "expiry_date": "2027-01-31",
       "batch_number": "PZ5005",
       "aisle_location": "B7",
       "prescription_required": 1,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"
+      "page": "prescription_medicine",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png"
     },
     {
       "id": 8,
@@ -172,14 +179,15 @@
       "userArea": "healthcare",
       "category": "Vitamin Supplement",
       "type": "Injection",
-      "pack_price": 45,
+      "unit_price": 45,
       "stock": 250,
       "manufacturer": "ACME Laboratories Ltd.",
       "expiry_date": "2025-12-31",
       "batch_number": "NB2101",
       "aisle_location": "A1",
       "prescription_required": 0,
-      "image": "https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"
+      "page": "skin_care",
+      "image": "https://cdn-icons-png.flaticon.com/512/4599/4599153.png"
     }
   ],
   "users": [
