@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/HomeView/HeroCarousel/HeroCarousel.tsx", "src/components/HomeView/CategoryCard/CategoryCard.tsx", "src/components/TestComp.tsx", "src/app/test/page.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/HomeView/HeroCarousel/HeroCarousel.tsx", "src/components/HomeView/CategoryCard/CategoryCard.tsx", "src/components/TestComp.tsx", "src/app/test/page.js", "src/components/Dashboard/UserDash/UserProfile"],
   "exclude": ["node_modules"]
 }

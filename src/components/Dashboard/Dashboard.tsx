@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation"; // corrected import to useRouter
 import { useEffect } from "react";
 import {
+  FaCartArrowDown,
   FaCashRegister,
   FaDollarSign,
   FaFileMedicalAlt,
@@ -16,6 +17,7 @@ import {
   FaUsers,
   FaUtensils,
 } from "react-icons/fa";
+import { isAdmin, isManager, isUser } from "../../../userTurner";
 
 const menuItems = {
   admin: [
@@ -103,13 +105,23 @@ const menuItems = {
       icon: FaStar,
       text: "Submit Review",
     },
+    {
+      href: "../../",
+      icon: FaHome,
+      text: "Home",
+    },
+    {
+      href: "../../cart",
+      icon: FaCartArrowDown,
+      text: "Cart",
+    },
   ],
 };
 
 const Dashboard = () => {
-  const isAdmin = true; // Example user role, replace with actual logic
-  const isManager = true; // Example user role, replace with actual logic
-  const isUser = true; // Example user role, replace with actual logic
+  isAdmin; // Example user role, replace with actual logic
+  isManager; // Example user role, replace with actual logic
+  isUser; // Example user role, replace with actual logic
 
   const dashLocation = isAdmin
     ? "admin"
