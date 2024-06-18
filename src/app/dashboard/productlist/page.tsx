@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { getAllProducts } from "../../../../api";
 import ProductsList from "../../../components/Dashboard/AdminDash/ProductsList/ProductsList";
 
-const page = () => {
+const ProductsListPage = () => {
   return (
     <>
       <ProductsList />
@@ -11,4 +8,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ProductsListPage;

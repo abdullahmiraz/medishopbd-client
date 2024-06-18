@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -8,27 +9,39 @@ interface User {
 }
 
 const DeliveryAddress: React.FC = () => {
-  const [userAddresses, setUserAddresses] = useState<User | null>(null);
+  const [userAddress, setUserAddress] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchUserAddresses = async () => {
+    const fetchUserAddress = async () => {
       try {
         const response = await axios.get("http://localhost:3002/users/1");
-        setUserAddresses(response.data); // Assuming user ID is 1
+        setUserAddress(response.data); // Assuming user ID is 1
       } catch (error) {
-        console.error("Error fetching user addresses:", error);
+        console.error("Error fetching user address:", error);
       }
     };
 
-    fetchUserAddresses();
+    fetchUserAddress();
   }, []);
 
   return (
-    <div>
-      <h1>Delivery Address</h1>
-      {userAddresses ? (
+    <div className="p-6 m-4 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-4">Delivery Address</h1>
+      {userAddress ? (
         <div>
-          <p>Address: {userAddresses.address}</p>
+          <form>
+            <div className="form-control mb-4">
+              <label className="label">
+                <span className="label-text">Address</span>
+              </label>
+              <input
+                type="text"
+                value={userAddress.address}
+                className="input input-bordered"
+                readOnly
+              />
+            </div>
+          </form>
         </div>
       ) : (
         <p>Loading...</p>
