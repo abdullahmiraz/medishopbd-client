@@ -69,8 +69,14 @@ const Checkout = () => {
 
     localStorage.setItem("order_details", JSON.stringify(orderDetails));
     router.push("/checkout/confirmation");
+    clearLocalStorage();
   };
 
+  const clearLocalStorage = () => {
+    localStorage.removeItem("order_details");
+    localStorage.removeItem("invoice_number");
+    localStorage.removeItem("medicine_cart");
+  };
   if (cartItems.length === 0) {
     return <p className="text-center my-12">Your cart is empty.</p>;
   }

@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
-import { baseUrl, getAllProducts } from "../../../../../api";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { baseUrl } from "../../../../../api";
 
 const ProductsList = () => {
   const [products, setProducts] = useState();

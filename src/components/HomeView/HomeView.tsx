@@ -1,13 +1,10 @@
-import React from "react";
-import SearchBarTop from "../Shared/Navbar/SearchBarTop/SearchBarTop";
-import OptionBar from "../Shared/Navbar/OptionBar/OptionBar";
-import HeroCarousel from "./HeroCarousel/HeroCarousel";
-import ReviewCard from "./ServiceCard/ServiceCard";
-import CategoryCard from "./CategoryCard/CategoryCard";
 import Footer from "../Shared/Footer/Footer";
-import CardCarousel from "./CardCarousel/CardCarousel";
-import TestComp from "../../components/TestComp";
+import OptionBar from "../Shared/Navbar/OptionBar/OptionBar";
+import SearchBarTop from "../Shared/Navbar/SearchBarTop/SearchBarTop";
+import CategoryCard from "./CategoryCard/CategoryCard";
+import HeroCarousel from "./HeroCarousel/HeroCarousel";
 import PrescriptionMedicine from "./PrescriptionMedicines/PrescriptionMedicine";
+import ReviewCard from "./ServiceCard/ServiceCard";
 import SkinCareProducts from "./SkinCareProducts/SkinCareProducts";
 
 const HomeView = () => {
@@ -18,11 +15,7 @@ const HomeView = () => {
       <HeroCarousel />
       <ReviewCard />
       <CategoryCard />
-
-      {/* <CardCarousel /> */}
-
       <PrescriptionMedicine />
-
       <SkinCareProducts />
       <Footer />
     </div>

@@ -54,6 +54,7 @@ const ProductSingleView = ({ productId }) => {
 
     localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
     console.log(`Added ${stripCount} strips of ${product.name} to cart`);
+    alert("Added to cart");
   };
 
   if (!product) {
