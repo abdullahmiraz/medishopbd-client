@@ -2,19 +2,8 @@
 import { FaGoogle } from "react-icons/fa";
 import { useState } from "react";
 import Link from "next/link";
-import { auth } from "../../firebase/firebase.config";
-import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { signIn } from "next-auth/react";
-import router from "next/router";
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordAgain, setPasswordAgain] = useState();
-
-  const signup = () => {
-    createUserWithEmailAndPassword(auth, email, password);
-  };
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -54,44 +43,106 @@ const SignUp = () => {
       <div className="hero-content flex-col">
         <h1 className="text-3xl font-bold">SignUp now!</h1>
         <div className="card shrink-0 w-full  shadow-2xl bg-base-100">
-          <form className="card-body">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="email"
-                className="input input-bordered"
-                required
-                onChange={(e) => setEmail(e.target.email)}
-              />
+          <form className="card-body" onSubmit={handleSubmit}>
+            <div className="flex gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Name</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Name"
+                  className="input input-bordered"
+                  required
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Email</span>
+                </label>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className="input input-bordered"
+                  required
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+                {!validateEmail(formData.email) && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Please enter a valid email address
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Phone</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Phone"
+                  className="input input-bordered"
+                  required
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                />
+                {!validatePhoneNumber(formData.phone) && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Please enter a valid Phone Number
+                  </p>
+                )}
+              </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Address</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Address"
+                  className=" input input-bordered"
+                  required
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Password</span>
               </label>
               <input
-                id="password"
-                name="password"
                 type="password"
-                placeholder="password"
+                placeholder="Password"
                 className="input input-bordered"
                 required
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
               />
             </div>
             <div className="form-control gap-4 mt-6">
-              <button
-                onClick={() => signup()}
-                disabled={!email || !password}
-                className="btn btn-primary"
-              >
-                Signup
+              <button type="submit" className="btn btn-primary">
+                SignUp
+              </button>
+              <button className="btn btn-warning">
+                {" "}
+                <FaGoogle /> SignUp By Google
               </button>
             </div>
+            <p>
+              Already Have an account ?{" "}
+              <Link className="text-blue-700" href={"../login"}>
+                Login
+              </Link>
+            </p>
           </form>
         </div>
       </div>
