@@ -1,9 +1,13 @@
 "use client";
 
-import axios from "axios";
+// ProductSingleView.tsx
+
 import Image from "next/image";
+import axios from "axios";
 import { useEffect, useState } from "react";
-import { baseUrl } from "../../../../api";
+import { serverUrl } from "../../../../api";
+import { formatDate } from "../../../utils/dateUtils"; // Assuming you have a utility function for date formatting
+import toast, { Toaster } from "react-hot-toast";
 
 const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
@@ -12,10 +16,8 @@ const ProductSingleView = ({ productId }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/products`);
-        const filteredProduct = res?.data?.find((p) => p.id === productId);
-        console.log(filteredProduct);
-        setProduct(filteredProduct);
+        const res = await axios.get(`${serverUrl}/api/products/${productId}`);
+        setProduct(res.data);
       } catch (error) {
         console.error("Error fetching product", error);
       }
@@ -28,19 +30,19 @@ const ProductSingleView = ({ productId }) => {
 
   const handleAddToCart = () => {
     const cartItem = {
-      productId: product.id,
-      name: product.name,
-      measure: product.measure,
+      productId: product?._id,
+      name: product?.productName,
+      measure: product?.measure,
       stripCount: stripCount,
-      pricePerStrip: product.unit_price,
-      totalPrice: product.unit_price * stripCount,
+      pricePerStrip: product?.pricePerUnit,
+      totalPrice: product?.pricePerUnit * stripCount,
     };
 
     const existingCart =
       JSON.parse(localStorage.getItem("medicine_cart")) || [];
 
     const existingItemIndex = existingCart.findIndex(
-      (item) => item.productId === product.id
+      (item) => item.productId === product?._id
     );
 
     if (existingItemIndex > -1) {
@@ -53,8 +55,10 @@ const ProductSingleView = ({ productId }) => {
     }
 
     localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
-    console.log(`Added ${stripCount} strips of ${product.name} to cart`);
-    alert("Added to cart");
+    console.log(
+      `Added ${stripCount} strips of ${product?.productName} to cart`
+    );
+    toast.success("Product added successfully!");
   };
 
   if (!product) {
@@ -63,6 +67,7 @@ const ProductSingleView = ({ productId }) => {
 
   return (
     <div className="flex flex-col container mx-auto my-12 px-6">
+      <Toaster />
       <div className="">
         <div className="grid grid-cols-12 gap-4 mt-4">
           <div
@@ -70,11 +75,8 @@ const ProductSingleView = ({ productId }) => {
             style={{ paddingBottom: "60%" }}
           >
             <Image
-              src={
-                product.image ||
-                `https://i.ibb.co/ZGCQxbH/osudpotro-default.webp`
-              }
-              alt={product.name}
+              src={`https://i.ibb.co/ZGCQxbH/osudpotro-default.webp`}
+              alt={product?.productName}
               layout="fill"
               objectFit="cover"
               className="rounded-t-md border"
@@ -83,44 +85,37 @@ const ProductSingleView = ({ productId }) => {
           <div className="info-table grid grid-cols-10 col-span-8">
             <div className="col-span-7">
               <h2 className="font-bold text-2xl mb-4">
-                {product.name} {product.measure}
+                {product?.productName} {product?.measure}
               </h2>
               <p>
-                <strong>Type:</strong> {product.type}
+                <strong>Type:</strong> {product?.productType}
+              </p>
+              <p>
+                <strong>Manufacturer:</strong> {product?.manufacturer}
               </p>
               <p>
                 <strong>Generics:</strong>{" "}
                 <span className="font-semibold text-cyan-700">
-                  {product.generics}
+                  {product?.activeIngredient}
                 </span>
               </p>
-              <p>
-                <strong>Manufacturer:</strong> {product.manufacturer}
-              </p>
-              {product?.pack_details ? (
-                <div>
-                  <strong>
-                    Pack Details: <br />{" "}
-                  </strong>
-                  <span>
-                    Per Strip: {product?.pack_details?.strip_unit}{" "}
-                    {product?.type}
-                    <br />
-                  </span>
-                  <span>Strips: {product?.pack_details?.strip_in_box}</span>
-                </div>
-              ) : null}
-
+              <div className="pack-details">
+                <strong>Pack Details:</strong>
+                <p>
+                  Per Strip: {product?.packaging.unitsPerStrip}{" "}
+                  {product?.measure}
+                </p>
+                <p>Strips: {product?.packaging.stripsPerBox}</p>
+              </div>
               <div className="price-view">
                 <p>
-                  <strong> Best Price*: </strong>{" "}
+                  <strong>Best Price:</strong>{" "}
                   <span className="font-bold text-2xl">
-                    Tk. {product.unit_price}
+                    Tk. {product?.pricePerUnit}
                   </span>{" "}
                   / strip
                 </p>
               </div>
-
               <div className="mt-4">
                 <label>
                   <strong>Quantity:</strong> (strips)
@@ -143,7 +138,6 @@ const ProductSingleView = ({ productId }) => {
                   </button>
                 </div>
               </div>
-
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
                 onClick={handleAddToCart}
@@ -152,24 +146,52 @@ const ProductSingleView = ({ productId }) => {
               </button>
             </div>
             <div className="extra-infos col-span-3 px-2">
-              {/* Extra information content */}
               <h3 className="font-bold text-lg underline">Extra Information</h3>
-              {product.prescription_required ? (
+              {product?.requiresPrescription ? (
                 <p className="text-red-500 font-bold">Prescription required</p>
               ) : null}
             </div>
           </div>
         </div>
+        TT
       </div>
       <div className="indications mt-4">
         <h3 className="font-bold text-lg">Usage Indications:</h3>
         <ul>
-          {product.usage_details?.indications.subtitles.map(
-            (subtitle, index) => (
-              <li key={index}>{subtitle}</li>
-            )
-          )}
+          <li>
+            <strong>Main Title:</strong>{" "}
+            {product?.usageDetails?.indications?.mainTitle}
+          </li>
+          <li>
+            <strong>Subtitles:</strong>{" "}
+            {product?.usageDetails?.indications?.subtitles?.map(
+              (subtitle, index) => (
+                <span key={index}>
+                  {subtitle}
+                  {index !==
+                    product?.usageDetails?.indications?.subtitles?.length - 1 &&
+                    ", "}
+                </span>
+              )
+            )}
+          </li>
         </ul>
+      </div>
+      <div className="usage-details mt-4">
+        <h3 className="font-bold text-lg">Usage Details:</h3>
+        {product?.usageDetails?.dosageDetails?.map((detail, index) => (
+          <div key={index} className="mt-2">
+            <h4 className="font-semibold">{detail.ageRange}</h4>
+            <p>
+              <strong>User Group:</strong> {detail.userGroup}
+            </p>
+            <ul>
+              {detail.dosageInstructions.map((instruction, idx) => (
+                <li key={idx}>{instruction}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </div>
   );

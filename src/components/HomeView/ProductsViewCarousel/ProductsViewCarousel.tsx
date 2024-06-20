@@ -8,7 +8,7 @@ import Link from "next/link";
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
 
-export default function ProductsViewCarousel({ title, products }) {
+export default function ProductsViewCarousel({ title, products }: any) {
   console.log(products);
   return (
     <div className="shadow-md  pb-4">
@@ -31,31 +31,30 @@ export default function ProductsViewCarousel({ title, products }) {
         extensions={{ AutoScroll }}
         className=" mx-6"
       >
-        {products?.map((product?, index) => (
+        {products?.map((product, index) => (
           <SplideSlide key={index}>
-            <Link href={`../products/${product.id}`}>
-              <div className=" cursor-pointer rounded-md w-56  my-8 shadow-md">
-                <figure>
-                  <div className="relative " style={{ paddingBottom: "60%" }}>
-                    <Image
-                      src={product?.image}
-                      alt="slide"
-                      layout="fill"
-                      objectFit="cover"
-                      className=" rounded-t-md "
-                    />
-                  </div>
+            <Link href={`/products/${product._id}`}>
+              <div className="cursor-pointer rounded-md w-56 my-8 shadow-md">
+                <figure className="relative" style={{ paddingBottom: "60%" }}>
+                  <Image
+                    src={"https://via.placeholder.com/450x250"}
+                    // product?.productImage ||
+                    alt={product?.productName}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-t-md"
+                  />
                 </figure>
                 <div className="card-body p-2">
                   <h2 className="card-title">
-                    {product.name} {product.measure}
+                    {product.productName} {product.measure}
                   </h2>
-                  <p>{product.type}</p>
+                  <p>{product.productType}</p>
                   <div className="price-view">
                     <p>
-                      Price:
+                      Price:{" "}
                       <span className="font-bold">
-                        Tk. {product.unit_price}
+                        Tk. {product.pricePerUnit}
                       </span>
                     </p>
                   </div>

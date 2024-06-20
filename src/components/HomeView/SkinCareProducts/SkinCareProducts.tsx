@@ -3,7 +3,7 @@
 import "@splidejs/react-splide/css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { baseUrl } from "../../../../api";
+import { baseUrl, serverUrl } from "../../../../api";
 import ProductsViewCarousel from "../ProductsViewCarousel/ProductsViewCarousel";
 
 export default function SkinCareProducts() {
@@ -11,7 +11,7 @@ export default function SkinCareProducts() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/products`);
+        const res = await axios.get(`${serverUrl}/api/products`);
         setProducts(res.data);
       } catch (error) {
         console.error("Error fetching users", error);

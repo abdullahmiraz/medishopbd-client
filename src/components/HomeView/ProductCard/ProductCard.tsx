@@ -1,40 +1,44 @@
-"use client";
+// ProductCard.tsx
 
 import Image from "next/image";
 import Link from "next/link";
-import layout from "../../../app/layout";
+import { formatDate } from "../../Dashboard/AdminDash/ProductsList/ProductsList";
 
 const ProductCard = ({ product }) => {
   console.log(product);
   return (
-    <Link href={`../products/${product.id}`}>
-      <div className=" border cursor-pointer rounded-md shadow-md">
-        <figure>
-          <div className="relative " style={{ paddingBottom: "60%" }}>
-            <Image
-              src={
-                product.image ||
-                `https://i.ibb.co/ZGCQxbH/osudpotro-default.webp`
-              }
-              alt="slide"
-              layout="fill"
-              objectFit="cover"
-              className=" rounded-t-md "
-            />
-          </div>
+    <Link href={`/products/${product._id}`}>
+      <div className="border cursor-pointer rounded-md shadow-md">
+        <figure className="relative" style={{ paddingBottom: "60%" }}>
+          <Image
+            src={"https://i.ibb.co/ZGCQxbH/osudpotro-default.webp"}
+            alt={product.productName}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-t-md"
+          />
         </figure>
-        <div className="card-body p-2">
-          <h2 className="card-title">{product.cardTitle}</h2>
-          <p>
-            {product.name} {product.measure}
+        <div className="card-body p-4">
+          <h2 className="text-xl font-bold mb-2">
+            {product.productName} {product.measure}
+          </h2>
+          <p className="text-gray-600 mb-2">{product.productType}</p>
+          <div className="flex justify-between mb-2">
+            <p>Manufacturer: {product.manufacturer}</p>
+            <p>Category: {product.primaryCategory}</p>
+          </div>
+          <div className="flex justify-between mb-2">
+            <p>
+              Price:{" "}
+              <span className="text-green-500 font-medium">
+                Tk. {product.pricePerUnit}
+              </span>
+            </p>
+            <p>Stock: {product.availableStock}</p>
+          </div>
+          <p className="text-sm text-gray-500">
+            Expiration Date: {formatDate(product.expirationDate)}
           </p>
-          <p>{product.type} </p>
-          <h3>
-            Best Price:
-            <span className="text-green-500 font-medium">
-              Tk.{product.price}
-            </span>
-          </h3>
         </div>
       </div>
     </Link>

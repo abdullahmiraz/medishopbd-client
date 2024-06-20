@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { baseUrl } from "../../../../api";
+import { baseUrl, serverUrl } from "../../../../api";
 import ProductCard from "../ProductCard/ProductCard";
 
 const AllProductsView = () => {
@@ -10,7 +10,7 @@ const AllProductsView = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/products`);
+        const res = await axios.get(`${serverUrl}/api/products`);
         setProducts(res.data);
       } catch (error) {
         console.error("Error fetching users", error);
@@ -23,7 +23,7 @@ const AllProductsView = () => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mt-8 px-6">
       {products?.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product?.productId} product={product} />
       ))}
     </div>
   );

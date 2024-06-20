@@ -134,7 +134,7 @@ const ProductsList: React.FC = () => {
 };
 
 // Function to format date as 'YYYY-MM-DD'
-const formatDate = (date?: Date): string => {
+export const formatDate = (date?: Date): string => {
   if (!date) return "";
   const d = new Date(date);
   const year = d.getFullYear();
