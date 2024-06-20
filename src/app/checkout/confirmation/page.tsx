@@ -39,11 +39,14 @@ const Confirmation = () => {
     } else {
       router.push("/");
     }
+
   }, []);
+
 
   useEffect(() => {
     if (orderDetails && invoiceNumber) {
       generatePDF(orderDetails, invoiceNumber); // Call generatePDF once after setting orderDetails and invoiceNumber
+      clearLocalStorage()
     }
   }, [orderDetails, invoiceNumber]);
 
