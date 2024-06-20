@@ -37,7 +37,7 @@ const ProductCard = ({ product }) => {
             <p>Stock: {product.availableStock}</p>
           </div>
           <p className="text-sm text-gray-500">
-            Expiration Date: {formatDate(product.expirationDate)}
+            Expiration Date: {product?.expirationDate.slice(0, 10)}
           </p>
         </div>
       </div>

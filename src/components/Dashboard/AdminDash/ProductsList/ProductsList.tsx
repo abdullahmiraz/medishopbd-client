@@ -106,7 +106,11 @@ const ProductsList: React.FC = () => {
                 <td>{product?.pricePerUnit}</td>
                 <td>{product?.availableStock}</td>
                 <td>{product?.manufacturer}</td>
-                <td>{formatDate(product?.expirationDate)}</td>
+                <td>
+                  {product?.expirationDate
+                    ? product.expirationDate.slice(0, 10)
+                    : ""}
+                </td>
                 <td>{product?.batchNumber}</td>
                 <td>{product?.aisleLocation}</td>
                 <td>{product?.requiresPrescription ? "Yes" : "No"}</td>
@@ -131,18 +135,6 @@ const ProductsList: React.FC = () => {
       </div>
     </div>
   );
-};
-
-// Function to format date as 'YYYY-MM-DD'
-export const formatDate = (date?: Date): string => {
-  if (!date) return "";
-  const d = new Date(date);
-  const year = d.getFullYear();
-  let month = "" + (d.getMonth() + 1);
-  let day = "" + d.getDate();
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-  return [year, month, day].join("-");
 };
 
 export default ProductsList;

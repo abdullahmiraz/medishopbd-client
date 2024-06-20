@@ -2,12 +2,11 @@
 
 // ProductSingleView.tsx
 
-import Image from "next/image";
 import axios from "axios";
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { serverUrl } from "../../../../api";
-import { formatDate } from "../../../utils/dateUtils"; // Assuming you have a utility function for date formatting
 import toast, { Toaster } from "react-hot-toast";
+import { serverUrl } from "../../../../api";
 
 const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
