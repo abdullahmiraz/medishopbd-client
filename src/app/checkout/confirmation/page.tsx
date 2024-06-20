@@ -121,7 +121,7 @@ const Confirmation = () => {
     doc.text("Discount: - Tk. 0.00", 20, startY + 20);
     doc.text(`Total: Tk. ${orderDetails.total.toFixed(2)}`, 20, startY + 30);
 
-    doc.save(`invoice_${invoiceNumber}.pdf`);
+    doc.save(`${invoiceNumber}.pdf`);
   };
 
   const calculateSubtotal = (cartItems) => {
