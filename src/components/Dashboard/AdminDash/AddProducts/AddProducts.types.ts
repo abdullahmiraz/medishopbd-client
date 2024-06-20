@@ -1,25 +1,25 @@
-interface Packaging {
+export interface Packaging {
   unitsPerStrip: string;
   stripsPerBox: string;
 }
 
-interface Indications {
+export interface Indications {
   mainTitle: string;
   subtitles: string[];
 }
 
-interface DosageDetail {
+export interface DosageDetail {
   ageRange: string;
   userGroup: string;
   dosageInstructions: string[];
 }
 
-interface UsageDetails {
+export interface UsageDetails {
   indications: Indications;
   dosageDetails: DosageDetail[];
 }
 
-interface ProductData {
+export interface ProductData {
   productId: string;
   productName: string;
   measure: string;

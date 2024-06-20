@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../../api";
+import { ProductData } from "./AddProducts.types";
 
 const AddProducts: React.FC = () => {
-  const [productData, setProductData] = useState<ProductData>({
+  const [productData, setProductData] = useState<ProductDataData>({
     productId: "",
     productName: "",
     measure: "",
@@ -96,16 +97,12 @@ const AddProducts: React.FC = () => {
     }
 
     // Ensure the nested array at index exists
-    if (!nestedObj[index]) {
-      nestedObj[index] = { dosageInstructions: [] };
+    if (!Array.isArray(nestedObj)) {
+      nestedObj = [];
     }
 
-    // Ensure the dosageInstructions array exists
-    if (!nestedObj[index].dosageInstructions) {
-      nestedObj[index].dosageInstructions = [];
-    }
-
-    nestedObj[index].dosageInstructions[subIndex] = value;
+    // Directly update the subtitle at index
+    nestedObj[index] = value;
 
     setProductData(updatedData);
   };
@@ -318,14 +315,14 @@ const AddProducts: React.FC = () => {
                   <label className="block mb-1">Subtitle {index + 1}</label>
                   <input
                     type="text"
-                    name="subtitles"
+                    name={`subtitle-${index}`}
                     value={subtitle}
                     onChange={(e) =>
                       handleArrayChange(
                         e,
                         "usageDetails.indications.subtitles",
-                        0,
-                        index
+                        index,
+                        0
                       )
                     }
                     className="input input-bordered w-full"
@@ -389,7 +386,7 @@ const AddProducts: React.FC = () => {
                   className="input input-bordered w-full"
                 />
               </div>
-              {detail.dosageInstructions.map((instruction, subIndex) => (
+              {detail?.dosageInstructions?.map((instruction, subIndex) => (
                 <div key={subIndex} className="mb-4">
                   <label className="block mb-1">
                     Dosage Instruction {subIndex + 1}
