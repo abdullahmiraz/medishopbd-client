@@ -152,7 +152,7 @@ const Dashboard = () => {
           {menuItems[dashLocation]?.map((item) => (
             <li key={item.href} className="border-b-2 border-b-green-300">
               <Link
-                href={`../dashboard/${item.href}`}
+                href={`/dashboard/${item.href}`}
                 className="dashboard-link"
               >
                 <item.icon />

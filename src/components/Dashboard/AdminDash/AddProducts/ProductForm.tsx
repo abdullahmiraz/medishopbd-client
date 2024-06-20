@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
 import { ProductData } from "./AddProducts.types";
-import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
-import { serverUrl } from "../../../../../api";
 import AdditionalInputs from "./AdditionalInputs";
 
 interface ProductFormProps {
@@ -13,34 +11,42 @@ const ProductForm: React.FC<ProductFormProps> = ({
   initialProduct,
   onSubmit,
 }) => {
-  const [productData, setProductData] = useState<ProductData>({
-    productId: "",
-    productName: "",
-    measure: "",
-    activeIngredient: "",
-    dosageForm: "",
-    applicationArea: "",
-    primaryCategory: "",
-    subCategory: "",
-    productType: "",
-    packaging: { unitsPerStrip: "", stripsPerBox: "" },
-    pricePerUnit: "",
-    availableStock: "",
-    manufacturer: "",
-    expirationDate: "",
-    batchNumber: "",
-    aisleLocation: "",
-    requiresPrescription: false,
-    pageCategory: "",
-    productImage: "",
-    usageDetails: {
-      indications: { mainTitle: "", subtitles: [""] },
-      dosageDetails: [
-        { ageRange: "", userGroup: "", dosageInstructions: [""] },
-      ],
-    },
-    pharmacology: "",
-  });
+  const [productData, setProductData] = useState<ProductData>(
+    initialProduct || {
+      productId: "",
+      productName: "",
+      measure: "",
+      activeIngredient: "",
+      dosageForm: "",
+      applicationArea: "",
+      primaryCategory: "",
+      subCategory: "",
+      productType: "",
+      packaging: { unitsPerStrip: "", stripsPerBox: "" },
+      pricePerUnit: "",
+      availableStock: "",
+      manufacturer: "",
+      expirationDate: "",
+      batchNumber: "",
+      aisleLocation: "",
+      requiresPrescription: false,
+      pageCategory: "",
+      productImage: "",
+      usageDetails: {
+        indications: { mainTitle: "", subtitles: [""] },
+        dosageDetails: [
+          { ageRange: "", userGroup: "", dosageInstructions: [""] },
+        ],
+      },
+      pharmacology: "",
+    }
+  );
+
+  useEffect(() => {
+    if (initialProduct) {
+      setProductData(initialProduct);
+    }
+  }, [initialProduct]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -113,7 +119,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     setProductData(updatedData);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(productData);
   };

@@ -27,7 +27,8 @@ const ProductsList: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`${serverUrl}/api/products/${id}`);
+      const response = await axios.delete(`${serverUrl}/api/products/${id}`);
+      console.log(response.data);
       setProducts(products.filter((product) => product._id !== id));
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -39,12 +40,12 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto p-4 shadow-xl  ">
       <h2 className="font-extrabold text-2xl text-center my-4">
         Products List
       </h2>
-      <div className="overflow-x-auto m-4 border">
-        <table className="table table-zebra table-xs">
+      <div className="overflow-x-auto overflow-y-auto">
+        <table className="table table-zebra table-xs  table-pin-rows table-pin-cols">
           <thead>
             <tr>
               <th>Actions</th>
@@ -82,7 +83,7 @@ const ProductsList: React.FC = () => {
               <tr key={product._id}>
                 <td className="flex gap-2 items-center mt-[15%]">
                   <button className="text-blue-500  cursor-pointer p-2 ">
-                    <Link href={`/editproduct/${product._id}`}>
+                    <Link href={`/dashboard/editproduct/${product._id}`}>
                       <FaEdit />
                     </Link>
                   </button>
