@@ -11,7 +11,7 @@ import BannerWide from "../BannerWide/BannerWide";
 export default function ProductsViewCarousel({ title, products }: any) {
   console.log(products);
   return (
-    <div className="shadow-md  pb-4">
+    <div className="shadow-md max-h-min  pb-4">
       <TitleStyle title={title} />
       <Splide
         options={{
@@ -34,7 +34,7 @@ export default function ProductsViewCarousel({ title, products }: any) {
         {products?.map((product, index) => (
           <SplideSlide key={index}>
             <Link href={`/products/${product._id}`}>
-              <div className="cursor-pointer rounded-md w-56 my-8 shadow-md">
+              <div className="cursor-pointer rounded-md w-56  h-72 my-8 shadow-md">
                 <figure className="relative" style={{ paddingBottom: "60%" }}>
                   <Image
                     src={"https://via.placeholder.com/450x250"}
@@ -45,7 +45,7 @@ export default function ProductsViewCarousel({ title, products }: any) {
                     className="rounded-t-md"
                   />
                 </figure>
-                <div className="card-body p-2">
+                <div className="card-body flex flex-col justify-between p-2">
                   <h2 className="card-title">
                     {product.productName} {product.measure}
                   </h2>

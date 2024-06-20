@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const companyLogoUrl =
   "https://cdn-icons-png.flaticon.com/512/4599/4599153.png";
@@ -39,14 +40,12 @@ const Confirmation = () => {
     } else {
       router.push("/");
     }
-
   }, []);
-
 
   useEffect(() => {
     if (orderDetails && invoiceNumber) {
       generatePDF(orderDetails, invoiceNumber); // Call generatePDF once after setting orderDetails and invoiceNumber
-      clearLocalStorage()
+      clearLocalStorage();
     }
   }, [orderDetails, invoiceNumber]);
 
@@ -150,13 +149,19 @@ const Confirmation = () => {
             Your order number is <strong>{invoiceNumber}</strong>.
           </p>
           <p>A PDF receipt has been generated for your records.</p>
-          <div>
+          <div className="flex gap-4 my-4">
             <button
               className="px-4 py-2 bg-blue-500 text-white rounded"
               onClick={handleSavePDF}
             >
               Download Receipt
             </button>
+            <Link
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+              href={"/"}
+            >
+              Return to Homepage
+            </Link>
           </div>
         </div>
       ) : (
