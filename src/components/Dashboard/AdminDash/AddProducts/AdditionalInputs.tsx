@@ -1,20 +1,22 @@
+// AdditionalInputs.tsx
+
 import React from "react";
 
-interface AdditionalInputsProps {
-  productData: any; // Replace with your productData type
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+interface Props {
+  productData: any; // Use 'any' for simplicity in this example, consider updating with proper types
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const AdditionalInputs: React.FC<AdditionalInputsProps> = ({ productData, handleChange }) => {
+const AdditionalInputs: React.FC<Props> = ({ productData, onChange }) => {
   return (
-    <div>
+    <>
       <div className="mb-4">
         <label className="block mb-1">Dosage Form</label>
         <input
           type="text"
           name="dosageForm"
           value={productData.dosageForm}
-          onChange={handleChange}
+          onChange={onChange}
           className="input input-bordered w-full"
         />
       </div>
@@ -24,7 +26,7 @@ const AdditionalInputs: React.FC<AdditionalInputsProps> = ({ productData, handle
           type="text"
           name="applicationArea"
           value={productData.applicationArea}
-          onChange={handleChange}
+          onChange={onChange}
           className="input input-bordered w-full"
         />
       </div>
@@ -34,7 +36,7 @@ const AdditionalInputs: React.FC<AdditionalInputsProps> = ({ productData, handle
           type="text"
           name="primaryCategory"
           value={productData.primaryCategory}
-          onChange={handleChange}
+          onChange={onChange}
           className="input input-bordered w-full"
         />
       </div>
@@ -44,7 +46,7 @@ const AdditionalInputs: React.FC<AdditionalInputsProps> = ({ productData, handle
           type="text"
           name="subCategory"
           value={productData.subCategory}
-          onChange={handleChange}
+          onChange={onChange}
           className="input input-bordered w-full"
         />
       </div>
@@ -54,11 +56,11 @@ const AdditionalInputs: React.FC<AdditionalInputsProps> = ({ productData, handle
           type="text"
           name="productType"
           value={productData.productType}
-          onChange={handleChange}
+          onChange={onChange}
           className="input input-bordered w-full"
         />
       </div>
-    </div>
+    </>
   );
 };
 

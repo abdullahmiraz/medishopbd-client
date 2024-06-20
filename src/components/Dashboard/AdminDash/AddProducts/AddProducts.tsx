@@ -5,9 +5,10 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../../api";
 import { ProductData } from "./AddProducts.types";
+import AdditionalInputs from "./AdditionalInputs";
 
 const AddProducts: React.FC = () => {
-  const [productData, setProductData] = useState<ProductDataData>({
+  const [productData, setProductData] = useState<ProductData>({
     productId: "",
     productName: "",
     measure: "",
@@ -145,6 +146,11 @@ const AddProducts: React.FC = () => {
                 className="input input-bordered w-full"
               />
             </div>
+            <AdditionalInputs
+              productData={productData}
+              onChange={handleChange}
+            />
+
             <div className="mb-4">
               <label className="block mb-1">Product Name</label>
               <input
@@ -393,12 +399,11 @@ const AddProducts: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    name="dosageInstructions"
                     value={instruction}
                     onChange={(e) =>
                       handleArrayChange(
                         e,
-                        "usageDetails.dosageDetails",
+                        `usageDetails.dosageDetails.${index}.dosageInstructions`,
                         index,
                         subIndex
                       )

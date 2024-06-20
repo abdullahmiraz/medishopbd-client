@@ -145,7 +145,7 @@ const Dashboard = () => {
   //   }, [router.pathname]);
 
   return (
-    <div className="flex">
+    <div className="flex h-screen bg-green-400">
       {/* dashboard side bar */}
       <div className="min-w-32 w-full h-screen text-[darkblue] bg-green-400">
         <ul className="menu p-0">
