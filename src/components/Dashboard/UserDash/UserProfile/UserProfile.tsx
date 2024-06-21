@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { serverUrl } from "../../../../../api";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 type OrderItem = {
   id: number;
@@ -21,6 +22,7 @@ type Order = {
 };
 
 type User = {
+  _id: string; // Added to track MongoDB ObjectId
   uid: string;
   name: string;
   email: string;
@@ -33,39 +35,54 @@ type User = {
 
 const UserProfile = ({ userId }: { userId: string }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     const fetchUserIdByUid = async () => {
       try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/uid/${userId}`
-        );
-        return response.data.id;
+        const response = await axios.get(`${serverUrl}/api/users/uid/${userId}`);
+        const userMongoId = response?.data?.id;
+        if (userMongoId) {
+          fetchUser(userMongoId);
+        }
       } catch (error) {
         console.error("Error fetching user id:", error);
-        return null;
       }
     };
 
     const fetchUser = async (id: string) => {
       try {
         const response = await axios.get(`${serverUrl}/api/users/${id}`);
-        setUser(response.data);
+        const userData = response.data;
+        setUser(userData);
+        setPhone(userData.phone);
+        setAddress(userData.address);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
 
-    const getUserData = async () => {
-      const id = await fetchUserIdByUid();
-      console.log(id);
-      if (id) {
-        fetchUser(id);
-      }
-    };
-
-    getUserData();
+    fetchUserIdByUid();
   }, [userId]);
+
+  const handleUpdateUserDetails = async () => {
+    if (user) {
+      try {
+        const response = await axios.patch(`${serverUrl}/api/users/${user._id}`, {
+          phone,
+          address,
+        });
+        setUser(response.data);
+        setIsEditing(false);
+        toast.success("User updated successfully!");
+      } catch (error) {
+        console.error("Error updating user:", error);
+        toast.error("Error updating user.");
+      }
+    }
+  };
 
   if (!user) {
     return <div>Loading...</div>;
@@ -76,30 +93,40 @@ const UserProfile = ({ userId }: { userId: string }) => {
       <h2 className="text-2xl font-bold mb-4">User Profile</h2>
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Personal Information</h3>
-        <Image
-          src={`${user.photoURL}`}
-          alt={`${user.name}`}
-          height={100}
-          width={100}
-          objectFit="cover"
-          className="rounded-full"
-        />
-        <p>
-          <strong>Name:</strong> {user.name}
-        </p>
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-        <p>
-          <strong>Phone:</strong> {user.phone}
-        </p>
-        <p>
-          <strong>Address:</strong> {user.address}
-        </p>
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+        <div>
+          <label>
+            <strong>Phone:</strong>
+            {isEditing ? (
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="ml-2 border rounded px-2"
+              />
+            ) : (
+              <span> {user.phone}</span>
+            )}
+          </label>
+        </div>
+        <div>
+          <label>
+            <strong>Address:</strong>
+            {isEditing ? (
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="ml-2 border rounded px-2"
+              />
+            ) : (
+              <span> {user.address}</span>
+            )}
+          </label>
+        </div>
         {user.prescription && (
-          <p>
-            <strong>Prescription:</strong> {user.prescription}
-          </p>
+          <p><strong>Prescription:</strong> {user.prescription}</p>
         )}
       </div>
       <div>
@@ -107,19 +134,10 @@ const UserProfile = ({ userId }: { userId: string }) => {
         {user.orders.length > 0 ? (
           user.orders.map((order) => (
             <div key={order.orderId} className="mb-4 p-4 border rounded">
-              <p>
-                <strong>Order ID:</strong> {order.orderId}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(order.date).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Total:</strong> Tk. {order.total}
-              </p>
-              <p>
-                <strong>Status:</strong> {order.status}
-              </p>
+              <p><strong>Order ID:</strong> {order.orderId}</p>
+              <p><strong>Date:</strong> {new Date(order.date).toLocaleDateString()}</p>
+              <p><strong>Total:</strong> Tk. {order.total}</p>
+              <p><strong>Status:</strong> {order.status}</p>
               <div>
                 <h4 className="font-semibold">Items:</h4>
                 <ul>
@@ -136,6 +154,21 @@ const UserProfile = ({ userId }: { userId: string }) => {
           <p>No orders found.</p>
         )}
       </div>
+      {isEditing ? (
+        <button
+          onClick={handleUpdateUserDetails}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Save
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsEditing(true)}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Edit
+        </button>
+      )}
     </div>
   );
 };
