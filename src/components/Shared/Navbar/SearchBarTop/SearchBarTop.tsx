@@ -41,14 +41,14 @@ const SearchBarTop = () => {
   };
 
   useEffect(() => {
-    const sendFirebaseUserToMongoose = async () => {
+    const sendFirebaseUserToMongoDB = async () => {
       if (user) {
         const userPayload = {
           uid: user.uid,
           name: user.displayName,
           email: user.email,
           photoURL: user.photoURL,
-          phone: "", 
+          phone: "",
           address: "",
           prescription: "", // Can be updated later if needed
           orders: [], // Initial empty order history
@@ -64,7 +64,7 @@ const SearchBarTop = () => {
         } catch (error) {
           if (error.response && error.response.status === 409) {
             console.error("User already exists.");
-            toast.error("User already exists.");
+            // toast.error("User already exists.");
           } else {
             console.error("Error Adding User.");
             toast.error("Error Adding User.");
@@ -73,7 +73,7 @@ const SearchBarTop = () => {
         }
       }
     };
-    sendFirebaseUserToMongoose();
+    sendFirebaseUserToMongoDB();
   }, [user]);
 
   useEffect(() => {

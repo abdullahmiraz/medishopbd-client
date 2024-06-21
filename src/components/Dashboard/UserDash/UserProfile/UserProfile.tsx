@@ -3,26 +3,25 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { serverUrl } from "../../../../../api";
-import Image from "next/image";
 import toast from "react-hot-toast";
 
 type OrderItem = {
-  id: number;
+  productId: string;
   name: string;
   quantity: number;
   price: number;
 };
 
 type Order = {
-  orderId: string;
-  date: string;
+  _id: string;
+  products: OrderItem[];
   total: number;
   status: string;
-  items: OrderItem[];
+  created_at: string;
 };
 
 type User = {
-  _id: string; // Added to track MongoDB ObjectId
+  _id: string;
   uid: string;
   name: string;
   email: string;
@@ -43,9 +42,10 @@ const UserProfile = ({ userId }: { userId: string }) => {
     const fetchUserIdByUid = async () => {
       try {
         const response = await axios.get(`${serverUrl}/api/users/uid/${userId}`);
-        const userMongoId = response?.data?.id;
+        const userMongoId = response?.data?.id; // Ensure to use "id" here
         if (userMongoId) {
           fetchUser(userMongoId);
+          sessionStorage.setItem("mongoUserId", userMongoId);
         }
       } catch (error) {
         console.error("Error fetching user id:", error);
@@ -133,16 +133,16 @@ const UserProfile = ({ userId }: { userId: string }) => {
         <h3 className="text-xl font-semibold">Orders</h3>
         {user.orders.length > 0 ? (
           user.orders.map((order) => (
-            <div key={order.orderId} className="mb-4 p-4 border rounded">
-              <p><strong>Order ID:</strong> {order.orderId}</p>
-              <p><strong>Date:</strong> {new Date(order.date).toLocaleDateString()}</p>
+            <div key={order._id} className="mb-4 p-4 border rounded">
+              <p><strong>Order ID:</strong> {order._id}</p>
+              <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
               <p><strong>Total:</strong> Tk. {order.total}</p>
               <p><strong>Status:</strong> {order.status}</p>
               <div>
                 <h4 className="font-semibold">Items:</h4>
                 <ul>
-                  {order.items.map((item) => (
-                    <li key={item.id}>
+                  {order.products.map((item, index) => (
+                    <li key={index}>
                       {item.name} - {item.quantity} x Tk. {item.price}
                     </li>
                   ))}
