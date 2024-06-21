@@ -1,11 +1,40 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaCartPlus, FaSearch, FaTruck, FaUserCircle } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaCartPlus, FaSearch, FaTruck } from "react-icons/fa";
+import { UserAuth } from "../../../../context/AuthContext";
 
 const SearchBarTop = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const { user, googleSignIn, logOut } = UserAuth();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      setLoading(false);
+    };
+    checkAuthentication();
+  }, [user]);
+
+  console.log(user);
+
+  const handleSignIn = async () => {
+    try {
+      await googleSignIn();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -56,13 +85,44 @@ const SearchBarTop = () => {
             </p>
           </div>
         </Link>
-        <div className="user-section-top flex items-center gap-2">
-          <p className="user-name border-l-4 pl-4 border-cyan-800">
-            User <br />
-            Name
-          </p>
-          <FaUserCircle size={40} />
+
+        <div className="user-section-top flex items-center gap-2  border-l-4 pl-4 border-cyan-800">
+          {loading ? (
+            <p>Loading</p>
+          ) : !user ? (
+            <ul className="flex gap-2">
+              <li
+                onClick={handleSignIn}
+                className=" bg-blue-500 rounded text-white  px-4 py-2 cursor-pointer"
+              >
+                Login
+              </li>
+              <li
+                onClick={handleSignIn}
+                className="bg-orange-500 rounded text-white px-4 py-2 cursor-pointer"
+              >
+                Sign Up
+              </li>
+            </ul>
+          ) : (
+            <div className="flex items-center">
+              <p>
+                Welcome,{" "}
+                {user.displayName ? user.displayName.split(" ")[0] : ""}
+              </p>
+              <p
+                onClick={handleSignOut}
+                className="bg-orange-500 rounded text-white px-4 py-2 cursor-pointer"
+              >
+                Sign Out
+              </p>
+            </div>
+          )}
         </div>
+        {/* <div className="user-section-top flex items-center gap-2  border-l-4 pl-4 border-cyan-800">
+          Name
+          <FaUserCircle size={40} />
+        </div> */}
       </div>
     </div>
   );
