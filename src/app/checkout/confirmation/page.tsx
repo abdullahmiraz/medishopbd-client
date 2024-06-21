@@ -6,6 +6,7 @@ import "jspdf-autotable";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Spinner from "../../../components/Shared/Spinner/Spinner";
 
 const companyLogoUrl =
   "https://cdn-icons-png.flaticon.com/512/4599/4599153.png";
@@ -165,7 +166,7 @@ const Confirmation = () => {
           </div>
         </div>
       ) : (
-        <p>Loading...</p>
+        <Spinner />
       )}
     </div>
   );

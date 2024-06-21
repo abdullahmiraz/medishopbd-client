@@ -61,7 +61,7 @@ const OptionBar = () => {
   );
 
   return (
-    <div className="sticky top-0 z-50 bg-white">
+    <div className="sticky top-0 z-10 bg-white">
       <div className="navbar bg-base-100 shadow-md">
         <div className="navbar-start">
           <div className="dropdown">

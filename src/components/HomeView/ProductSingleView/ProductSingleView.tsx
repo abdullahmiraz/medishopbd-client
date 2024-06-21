@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../api";
+import Link from "next/link";
 
 const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
@@ -61,7 +62,7 @@ const ProductSingleView = ({ productId }) => {
   };
 
   if (!product) {
-    return <p className="text-center">Loading...</p>;
+    return <div className="text-center my-20">Loading...</div>;
   }
 
   return (
@@ -145,14 +146,23 @@ const ProductSingleView = ({ productId }) => {
               </button>
             </div>
             <div className="extra-infos col-span-3 px-2">
-              <h3 className="font-bold text-lg underline">Extra Information</h3>
+              <h3 className="font-bold text-lg underline mb-4">
+                Extra Information
+              </h3>
               {product?.requiresPrescription ? (
-                <p className="text-red-500 font-bold">Prescription required</p>
+                <p className="text-red-500 font-bold mb-4">
+                  Prescription required
+                </p>
               ) : null}
+              <Link
+                href={"https://www.via.placeholder.co/50x50"}
+                className="cursor-pointer bg-orange-500 text-white  py-2 px-4 rounded-xl"
+              >
+                Prescription
+              </Link>
             </div>
           </div>
         </div>
-        TT
       </div>
       <div className="indications mt-4">
         <h3 className="font-bold text-lg">Usage Indications:</h3>

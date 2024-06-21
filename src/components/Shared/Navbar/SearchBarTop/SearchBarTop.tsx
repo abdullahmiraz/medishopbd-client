@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaCartPlus, FaSearch, FaTruck } from "react-icons/fa";
 import { UserAuth } from "../../../../context/AuthContext";
+import Spinner from "../../Spinner/Spinner";
 
 const SearchBarTop = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
@@ -88,7 +89,7 @@ const SearchBarTop = () => {
 
         <div className="user-section-top flex items-center gap-2  border-l-4 pl-4 border-cyan-800">
           {loading ? (
-            <p>Loading</p>
+            <Spinner />
           ) : !user ? (
             <ul className="flex gap-2">
               <li
@@ -105,10 +106,20 @@ const SearchBarTop = () => {
               </li>
             </ul>
           ) : (
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
+              <Image
+                className="rounded-full"
+                src={user.photoURL}
+                height={50}
+                width={50}
+                alt={user.displayName}
+              />
               <p>
-                Welcome,{" "}
-                {user.displayName ? user.displayName.split(" ")[0] : ""}
+                User: <br />
+                <p className="text-blue-800 font-bold">
+                  {" "}
+                  {user.displayName ? user.displayName.split(" ")[0] : ""}
+                </p>
               </p>
               <p
                 onClick={handleSignOut}
