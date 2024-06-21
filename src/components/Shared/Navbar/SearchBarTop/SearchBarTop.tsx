@@ -1,13 +1,16 @@
 "use client";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaCartPlus, FaSearch, FaTruck } from "react-icons/fa";
+import { serverUrl } from "../../../../../api";
 import { UserAuth } from "../../../../context/AuthContext";
 import Spinner from "../../Spinner/Spinner";
 
 const SearchBarTop = () => {
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState([]);
   const { user, googleSignIn, logOut } = UserAuth();
   const [loading, setLoading] = useState(true);
 
@@ -36,6 +39,42 @@ const SearchBarTop = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const sendFirebaseUserToMongoose = async () => {
+      if (user) {
+        const userPayload = {
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          phone: "", 
+          address: "",
+          prescription: "", // Can be updated later if needed
+          orders: [], // Initial empty order history
+        };
+
+        try {
+          const response = await axios.post(
+            `${serverUrl}/api/users`,
+            userPayload
+          );
+          console.log(response.data);
+          toast.success("User Added successfully!");
+        } catch (error) {
+          if (error.response && error.response.status === 409) {
+            console.error("User already exists.");
+            toast.error("User already exists.");
+          } else {
+            console.error("Error Adding User.");
+            toast.error("Error Adding User.");
+          }
+          console.error("Failed to add User:", error);
+        }
+      }
+    };
+    sendFirebaseUserToMongoose();
+  }, [user]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -87,14 +126,14 @@ const SearchBarTop = () => {
           </div>
         </Link>
 
-        <div className="user-section-top flex items-center gap-2  border-l-4 pl-4 border-cyan-800">
+        <div className="user-section-top flex items-center gap-2 border-l-4 pl-4 border-cyan-800">
           {loading ? (
             <Spinner />
           ) : !user ? (
             <ul className="flex gap-2">
               <li
                 onClick={handleSignIn}
-                className=" bg-blue-500 rounded text-white  px-4 py-2 cursor-pointer"
+                className="bg-blue-500 rounded text-white px-4 py-2 cursor-pointer"
               >
                 Login
               </li>
@@ -121,7 +160,6 @@ const SearchBarTop = () => {
                 <div>
                   User: <br />
                   <p className="text-blue-800 font-bold">
-                    {" "}
                     {user.displayName ? user.displayName.split(" ")[0] : ""}
                   </p>
                 </div>
@@ -135,10 +173,6 @@ const SearchBarTop = () => {
             </div>
           )}
         </div>
-        {/* <div className="user-section-top flex items-center gap-2  border-l-4 pl-4 border-cyan-800">
-          Name
-          <FaUserCircle size={40} />
-        </div> */}
       </div>
     </div>
   );

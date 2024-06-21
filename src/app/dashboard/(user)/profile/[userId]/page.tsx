@@ -3,7 +3,7 @@ import UserProfile from "../../../../../components/Dashboard/UserDash/UserProfil
 
 const UserProfilePage = ({ params }: any) => {
   console.log(params);
-  return <UserProfile userId={params.uid} />;
+  return <UserProfile userId={params.userId} />;
 };
 
 export default UserProfilePage;

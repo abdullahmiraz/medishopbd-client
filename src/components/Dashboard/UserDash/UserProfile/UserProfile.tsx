@@ -3,41 +3,68 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { serverUrl } from "../../../../../api";
+import Image from "next/image";
 
-interface User {
+type OrderItem = {
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
+};
+
+type Order = {
+  orderId: string;
+  date: string;
+  total: number;
+  status: string;
+  items: OrderItem[];
+};
+
+type User = {
+  uid: string;
   name: string;
   email: string;
+  photoURL: string;
   phone: string;
   address: string;
   prescription?: string;
-  orders: {
-    orderId: string;
-    date: string;
-    total: number;
-    status: string;
-    items: {
-      id: number;
-      name: string;
-      quantity: number;
-      price: number;
-    }[];
-  }[];
-}
+  orders: Order[];
+};
 
 const UserProfile = ({ userId }: { userId: string }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserIdByUid = async () => {
       try {
-        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
+        const response = await axios.get(
+          `${serverUrl}/api/users/uid/${userId}`
+        );
+        return response.data.id;
+      } catch (error) {
+        console.error("Error fetching user id:", error);
+        return null;
+      }
+    };
+
+    const fetchUser = async (id: string) => {
+      try {
+        const response = await axios.get(`${serverUrl}/api/users/${id}`);
         setUser(response.data);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
 
-    fetchUser();
+    const getUserData = async () => {
+      const id = await fetchUserIdByUid();
+      console.log(id);
+      if (id) {
+        fetchUser(id);
+      }
+    };
+
+    getUserData();
   }, [userId]);
 
   if (!user) {
@@ -49,6 +76,14 @@ const UserProfile = ({ userId }: { userId: string }) => {
       <h2 className="text-2xl font-bold mb-4">User Profile</h2>
       <div className="mb-4">
         <h3 className="text-xl font-semibold">Personal Information</h3>
+        <Image
+          src={`${user.photoURL}`}
+          alt={`${user.name}`}
+          height={100}
+          width={100}
+          objectFit="cover"
+          className="rounded-full"
+        />
         <p>
           <strong>Name:</strong> {user.name}
         </p>
