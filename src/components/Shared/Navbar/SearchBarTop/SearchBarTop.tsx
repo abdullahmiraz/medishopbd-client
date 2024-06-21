@@ -107,20 +107,25 @@ const SearchBarTop = () => {
             </ul>
           ) : (
             <div className="flex items-center gap-2">
-              <Image
-                className="rounded-full"
-                src={user.photoURL}
-                height={50}
-                width={50}
-                alt={user.displayName}
-              />
-              <p>
-                User: <br />
-                <p className="text-blue-800 font-bold">
-                  {" "}
-                  {user.displayName ? user.displayName.split(" ")[0] : ""}
-                </p>
-              </p>
+              <Link
+                href={`/dashboard/profile/${user.uid}`}
+                className="flex gap-2"
+              >
+                <Image
+                  className="rounded-full"
+                  src={user.photoURL}
+                  height={50}
+                  width={50}
+                  alt={user.displayName}
+                />
+                <div>
+                  User: <br />
+                  <p className="text-blue-800 font-bold">
+                    {" "}
+                    {user.displayName ? user.displayName.split(" ")[0] : ""}
+                  </p>
+                </div>
+              </Link>
               <p
                 onClick={handleSignOut}
                 className="bg-orange-500 rounded text-white px-4 py-2 cursor-pointer"
