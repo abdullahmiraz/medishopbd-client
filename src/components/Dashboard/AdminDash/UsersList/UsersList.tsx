@@ -1,17 +1,31 @@
 "use client";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { baseUrl, serverUrl } from "../../../../../api";
+import { serverUrl } from "../../../../../api";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
-const UsersList = () => {
-  const [users, setUsers] = useState([]);
-  const [editingUserId, setEditingUserId] = useState(null);
-  const [editedUser, setEditedUser] = useState({});
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: "Admin" | "Manager" | "User";
+  phone: string;
+  address: string;
+  prescription: string;
+}
+
+const mongoUserId = sessionStorage.getItem("mongoUserId");
+
+const UsersList = (): JSX.Element => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editedRole, setEditedRole] = useState<string>("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get(`${serverUrl}/api/users`);
+        const res = await axios.get<User[]>(`${serverUrl}/api/users`);
         setUsers(res.data);
         console.log(res.data);
       } catch (error) {
@@ -22,34 +36,42 @@ const UsersList = () => {
     fetchUsers();
   }, []);
 
-  const handleEditClick = (user) => {
+  const handleEditClick = (user: User) => {
     setEditingUserId(user._id);
-    setEditedUser({ ...user });
+    setEditedRole(user.role || "User");
   };
 
-  const handleSaveClick = async (userId) => {
+  const handleSaveClick = async (userId: string) => {
     try {
-      await axios.put(`${serverUrl}/api/users/${userId}`, editedUser);
-      setUsers(users.map((user) => (user._id === userId ? editedUser : user)));
+      await axios.put(`${serverUrl}/api/users/${userId}`, { role: editedRole });
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === userId ? { ...user, role: editedRole } : user
+        )
+      );
       setEditingUserId(null);
-      setEditedUser({});
+      setEditedRole("");
     } catch (error) {
-      console.error("Error updating user", error);
+      console.error("Error updating user role", error);
     }
   };
 
-  const handleDeleteClick = async (userId) => {
+  const handleDeleteClick = async (userId: string) => {
+    if (userId == mongoUserId) {
+      sessionStorage.clear();
+      localStorage.clear();
+    }
     try {
-      await axios.delete(`${serverUrl}/api/users/${userId}`);
-      setUsers(users.filter((user) => user._id !== userId));
+      const response = await axios.delete(`${serverUrl}/api/users/${userId}`);
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+      console.log(response.data);
     } catch (error) {
       console.error("Error deleting user", error);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditedUser({ ...editedUser, [name]: value });
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEditedRole(e.target.value);
   };
 
   return (
@@ -74,7 +96,7 @@ const UsersList = () => {
           </thead>
           <tbody>
             {users?.map((user) => (
-              <tr key={user?._id}>
+              <tr key={user._id}>
                 <td>
                   {editingUserId === user._id ? (
                     <>
@@ -92,104 +114,43 @@ const UsersList = () => {
                       </button>
                     </>
                   ) : (
-                    <>
+                    <div className="flex gap-2">
                       <button
-                        className="btn btn-primary btn-sm"
+                        className="text-blue-500"
                         onClick={() => handleEditClick(user)}
                       >
-                        Edit
+                        <FaEdit />
                       </button>
                       <button
-                        className="btn btn-danger btn-sm ml-2"
+                        className=" text-red-500"
                         onClick={() => handleDeleteClick(user._id)}
                       >
-                        Delete
+                        <FaTrash />
                       </button>
-                    </>
+                    </div>
                   )}
                 </td>
-                <td>
-                  {editingUserId === user._id ? (
-                    <input
-                      type="text"
-                      name="name"
-                      value={editedUser.name || ""}
-                      onChange={handleChange}
-                      className="input input-sm input-bordered"
-                    />
-                  ) : (
-                    user?.name
-                  )}
-                </td>
-                <td>
-                  {editingUserId === user._id ? (
-                    <input
-                      type="email"
-                      name="email"
-                      value={editedUser.email || ""}
-                      onChange={handleChange}
-                      className="input input-sm input-bordered"
-                    />
-                  ) : (
-                    user?.email
-                  )}
-                </td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
                 <td>
                   {editingUserId === user._id ? (
                     <select
                       name="role"
-                      value={editedUser.role || ""}
+                      value={editedRole}
                       onChange={handleChange}
                       className="select select-sm select-bordered"
                     >
-                      <option value="admin">Admin</option>
-                      <option value="user">User</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Manager">Manager</option>
+                      <option value="User">User</option>
                     </select>
                   ) : (
-                    user?.role
+                    user.role
                   )}
                 </td>
-                <td>
-                  {editingUserId === user._id ? (
-                    <input
-                      type="text"
-                      name="phone"
-                      value={editedUser.phone || ""}
-                      onChange={handleChange}
-                      className="input input-sm input-bordered"
-                    />
-                  ) : (
-                    user?.phone
-                  )}
-                </td>
-                <td>
-                  {editingUserId === user._id ? (
-                    <input
-                      type="text"
-                      name="address"
-                      value={editedUser.address || ""}
-                      onChange={handleChange}
-                      className="input input-sm input-bordered"
-                    />
-                  ) : (
-                    user?.address
-                  )}
-                </td>
-                <td>
-                  {editingUserId === user._id ? (
-                    <select
-                      name="prescription"
-                      value={editedUser.prescription || false}
-                      onChange={handleChange}
-                      className="select select-sm select-bordered"
-                    >
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  ) : (
-                    user?.prescription ? "true" : "false"
-                  )}
-                </td>
+                <td>{user.phone}</td>
+                <td>{user.address}</td>
+                <td>{user.prescription ? "true" : "false"}</td>
               </tr>
             ))}
           </tbody>
