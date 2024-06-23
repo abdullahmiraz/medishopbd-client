@@ -62,7 +62,7 @@ const Confirmation = () => {
     try {
       const orderData = {
         userId: userId,
-        products: orderDetails.cartItems.map((item) => ({
+        products: orderDetails?.cartItems?.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
           price: item.price,
@@ -99,7 +99,7 @@ const Confirmation = () => {
     });
 
     const headers = [["Item", "Price per strip", "Quantity", "Total Price"]];
-    const data = orderDetails.cartItems.map((item) => [
+    const data = orderDetails?.cartItems?.map((item) => [
       `${item.name} (${item.measure})`,
       `Tk. ${item.pricePerStrip}`,
       `${item.stripCount}`,
@@ -130,7 +130,9 @@ const Confirmation = () => {
     const startY = doc.autoTable.previous.finalY + 10;
     doc.setFontSize(12);
     doc.text(
-      `Sub Total: Tk. ${calculateSubtotal(orderDetails.cartItems).toFixed(2)}`,
+      `Sub Total: Tk. ${calculateSubtotal(orderDetails?.cartItems)?.toFixed(
+        2
+      )}`,
       20,
       startY
     );
@@ -165,6 +167,14 @@ const Confirmation = () => {
             <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded">
               Return to Homepage
             </Link>
+            <button
+              onClick={
+                () => generatePDF(orderDetails, invoiceNumber) // Call generatePDF once after setting orderDetails and invoiceNumber
+              }
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Download Reciept
+            </button>
           </div>
         </div>
       ) : (

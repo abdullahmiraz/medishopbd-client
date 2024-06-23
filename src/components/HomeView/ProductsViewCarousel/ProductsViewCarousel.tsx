@@ -34,7 +34,7 @@ export default function ProductsViewCarousel({ title, products }: any) {
         {products?.map((product, index) => (
           <SplideSlide key={index}>
             <Link href={`/products/${product._id}`}>
-              <div className="cursor-pointer rounded-md w-56 min-h-[17rem]   my-8 shadow-md">
+              <div className="cursor-pointer rounded-md w-56 my-8 shadow-md">
                 <figure className="relative" style={{ paddingBottom: "60%" }}>
                   <Image
                     src={"https://via.placeholder.com/450x250"}
@@ -45,7 +45,7 @@ export default function ProductsViewCarousel({ title, products }: any) {
                     className="rounded-t-md"
                   />
                 </figure>
-                <div className="card-body flex flex-col my-auto justify-between p-2">
+                <div className="card-body flex flex-col  justify-between p-2 h-40 ">
                   <h2 className="card-title">
                     {product.productName} {product.measure}
                   </h2>

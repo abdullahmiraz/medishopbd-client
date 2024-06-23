@@ -102,10 +102,10 @@ const ProductSingleView = ({ productId }) => {
               <div className="pack-details">
                 <strong>Pack Details:</strong>
                 <p>
-                  Per Strip: {product?.packaging.unitsPerStrip}{" "}
+                  Per Strip: {product?.packaging?.unitsPerStrip}{" "}
                   {product?.measure}
                 </p>
-                <p>Strips: {product?.packaging.stripsPerBox}</p>
+                <p>Strips: {product?.packaging?.stripsPerBox}</p>
               </div>
               <div className="price-view">
                 <p>
