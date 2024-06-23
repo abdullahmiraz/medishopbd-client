@@ -19,6 +19,7 @@ import {
 } from "react-icons/fa";
 import { isAdmin, isManager, isUser } from "../../../userTurner";
 
+const userId = sessionStorage.getItem("firebaseUid");
 const menuItems = {
   admin: [
     {
@@ -81,7 +82,7 @@ const menuItems = {
   ],
   user: [
     {
-      href: "profile",
+      href: `profile/${userId}`,
       icon: FaUser,
       text: "Profile",
     },
@@ -151,10 +152,7 @@ const Dashboard = () => {
         <ul className="menu p-0">
           {menuItems[dashLocation]?.map((item) => (
             <li key={item.href} className="border-b-2 border-b-green-300">
-              <Link
-                href={`/dashboard/${item.href}`}
-                className="dashboard-link"
-              >
+              <Link href={`/dashboard/${item.href}`} className="dashboard-link">
                 <item.icon />
                 {item.text}
               </Link>

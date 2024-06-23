@@ -35,6 +35,7 @@ const SearchBarTop = () => {
   const handleSignOut = async () => {
     try {
       await logOut();
+      sessionStorage.clear();
     } catch (error) {
       console.log(error);
     }

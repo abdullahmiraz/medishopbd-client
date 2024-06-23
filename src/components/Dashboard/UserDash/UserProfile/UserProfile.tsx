@@ -49,6 +49,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
           fetchUser(userMongoId);
           fetchOrders(userMongoId);
           sessionStorage.setItem("mongoUserId", userMongoId);
+          sessionStorage.setItem("firebaseUid", userId);
         }
       } catch (error) {
         console.error("Error fetching user id:", error);
