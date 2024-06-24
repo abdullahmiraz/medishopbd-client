@@ -1,30 +1,27 @@
 "use client";
 
 import axios from "axios";
-import { useRouter, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { ProductData } from "../AdminDash/AddProducts/AddProducts.types";
+import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../api";
+import { ProductData } from "../AdminDash/AddProducts/AddProducts.types";
 import ProductForm from "../AdminDash/AddProducts/ProductForm";
-import { Toaster, toast } from "react-hot-toast";
 
-const EditProductsById: React.FC = () => {
+const ProductViewer: React.FC = ({ productId }) => {
   const [product, setProduct] = useState<ProductData | null>(null);
   const router = useRouter();
-  const { id } = useParams();
+  const { id } = router?.query;
   console.log(id);
-
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(`${serverUrl}/api/products/${id}`);
         setProduct(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Failed to fetch product:", error);
       }
     };
-
     if (id) {
       fetchProduct();
     }
@@ -50,7 +47,7 @@ const EditProductsById: React.FC = () => {
     <div className="p-6 bg-gray-100 ">
       <Toaster />
       <div className=" bg-white rounded-md">
-        <h2 className="text-2xl font-bold text-center pt-6">Edit Product</h2>
+        <h2 className="text-2xl font-bold text-center pt-6">View Product</h2>
         {product ? (
           <ProductForm
             initialProduct={product}
@@ -63,4 +60,4 @@ const EditProductsById: React.FC = () => {
     </div>
   );
 };
-export default EditProductsById;
+export default ProductViewer;
