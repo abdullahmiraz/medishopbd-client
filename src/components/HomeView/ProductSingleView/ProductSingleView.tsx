@@ -155,8 +155,9 @@ const ProductSingleView = ({ productId }) => {
                 </p>
               ) : null}
               <Link
-                href={"https://www.via.placeholder.co/50x50"}
+                href={"https://www.placehold.co/850x850"}
                 className="cursor-pointer bg-orange-500 text-white  py-2 px-4 rounded-xl"
+                target="_blank"
               >
                 Prescription
               </Link>

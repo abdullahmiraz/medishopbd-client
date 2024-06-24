@@ -75,6 +75,7 @@ const SearchBarTop = () => {
       }
     };
     sendFirebaseUserToMongoDB();
+    sessionStorage.setItem("firebaseUid", user?.uid || "");
   }, [user]);
 
   useEffect(() => {

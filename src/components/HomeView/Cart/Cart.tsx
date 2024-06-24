@@ -2,9 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { UserAuth } from "../../../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const { user } = UserAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("medicine_cart")) || [];
@@ -47,8 +52,20 @@ const Cart = () => {
     return <p className="text-center my-12">Your cart is empty.</p>;
   }
 
+  const handleCheckout = () => {
+    if (user) {
+      router?.push("/checkout");
+    } else {
+      toast.error("Login/Signup First", {
+        duration: 5000,
+        position: "bottom-center",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto my-12 px-6">
+      <Toaster />
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div className="lg:col-span-8">
@@ -129,11 +146,12 @@ const Cart = () => {
               <button className="px-4 py-2 bg-blue-500 text-white rounded">
                 Buy More
               </button>
-              <Link href={"../checkout"}>
-                <button className="px-4 py-2 bg-green-500 text-white rounded">
-                  Checkout
-                </button>
-              </Link>
+              <button
+                onClick={handleCheckout}
+                className="px-4 py-2 bg-green-500 text-white rounded"
+              >
+                Checkout
+              </button>
             </div>
           </div>
         </div>
