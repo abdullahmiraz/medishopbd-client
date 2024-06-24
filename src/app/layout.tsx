@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthContextProvider } from "../context/AuthContext";
+import Footer from "../components/Shared/Footer/Footer";
+import SearchBarTop from "../components/Shared/Navbar/SearchBarTop/SearchBarTop";
+import OptionBar from "../components/Shared/Navbar/OptionBar/OptionBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
