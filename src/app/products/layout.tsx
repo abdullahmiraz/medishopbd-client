@@ -7,7 +7,7 @@ const ProductsPageLayout = ({ children }) => {
     <>
       <SearchBarTop />
       <OptionBar />
-      <div className="h-screen">{children}</div>
+      <div >{children}</div>
       <Footer />
     </>
   );

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../../../api";
-import { ProductData } from "../AddProducts/AddProducts.types";
+import { ProductData } from "../AddProducts/products.types";
 import Link from "next/link";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";

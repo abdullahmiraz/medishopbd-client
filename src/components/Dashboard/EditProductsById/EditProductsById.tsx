@@ -3,7 +3,7 @@
 import axios from "axios";
 import { useRouter, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { ProductData } from "../AdminDash/AddProducts/AddProducts.types";
+import { ProductData } from "../AdminDash/AddProducts/products.types";
 import { serverUrl } from "../../../../api";
 import ProductForm from "../AdminDash/AddProducts/ProductForm";
 import { Toaster, toast } from "react-hot-toast";

@@ -6,7 +6,7 @@ import React from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../../api";
 import ProductForm from "./ProductForm";
-import { ProductData } from "./AddProducts.types";
+import { ProductData } from "./products.types";
 
 const AddProducts: React.FC = () => {
   const router = useRouter();

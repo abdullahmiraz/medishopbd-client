@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { ProductData } from "./AddProducts.types";
+import { ProductData } from "./products.types";
 import AdditionalInputs from "./AdditionalInputs";
 
 interface ProductFormProps {

@@ -42,8 +42,11 @@ const UsersList = (): JSX.Element => {
   };
 
   const handleSaveClick = async (userId: string) => {
+    console.log("Saving role:", editedRole, "for user id:", userId);
     try {
-      await axios.put(`${serverUrl}/api/users/${userId}`, { role: editedRole });
+      await axios.patch(`${serverUrl}/api/users/${userId}`, {
+        role: editedRole,
+      });
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
           user._id === userId ? { ...user, role: editedRole } : user
