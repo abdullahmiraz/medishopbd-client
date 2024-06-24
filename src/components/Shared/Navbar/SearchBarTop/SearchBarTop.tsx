@@ -99,36 +99,38 @@ const SearchBarTop = () => {
           MediShopBD
         </Link>
       </div>
-      <div className="search-bar">
-        <label className="input input-bordered flex items-center gap-2">
+      <div className="search-bar  hidden lg:flex">
+        <label className="input input-bordered flex items-center gap-2 hidden lg:flex">
           <input type="text" className="grow" placeholder="Search" />
           <FaSearch />
         </label>
       </div>
       <div className="user-need-section flex items-center gap-6">
-        <div className="track-order flex items-center gap-2">
-          <div className="track-icon">
-            <FaTruck size={40} />
-          </div>
-          <p>
-            Track <br /> Order
-          </p>
-        </div>
-        <Link href={"../cart"}>
-          <div className="card-top-nav w-25 flex items-center gap-2 relative">
-            <div className="card-icon-top">
-              <FaCartPlus size={40} />
+        <div className="flex gap-4 items-center  hidden lg:flex">
+          <div className="track-order flex items-center gap-2">
+            <div className="track-icon">
+              <FaTruck size={40} />
             </div>
             <p>
-              Cart
-              <div className="badge badge-warning badge-md absolute top-0 left-0">
-                {cartItems.length}
-              </div>
+              Track <br /> Order
             </p>
           </div>
-        </Link>
+          <Link href={"../cart"}>
+            <div className="card-top-nav w-25 flex items-center gap-2 relative">
+              <div className="card-icon-top">
+                <FaCartPlus size={40} />
+              </div>
+              <div>
+                Cart
+                <div className="badge badge-warning badge-md absolute top-0 left-0">
+                  {cartItems.length}
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
 
-        <div className="user-section-top flex items-center gap-2 border-l-4 pl-4 border-cyan-800">
+        <div className="user-section-top   items-center gap-2 border-l-4 pl-4 border-cyan-800  hidden sm:flex">
           {loading ? (
             <Spinner />
           ) : !user ? (

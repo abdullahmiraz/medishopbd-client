@@ -19,7 +19,8 @@ import {
 } from "react-icons/fa";
 import { isAdmin, isManager, isUser } from "../../../userTurner";
 
-const userId = sessionStorage.getItem("firebaseUid");
+const userId =
+  typeof window !== "undefined" ? sessionStorage.getItem("firebaseUid") : null;
 const menuItems = {
   admin: [
     {

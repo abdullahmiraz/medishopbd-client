@@ -35,6 +35,23 @@ const ProductsList: React.FC = () => {
     }
   };
 
+  const getExpirationDateColor = (expirationDate: string) => {
+    if (!expirationDate) return ""; // Return empty string if no expiration date
+
+    const today = new Date();
+    const expiration = new Date(expirationDate);
+    const daysDifference =
+      (expiration.getTime() - today.getTime()) / (1000 * 3600 * 24);
+
+    if (daysDifference < 0) {
+      return "bg-red-500"; // Expired
+    } else if (daysDifference <= 7) {
+      return "bg-yellow-300"; // Expires within 7 days
+    }
+
+    return ""; // Default background color
+  };
+
   if (products === undefined) {
     return <div>Loading...</div>; // Handle loading state
   }
@@ -106,11 +123,16 @@ const ProductsList: React.FC = () => {
                 <td>{product?.pricePerUnit}</td>
                 <td>{product?.availableStock}</td>
                 <td>{product?.manufacturer}</td>
-                <td>
+                <td
+                  className={`border border-gray-400 px-4 py-2 ${getExpirationDateColor(
+                    product?.expirationDate
+                  )}`}
+                >
                   {product?.expirationDate
                     ? product.expirationDate.slice(0, 10)
                     : ""}
                 </td>
+
                 <td>{product?.batchNumber}</td>
                 <td>{product?.aisleLocation}</td>
                 <td>{product?.requiresPrescription ? "Yes" : "No"}</td>

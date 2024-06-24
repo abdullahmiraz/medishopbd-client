@@ -163,6 +163,9 @@ const Confirmation = () => {
             Your order number is <strong>{invoiceNumber}</strong>.
           </p>
           <p>A PDF receipt has been generated for your records.</p>
+          <div>
+            Our customer care agents will call you shortly to confirm your order
+          </div>
           <div className="flex gap-4 my-4">
             <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded">
               Return to Homepage
