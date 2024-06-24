@@ -2,23 +2,9 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { serverUrl } from "../../../../../api";
 import toast from "react-hot-toast";
-
-type OrderItem = {
-  productId: string;
-  name: string;
-  quantity: number;
-  price: number;
-};
-
-type Order = {
-  _id: string;
-  products: OrderItem[];
-  total: number;
-  status: string;
-  created_at: string;
-};
+import { serverUrl } from "../../../../../api";
+import OrderHistory from "../OrderHistory/OrderHistory";
 
 type User = {
   _id: string;
@@ -33,7 +19,6 @@ type User = {
 
 const UserProfile = ({ userId }: { userId: string }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -47,9 +32,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
         const userMongoId = response?.data?.id;
         if (userMongoId) {
           fetchUser(userMongoId);
-          fetchOrders(userMongoId);
           sessionStorage.setItem("mongoUserId", userMongoId);
-          sessionStorage.setItem("firebaseUid", userId);
         }
       } catch (error) {
         console.error("Error fetching user id:", error);
@@ -65,17 +48,6 @@ const UserProfile = ({ userId }: { userId: string }) => {
         setAddress(userData.address);
       } catch (error) {
         console.error("Error fetching user:", error);
-      }
-    };
-
-    const fetchOrders = async (userId: string) => {
-      try {
-        const response = await axios.get(
-          `${serverUrl}/api/orders?userId=${userId}`
-        );
-        setOrders(response.data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
       }
     };
 
@@ -108,8 +80,8 @@ const UserProfile = ({ userId }: { userId: string }) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-      <div className="flex items-start gap-8">
+      <h2 className="text-2xl font-bold  ml-4 mb-4">User Profile</h2>
+      <div className="flex items-start gap-8 m-4">
         <div className="mb-4">
           <h3 className="text-xl font-semibold">Personal Information</h3>
           <p>
@@ -170,40 +142,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
           </button>
         )}
       </div>
-      <div>
-        <h3 className="text-xl font-semibold">Orders</h3>
-        {orders.length > 0 ? (
-          orders.map((order) => (
-            <div key={order._id} className="mb-4 p-4 border rounded">
-              <p>
-                <strong>Order ID:</strong> {order._id}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(order.created_at).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Total:</strong> Tk. {order.total}
-              </p>
-              <p>
-                <strong>Status:</strong> {order.status}
-              </p>
-              <div>
-                <h4 className="font-semibold">Items:</h4>
-                <ul>
-                  {order.products.map((item, index) => (
-                    <li key={index}>
-                      {item.name} - {item.quantity} x Tk. {item.price}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No orders found.</p>
-        )}
-      </div>
+      <OrderHistory userId={user._id} />
     </div>
   );
 };

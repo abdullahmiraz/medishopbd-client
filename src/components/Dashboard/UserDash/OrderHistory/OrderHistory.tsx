@@ -1,75 +1,73 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { serverUrl } from "../../../../../api";
 
-interface OrderItem {
-  id: number;
+type OrderItem = {
+  productId: string;
   name: string;
   quantity: number;
   price: number;
-}
+};
 
-interface Order {
-  orderId: string;
-  date: string;
+type Order = {
+  _id: string;
+  products: OrderItem[];
   total: number;
   status: string;
-  items: OrderItem[];
-}
+  created_at: string;
+};
 
-const OrderHistory: React.FC = () => {
-  const [orderHistory, setOrderHistory] = useState<Order[]>([]);
+const OrderHistory = ({ userId }: { userId: string }) => {
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    const fetchOrderHistory = async () => {
+    const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:3002/users/1");
-        setOrderHistory(response.data.orders); // Assuming user ID is 1
+        const response = await axios.get(
+          `${serverUrl}/api/orders?userId=${userId}`
+        );
+        setOrders(response.data);
       } catch (error) {
-        console.error("Error fetching order history:", error);
+        console.error("Error fetching orders:", error);
       }
     };
 
-    fetchOrderHistory();
-  }, []);
+    fetchOrders();
+  }, [userId]);
 
   return (
-    <div className="p-6  rounded-lg shadow-md m-4">
-      <h1 className="text-2xl font-bold mb-4">Order History</h1>
-      {orderHistory.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="table table-xs table-zebra">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Items</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderHistory.map((order) => (
-                <tr key={order.orderId}>
-                  <td>{order.orderId}</td>
-                  <td>{order.date}</td>
-                  <td>${order.total}</td>
-                  <td>{order.status}</td>
-                  <td>
-                    <ul>
-                      {order.items.map((item) => (
-                        <li key={item.id}>
-                          {item.name} - {item.quantity} x ${item.price}
-                        </li>
-                      ))}
-                    </ul>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+    <div className="m-4">
+      <h2 className="text-2xl font-bold mb-4">Orders</h2>
+      {orders.length > 0 ? (
+        orders.map((order) => (
+          <div key={order._id} className="mb-4 p-4 border rounded">
+            <p>
+              <strong>Order ID:</strong> {order._id}
+            </p>
+            <p>
+              <strong>Date:</strong>{" "}
+              {new Date(order.created_at).toLocaleDateString()}
+            </p>
+            <p>
+              <strong>Total:</strong> Tk. {order.total}
+            </p>
+            <p>
+              <strong>Status:</strong> {order.status}
+            </p>
+            <div>
+              <h4 className="font-semibold">Items:</h4>
+              <ul>
+                {order.products.map((item, index) => (
+                  <li key={index}>
+                    {item.name} - {item.quantity} x Tk. {item.price}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))
       ) : (
         <p>No orders found.</p>
       )}
