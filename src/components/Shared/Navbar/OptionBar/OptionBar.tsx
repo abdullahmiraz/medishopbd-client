@@ -73,6 +73,13 @@ const OptionBar = () => {
               className="menu  dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
               {navOptions}
+              <li>
+                <Link href={"../track"}>Track Order</Link>
+              </li>
+              <li>
+                <Link href={"/cart"}>Cart</Link>
+              </li>
+              <li></li>
             </ul>
           </div>
         </div>

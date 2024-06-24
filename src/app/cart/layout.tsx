@@ -8,7 +8,7 @@ const CartPageLayout = ({ children }) => {
     <>
       <SearchBarTop />
       <OptionBar />
-      <div>{children}</div>
+      <div className="h-screen">{children}</div>
       <Footer />
     </>
   );

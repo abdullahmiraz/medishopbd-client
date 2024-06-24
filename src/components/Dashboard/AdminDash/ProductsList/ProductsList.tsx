@@ -5,7 +5,8 @@ import axios from "axios";
 import { serverUrl } from "../../../../../api";
 import { ProductData } from "../AddProducts/AddProducts.types";
 import Link from "next/link";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
 
 const ProductsList: React.FC = () => {
   const [products, setProducts] = useState<ProductData[]>([]);
@@ -26,12 +27,23 @@ const ProductsList: React.FC = () => {
   }, []);
 
   const handleDelete = async (id: string) => {
-    try {
-      const response = await axios.delete(`${serverUrl}/api/products/${id}`);
-      console.log(response.data);
-      setProducts(products.filter((product) => product._id !== id));
-    } catch (error) {
-      console.error("Error deleting product:", error);
+    const confirmDelete = window.confirm("Are you sure you want to delete?");
+
+    if (confirmDelete) {
+      try {
+        toast.promise(axios.delete(`${serverUrl}/api/products/${id}`), {
+          loading: "Deleting...",
+          success: <b>Product deleted!</b>,
+          error: <b>Error deleting product.</b>,
+        });
+        const updatedProducts = products.filter(
+          (product) => product._id !== id
+        );
+        setProducts(updatedProducts);
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        toast.error("Error deleting product.");
+      }
     }
   };
 
@@ -41,6 +53,7 @@ const ProductsList: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 shadow-xl  ">
+      <Toaster />
       <h2 className="font-extrabold text-2xl text-center my-4">
         Products List
       </h2>
@@ -82,6 +95,11 @@ const ProductsList: React.FC = () => {
             {products.map((product, index) => (
               <tr key={product._id}>
                 <td className="flex gap-2 items-center mt-[15%]">
+                  <button className="text-blue-500  cursor-pointer p-2 ">
+                    <Link href={`/dashboard/product/${product._id}`}>
+                      <FaEye />
+                    </Link>
+                  </button>
                   <button className="text-blue-500  cursor-pointer p-2 ">
                     <Link href={`/dashboard/editproduct/${product._id}`}>
                       <FaEdit />

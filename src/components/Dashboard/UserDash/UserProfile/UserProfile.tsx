@@ -1,5 +1,4 @@
 "use client";
-
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -22,6 +21,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [phoneError, setPhoneError] = useState<string | null>(null); // State for phone validation error
 
   useEffect(() => {
     const fetchUserIdByUid = async () => {
@@ -53,6 +53,23 @@ const UserProfile = ({ userId }: { userId: string }) => {
 
     fetchUserIdByUid();
   }, [userId]);
+
+  // Function to validate Bangladeshi phone number using regex
+  const isValidBangladeshiPhoneNumber = (phoneNumber: string) => {
+    const bdPhoneRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
+    return bdPhoneRegex.test(phoneNumber);
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setPhone(value);
+    // Validate phone number on change
+    if (!isValidBangladeshiPhoneNumber(value)) {
+      setPhoneError("Please enter a valid Bangladeshi phone number");
+    } else {
+      setPhoneError(null);
+    }
+  };
 
   const handleUpdateUserDetails = async () => {
     if (user) {
@@ -94,12 +111,15 @@ const UserProfile = ({ userId }: { userId: string }) => {
             <label>
               <strong>Phone:</strong>
               {isEditing ? (
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="ml-2 border rounded px-2"
-                />
+                <>
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    className="ml-2 border rounded px-2"
+                  />
+                  {phoneError && <p className="text-red-500">{phoneError}</p>}
+                </>
               ) : (
                 <span> {user.phone}</span>
               )}

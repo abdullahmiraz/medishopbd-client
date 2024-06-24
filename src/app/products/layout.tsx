@@ -1,9 +1,3 @@
-import React from "react";
-import CategoryCard from "../../components/HomeView/CategoryCard/CategoryCard";
-import HeroCarousel from "../../components/HomeView/HeroCarousel/HeroCarousel";
-import PrescriptionMedicine from "../../components/HomeView/PrescriptionMedicines/PrescriptionMedicine";
-import ReviewCard from "../../components/HomeView/ServiceCard/ServiceCard";
-import SkinCareProducts from "../../components/HomeView/SkinCareProducts/SkinCareProducts";
 import Footer from "../../components/Shared/Footer/Footer";
 import OptionBar from "../../components/Shared/Navbar/OptionBar/OptionBar";
 import SearchBarTop from "../../components/Shared/Navbar/SearchBarTop/SearchBarTop";
@@ -13,7 +7,7 @@ const ProductsPageLayout = ({ children }) => {
     <>
       <SearchBarTop />
       <OptionBar />
-      <div>{children}</div>
+      <div className="h-screen">{children}</div>
       <Footer />
     </>
   );
