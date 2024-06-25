@@ -1,5 +1,3 @@
-import React from "react";
-import page from "../page";
 import ProductViewer from "../../../../components/Dashboard/ProductViewer/ProductViewer";
 
 const DashboardProductPage = ({ params }) => {

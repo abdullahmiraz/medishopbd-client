@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import React from "react";
-import { FaAngleDown, FaBars } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
+import SignUpComp from "../../../SignUp/SignUpComp";
 
 const OptionBar = () => {
   const navOptions = (
@@ -79,7 +81,9 @@ const OptionBar = () => {
               <li>
                 <Link href={"/cart"}>Cart</Link>
               </li>
-              <li></li>
+              <div>
+                <SignUpComp />
+              </div>
             </ul>
           </div>
         </div>

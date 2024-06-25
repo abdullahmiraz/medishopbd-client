@@ -1,8 +1,7 @@
-
 const ProductPageSingleLayout = ({ children }) => {
   return (
     <>
-      <div>{children}</div>
+      <div className="h-screen">{children}</div>
     </>
   );
 };
