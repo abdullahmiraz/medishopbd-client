@@ -1,8 +1,9 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // corrected import to useRouter
-import { useEffect } from "react";
+import { useRouter } from "next/router"; // corrected import to useRouter
+import { useEffect, useState } from "react";
 import {
   FaCartArrowDown,
   FaCashRegister,
@@ -17,10 +18,12 @@ import {
   FaUsers,
   FaUtensils,
 } from "react-icons/fa";
-import { isAdmin, isManager, isUser } from "../../../userTurner";
+import { serverUrl } from "../../../api";
+import { User } from "firebase/auth";
 
 const userId =
   typeof window !== "undefined" ? sessionStorage.getItem("firebaseUid") : null;
+
 const menuItems = {
   admin: [
     {
@@ -120,10 +123,35 @@ const menuItems = {
   ],
 };
 
+const mongoUserId = sessionStorage.getItem("mongoUserId");
+console.log(mongoUserId);
+
 const Dashboard = () => {
-  isAdmin; // Example user role, replace with actual logic
-  isManager; // Example user role, replace with actual logic
-  isUser; // Example user role, replace with actual logic
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${serverUrl}/api/users/${mongoUserId}`
+        );
+        const userData = response.data;
+        console.log(userData);
+        setUser(userData); // Assuming userData contains a 'role' property
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  const isAdmin = user?.role === "Admin";
+  const isManager = user?.role === "Manager";
+  const isUser = user?.role === "User";
 
   const dashLocation = isAdmin
     ? "admin"
@@ -132,19 +160,6 @@ const Dashboard = () => {
     : isUser
     ? "user"
     : "/error";
-
-  const router = useRouter();
-
-  //   useEffect(() => {
-  //     const links = document.querySelectorAll(".dashboard-link");
-  //     links.forEach((link) => {
-  //       if (link.pathname === router.pathname) {
-  //         link.classList.add("bg-blue-500", "text-white");
-  //       } else {
-  //         link.classList.remove("bg-blue-500", "text-white");
-  //       }
-  //     });
-  //   }, [router.pathname]);
 
   return (
     <div className="flex h-screen bg-green-400">

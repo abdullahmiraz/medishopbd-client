@@ -147,7 +147,7 @@ const ProductSingleView = ({ productId }) => {
             </div>
             <div className="extra-infos col-span-3 px-2">
               <h3 className="font-bold text-lg underline mb-4">
-                Extra Information
+                Extra Informatlion
               </h3>
               {product?.requiresPrescription ? (
                 <p className="text-red-500 font-bold mb-4">
@@ -159,7 +159,7 @@ const ProductSingleView = ({ productId }) => {
                 className="cursor-pointer bg-orange-500 text-white  py-2 px-4 rounded-xl"
                 target="_blank"
               >
-                Prescription
+                Leaflet
               </Link>
             </div>
           </div>

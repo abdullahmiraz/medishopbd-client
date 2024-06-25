@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { ProductData } from "./products.types";
 import AdditionalInputs from "./AdditionalInputs";
+import PrescriptionMedicine from "../../../HomeView/PrescriptionMedicines/PrescriptionMedicine";
+import PrescriptionUpdate from "../../PrescriptionUpdate/PrescriptionUpdate";
 
 interface ProductFormProps {
   initialProduct?: ProductData;
@@ -407,6 +409,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
             ))}
           </div>
         ))}
+        <div>
+          {/* upload leaflet here  */}
+          
+          {/* <PrescriptionUpdate /> */}
+        </div>
 
         <button type="submit" className="btn btn-primary w-full">
           {initialProduct ? "Update Product" : "Add Product"}

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { serverUrl } from "../../../../../api";
 import OrderHistory from "../OrderHistory/OrderHistory";
+import Link from "next/link";
+import { FaArrowRight, FaImage } from "react-icons/fa";
 
 type User = {
   _id: string;
@@ -43,6 +45,8 @@ const UserProfile = ({ userId }: { userId: string }) => {
       try {
         const response = await axios.get(`${serverUrl}/api/users/${id}`);
         const userData = response.data;
+        // sessionStorage.setItem("mongoUserRole", userData.role || "");
+        // sessionStorage.setItem("mongoUserRole", JSON.stringify(userData));
         setUser(userData);
         setPhone(userData.phone);
         setAddress(userData.address);
@@ -141,9 +145,16 @@ const UserProfile = ({ userId }: { userId: string }) => {
             </label>
           </div>
           {user.prescription && (
-            <p>
-              <strong>Prescription:</strong> {user.prescription}
-            </p>
+            <div className="flex items-center gap-2">
+              <strong>Prescription:</strong>
+              <Link
+                className="flex items-center gap-2 bg-blue-500 px-4 py-2 text-white rounded-md"
+                href={`${user.prescription}`}
+                target="_blank"
+              >
+                Check <FaArrowRight />
+              </Link>
+            </div>
           )}
         </div>
         {isEditing ? (

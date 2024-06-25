@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { FaBars } from "react-icons/fa";
 import SignUpComp from "../../../SignUp/SignUpComp";
+import { UserAuth } from "../../../../context/AuthContext";
 
 const OptionBar = () => {
+  const { user } = UserAuth();
+ 
+
   const navOptions = (
     <>
       <li>
@@ -80,6 +84,9 @@ const OptionBar = () => {
               </li>
               <li>
                 <Link href={"/cart"}>Cart</Link>
+              </li>
+              <li>
+                <Link href={`../dashboard/profile/${user?.uid}`}>Dashboard</Link>
               </li>
               <div>
                 <SignUpComp />

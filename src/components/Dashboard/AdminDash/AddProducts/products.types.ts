@@ -40,6 +40,7 @@ export interface ProductData {
   requiresPrescription?: boolean;
   pageCategory?: string;
   productImage?: string;
+  leafletImage?: string;
   usageDetails?: UsageDetails;
   pharmacology?: string;
 }
