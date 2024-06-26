@@ -77,7 +77,7 @@ const Confirmation = () => {
     const pageWidth = doc.internal.pageSize.width;
 
     doc.setFontSize(10);
-    doc.text("Company Name", 10, 10);
+    doc.text("MediShopBD", 10, 10);
     doc.text("Address: Company Address", 10, 15);
     doc.text("Phone: +880123456789", 10, 20);
     doc.text("Email: info@company.com", 10, 25);
