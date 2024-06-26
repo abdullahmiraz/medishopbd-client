@@ -1,6 +1,5 @@
-"use client";
-
 // ProductSingleView.tsx
+"use client";
 
 import axios from "axios";
 import Image from "next/image";
@@ -29,36 +28,56 @@ const ProductSingleView = ({ productId }) => {
   }, [productId]);
 
   const handleAddToCart = () => {
-    const cartItem = {
-      productId: product?._id,
-      name: product?.productName,
-      measure: product?.measure,
-      stripCount: stripCount,
-      pricePerStrip: product?.pricePerUnit,
-      totalPrice: product?.pricePerUnit * stripCount,
-    };
+    if (stripCount >= 1) {
+      const cartItem = {
+        productId: product?._id,
+        name: product?.productName,
+        measure: product?.measure,
+        stripCount: stripCount,
+        pricePerStrip: product?.pricePerUnit,
+        totalPrice: product?.pricePerUnit * stripCount,
+      };
 
-    const existingCart =
-      JSON.parse(localStorage.getItem("medicine_cart")) || [];
+      const existingCart =
+        JSON.parse(localStorage.getItem("medicine_cart")) || [];
 
-    const existingItemIndex = existingCart.findIndex(
-      (item) => item.productId === product?._id
-    );
+      const existingItemIndex = existingCart.findIndex(
+        (item) => item.productId === product?._id
+      );
 
-    if (existingItemIndex > -1) {
-      // Update the existing item's strip count and total price
-      existingCart[existingItemIndex].stripCount += stripCount;
-      existingCart[existingItemIndex].totalPrice += cartItem.totalPrice;
+      if (existingItemIndex > -1) {
+        // Update the existing item's strip count and total price
+        existingCart[existingItemIndex].stripCount += stripCount;
+        existingCart[existingItemIndex].totalPrice += cartItem.totalPrice;
+      } else {
+        // Add the new item to the cart
+        existingCart.push(cartItem);
+      }
+
+      localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
+      console.log(
+        `Added ${stripCount} strips of ${product?.productName} to cart`
+      );
+      toast.success("Product added successfully!");
     } else {
-      // Add the new item to the cart
-      existingCart.push(cartItem);
+      toast.error("Enter a valid number quantity");
     }
+  };
 
-    localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
-    console.log(
-      `Added ${stripCount} strips of ${product?.productName} to cart`
-    );
-    toast.success("Product added successfully!");
+  const handleQuantityChange = (newValue) => {
+    // Handle direct input or backspace
+    const newCount = Number(newValue);
+    if (
+      !isNaN(newCount) &&
+      newCount >= 1 &&
+      newCount <= product.availableStock
+    ) {
+      setStripCount(newCount);
+    } else if (newValue === "" || newCount === 0) {
+      setStripCount(0); // Reset to 0 if input is empty or zero
+    } else {
+      setStripCount(product.availableStock); // Maximum strip count is availableStock
+    }
   };
 
   if (!product) {
@@ -94,7 +113,10 @@ const ProductSingleView = ({ productId }) => {
                 <strong>Manufacturer:</strong> {product?.manufacturer}
               </p>
               <p>
-                <strong>Generics:</strong>{" "}
+                <strong>Stock:</strong> {product?.availableStock}
+              </p>
+              <p>
+                <strong>Generics:</strong>
                 <span className="font-semibold text-cyan-700">
                   {product?.activeIngredient}
                 </span>
@@ -103,16 +125,16 @@ const ProductSingleView = ({ productId }) => {
                 <strong>Pack Details:</strong>
                 <p>
                   Per Strip: {product?.packaging?.unitsPerStrip}{" "}
-                  {product?.measure}
+                  {product?.measure || " tablets"}
                 </p>
                 <p>Strips: {product?.packaging?.stripsPerBox}</p>
               </div>
               <div className="price-view">
                 <p>
-                  <strong>Best Price:</strong>{" "}
+                  <strong>Best Price:</strong>
                   <span className="font-bold text-2xl">
                     Tk. {product?.pricePerUnit}
-                  </span>{" "}
+                  </span>
                   / strip
                 </p>
               </div>
@@ -123,16 +145,21 @@ const ProductSingleView = ({ productId }) => {
                 <div className="flex items-center text-3xl font-bold">
                   <button
                     className="px-2 py-1 border bg-red-400"
-                    onClick={() =>
-                      setStripCount(stripCount > 1 ? stripCount - 1 : 1)
-                    }
+                    onClick={() => handleQuantityChange(stripCount - 1)}
                   >
                     -
                   </button>
-                  <span className="px-4">{stripCount}</span>
+                  <input
+                    type="number"
+                    className="border rounded px-2 py-1 text-center mx-2"
+                    value={stripCount === 0 ? "" : stripCount}
+                    min="1"
+                    max={product.availableStock}
+                    onChange={(e) => handleQuantityChange(e.target.value)}
+                  />
                   <button
                     className="px-2 py-1 border bg-green-400"
-                    onClick={() => setStripCount(stripCount + 1)}
+                    onClick={() => handleQuantityChange(stripCount + 1)}
                   >
                     +
                   </button>
@@ -147,7 +174,7 @@ const ProductSingleView = ({ productId }) => {
             </div>
             <div className="extra-infos col-span-3 px-2">
               <h3 className="font-bold text-lg underline mb-4">
-                Extra Informatlion
+                Extra Information
               </h3>
               {product?.requiresPrescription ? (
                 <p className="text-red-500 font-bold mb-4">
@@ -156,7 +183,7 @@ const ProductSingleView = ({ productId }) => {
               ) : null}
               <Link
                 href={"https://www.placehold.co/850x850"}
-                className="cursor-pointer bg-orange-500 text-white  py-2 px-4 rounded-xl"
+                className="cursor-pointer bg-orange-500 text-white py-2 px-4 rounded-xl"
                 target="_blank"
               >
                 Leaflet
@@ -169,11 +196,11 @@ const ProductSingleView = ({ productId }) => {
         <h3 className="font-bold text-lg">Usage Indications:</h3>
         <ul>
           <li>
-            <strong>Main Title:</strong>{" "}
+            <strong>Main Title:</strong>
             {product?.usageDetails?.indications?.mainTitle}
           </li>
           <li>
-            <strong>Subtitles:</strong>{" "}
+            <strong>Subtitles:</strong>
             {product?.usageDetails?.indications?.subtitles?.map(
               (subtitle, index) => (
                 <span key={index}>

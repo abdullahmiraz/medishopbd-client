@@ -7,7 +7,7 @@ import OrderHistory from "../OrderHistory/OrderHistory";
 import Link from "next/link";
 import { FaArrowRight, FaImage } from "react-icons/fa";
 
-type User = {
+export type User = {
   _id: string;
   uid: string;
   name: string;
