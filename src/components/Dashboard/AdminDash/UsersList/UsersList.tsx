@@ -47,7 +47,7 @@ const UsersList = (): JSX.Element => {
       await axios.patch(`${serverUrl}/api/users/${userId}`, {
         role: editedRole,
       });
-      setUsers((prevUsers) =>
+      setUsers((prevUsers):any =>
         prevUsers.map((user) =>
           user._id === userId ? { ...user, role: editedRole } : user
         )
