@@ -146,12 +146,12 @@ const Dashboard = () => {
   }, []);
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <div>You are not allowed to see this</div>;
   }
 
-  const isAdmin = user?.role === "Admin";
-  const isManager = user?.role === "Manager";
-  const isUser = user?.role === "User";
+  const isAdmin: boolean = user?.role === "Admin" || false;
+  const isManager: boolean = user?.role === "Manager" || false;
+  const isUser: boolean = user?.role === "User" || false;
 
   const dashLocation = isAdmin
     ? "admin"
