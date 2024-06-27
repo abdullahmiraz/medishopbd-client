@@ -1,16 +1,20 @@
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import Spinner from "../Shared/Spinner/Spinner";
+"use client";
+
 import axios from "axios";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { serverUrl } from "../../../api";
 import { UserAuth } from "../../context/AuthContext";
-import Image from "next/image";
+import Spinner from "../Shared/Spinner/Spinner";
 
 const SignUpComp = () => {
   const [cartItems, setCartItems] = useState([]);
   const { user, googleSignIn, logOut } = UserAuth();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -24,7 +28,8 @@ const SignUpComp = () => {
 
   const handleSignIn = async () => {
     try {
-      await googleSignIn();
+      router.push("../login");
+      // await googleSignIn();
     } catch (error) {
       console.log(error);
     }
@@ -32,7 +37,8 @@ const SignUpComp = () => {
 
   const handleSignOut = async () => {
     try {
-      await logOut();
+      router.push("../signup");
+      // await logOut();
       sessionStorage.clear();
     } catch (error) {
       console.log(error);

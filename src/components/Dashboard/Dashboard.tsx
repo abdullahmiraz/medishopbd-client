@@ -21,8 +21,7 @@ import {
 import { serverUrl } from "../../../api";
 import { User } from "firebase/auth";
 
-const userId =
-  typeof window !== "undefined" ? sessionStorage.getItem("firebaseUid") : null;
+const mongoUserId = sessionStorage.getItem("mongoUserId");
 
 const menuItems = {
   admin: [
@@ -86,7 +85,7 @@ const menuItems = {
   ],
   user: [
     {
-      href: `profile/${userId}`,
+      href: `profile/${mongoUserId}`,
       icon: FaUser,
       text: "Profile",
     },
@@ -123,8 +122,7 @@ const menuItems = {
   ],
 };
 
-const mongoUserId = sessionStorage.getItem("mongoUserId");
-console.log(mongoUserId);
+ console.log(mongoUserId);
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -145,9 +143,9 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
-  if (!user) {
-    return <div>You are not allowed to see this</div>;
-  }
+  // if (!user) {
+  //   return <div>You are not allowed to see this</div>;
+  // }
 
   const isAdmin: boolean = user?.role === "Admin" || false;
   const isManager: boolean = user?.role === "Manager" || false;

@@ -1,33 +1,33 @@
 "use client";
+
 import React, { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../api";
 
-const Login = () => {
+const SignUp: React.FC = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
-  const handlePhoneChange = (e) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const response = await axios.post(`${serverUrl}/api/users/login`, {
+      const response = await axios.post(`${serverUrl}/api/users/signup`, {
         phone,
         password,
       });
-      console.log("Login successfdul:", response.data);
-      localStorage.setItem("loginData", response.data);
-      sessionStorage.setItem("mongoUserId", response.data.userId);
-      // handle successful login, e.g., redirect to another page, store token, etc.
+      console.log("Sign up successful:", response.data);
+      // handle successful sign up, e.g., redirect to login page
     } catch (error) {
-      console.error("Error logging in:", error.response?.data || error.message);
+      console.error("Error signing up:", error.response?.data || error.message);
       // handle error, e.g., show error message to user
     }
   };
@@ -35,7 +35,7 @@ const Login = () => {
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col">
-        <h1 className="text-3xl font-bold">Login now!</h1>
+        <h1 className="text-3xl font-bold">Sign Up now!</h1>
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <form className="card-body" onSubmit={handleSubmit}>
             <div className="form-control">
@@ -63,18 +63,10 @@ const Login = () => {
                 onChange={handlePasswordChange}
                 required
               />
-              <div className="label">
-                <a href="#" className="label-text-alt link link-hover">
-                  Forgot password?
-                </a>
-                <a href="../signup" className="label-text-alt link link-hover">
-                  Create Account ?
-                </a>
-              </div>
             </div>
             <div className="form-control gap-4 mt-6">
               <button className="btn btn-primary" type="submit">
-                Login
+                Sign Up
               </button>
             </div>
           </form>
@@ -84,4 +76,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

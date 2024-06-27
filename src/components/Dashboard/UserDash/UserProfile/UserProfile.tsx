@@ -18,35 +18,22 @@ export type User = {
   prescription?: string;
 };
 
+const mongoUserId = sessionStorage.getItem("mongoUserId");
+
 const UserProfile = ({ userId }: { userId: string }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [phoneError, setPhoneError] = useState<string | null>(null); // State for phone validation error
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUserIdByUid = async () => {
+    const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `${serverUrl}/api/users/uid/${userId}`
+          `${serverUrl}/api/users/${mongoUserId}`
         );
-        const userMongoId = response?.data?.id;
-        if (userMongoId) {
-          fetchUser(userMongoId);
-          sessionStorage.setItem("mongoUserId", userMongoId);
-        }
-      } catch (error) {
-        console.error("Error fetching user id:", error);
-      }
-    };
-
-    const fetchUser = async (id: string) => {
-      try {
-        const response = await axios.get(`${serverUrl}/api/users/${id}`);
         const userData = response.data;
-        // sessionStorage.setItem("mongoUserRole", userData.role || "");
-        // sessionStorage.setItem("mongoUserRole", JSON.stringify(userData));
         setUser(userData);
         setPhone(userData.phone);
         setAddress(userData.address);
@@ -55,10 +42,9 @@ const UserProfile = ({ userId }: { userId: string }) => {
       }
     };
 
-    fetchUserIdByUid();
+    fetchUser();
   }, [userId]);
 
-  // Function to validate Bangladeshi phone number using regex
   const isValidBangladeshiPhoneNumber = (phoneNumber: string) => {
     const bdPhoneRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
     return bdPhoneRegex.test(phoneNumber);
@@ -67,7 +53,6 @@ const UserProfile = ({ userId }: { userId: string }) => {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setPhone(value);
-    // Validate phone number on change
     if (!isValidBangladeshiPhoneNumber(value)) {
       setPhoneError("Please enter a valid Bangladeshi phone number");
     } else {
@@ -80,10 +65,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
       try {
         const response = await axios.patch(
           `${serverUrl}/api/users/${user._id}`,
-          {
-            phone,
-            address,
-          }
+          { phone, address }
         );
         setUser(response.data);
         setIsEditing(false);
@@ -101,7 +83,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold  ml-4 mb-4">User Profile</h2>
+      <h2 className="text-2xl font-bold ml-4 mb-4">User Profile</h2>
       <div className="flex items-start gap-8 m-4">
         <div className="mb-4">
           <h3 className="text-xl font-semibold">Personal Information</h3>
@@ -149,7 +131,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
               <strong>Prescription:</strong>
               <Link
                 className="flex items-center gap-2 bg-blue-500 px-4 py-2 text-white rounded-md"
-                href={`${user.prescription}`}
+                href={user.prescription}
                 target="_blank"
               >
                 Check <FaArrowRight />
@@ -173,7 +155,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
           </button>
         )}
       </div>
-      <OrderHistory userId={user._id} />
+      <OrderHistory userId={mongoUserId} />
     </div>
   );
 };

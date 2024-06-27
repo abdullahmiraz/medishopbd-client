@@ -19,6 +19,8 @@ const Checkout = () => {
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const router = useRouter();
 
+  const mongoUserId = sessionStorage.getItem("mongoUserId");
+
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("medicine_cart")) || [];
     setCartItems(savedCart);
@@ -27,8 +29,6 @@ const Checkout = () => {
   }, []);
 
   useEffect(() => {
-    const mongoUserId = sessionStorage.getItem("mongoUserId");
-
     const fetchUser = async () => {
       try {
         const response = await axios.get(
@@ -250,7 +250,7 @@ const Checkout = () => {
                 <button
                   className="px-4 py-2 bg-green-500 text-white rounded"
                   onClick={handleOrder}
-                  disabled={address.length < 0}
+                  disabled={address?.length < 0}
                 >
                   Place Order
                 </button>

@@ -6,9 +6,11 @@ import { UserAuth } from "../../../context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
+const mongoUserId = sessionStorage.getItem("mongoUserId");
+
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const { user } = UserAuth();
+
   const router = useRouter();
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const Cart = () => {
   }
 
   const handleCheckout = () => {
-    if (user) {
+    if (mongoUserId) {
       router?.push("/checkout");
     } else {
       toast.error("Login/Signup First", {
@@ -77,7 +79,10 @@ const Cart = () => {
                 className="border p-4 rounded-md flex justify-between items-center"
               >
                 <div>
-                  <Link href={`../products/${item?.productId}`} className="font-semibold">
+                  <Link
+                    href={`../products/${item?.productId}`}
+                    className="font-semibold"
+                  >
                     {item?.name} {item?.measure}
                   </Link>
                   <p>You've Selected: {item?.stripCount} items</p>
