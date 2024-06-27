@@ -47,13 +47,14 @@ const UsersList = (): JSX.Element => {
       await axios.patch(`${serverUrl}/api/users/${userId}`, {
         role: editedRole,
       });
-      setUsers((prevUsers):any =>
+      setUsers((prevUsers): any =>
         prevUsers.map((user) =>
           user._id === userId ? { ...user, role: editedRole } : user
         )
       );
       setEditingUserId(null);
       setEditedRole("");
+      window.location.reload();
     } catch (error) {
       console.error("Error updating user role", error);
     }
