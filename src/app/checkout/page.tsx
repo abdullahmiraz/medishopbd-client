@@ -3,28 +3,53 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { serverUrl } from "../../../api";
+import { User } from "../../components/Dashboard/UserDash/UserProfile/UserProfile";
 
 const Checkout = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [cartItems, setCartItems] = useState([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cashOnDelivery");
   const [error, setError] = useState("");
-  const [isFormValid, setIsFormValid] = useState(false);
+  // const [isFormValid, setIsFormValid] = useState(false);
+  const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("medicine_cart")) || [];
     setCartItems(savedCart);
+
+    console.log(address);
   }, []);
 
   useEffect(() => {
-    validateForm();
-  }, [name, phone, address]);
+    const mongoUserId = sessionStorage.getItem("mongoUserId");
+
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${serverUrl}/api/users/${mongoUserId}`
+        );
+        const userData = response.data;
+        console.log(userData);
+        setName(userData.name);
+        setUser(userData);
+        setPhone(userData.phone);
+        setAddress(userData.address);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
+    return cartItems.reduce((acc, item) => acc + item?.totalPrice, 0);
   };
 
   const calculateTotal = () => {
@@ -34,30 +59,7 @@ const Checkout = () => {
     return subtotal + deliveryFee - discount;
   };
 
-  const validatePhoneNumber = (phoneNumber) => {
-    const regex = /^(?:\+88|88)?(01[3-9]\d{8})$/;
-    return regex.test(phoneNumber);
-  };
-
-  const validateForm = () => {
-    if (name && address && validatePhoneNumber(phone)) {
-      setError("");
-      setIsFormValid(true);
-    } else {
-      setIsFormValid(false);
-      if (!name || !phone || !address) {
-        setError("Please fill in all fields.");
-      } else if (!validatePhoneNumber(phone)) {
-        setError("Please enter a valid Bangladeshi phone number.");
-      }
-    }
-  };
-
   const handleOrder = () => {
-    if (!isFormValid) {
-      return;
-    }
-
     const orderDetails = {
       cartItems,
       name,
@@ -89,6 +91,8 @@ const Checkout = () => {
                 type="text"
                 className="w-full p-2 border rounded"
                 value={name}
+                defaultValue={name}
+                disabled
                 onChange={(e) => setName(e.target.value)}
                 required
               />
@@ -99,15 +103,47 @@ const Checkout = () => {
                 type="number"
                 className="w-full p-2 border rounded"
                 value={phone}
+                defaultValue={phone}
+                disabled
                 onChange={(e) => setPhone(e.target.value)}
                 required
               />
             </div>
             <div className="mb-4">
               <label className="block mb-2">Address</label>
+              <div className="mb-2">
+                <label>
+                  <input
+                    type="radio"
+                    name="addressOption"
+                    value="default"
+                    checked={useDefaultAddress}
+                    onChange={() => setUseDefaultAddress(true)}
+                    className="mr-2"
+                  />
+                  Use Default Address
+                </label>
+              </div>
+              <div className="mb-2">
+                <label>
+                  <input
+                    type="radio"
+                    name="addressOption"
+                    value="new"
+                    checked={!useDefaultAddress}
+                    onChange={() => setUseDefaultAddress(false)}
+                    className="mr-2"
+                  />
+                  Deliver to a New Address
+                </label>
+              </div>
+            </div>
+            <div className="mb-4">
               <textarea
                 className="w-full p-2 border rounded"
                 value={address}
+                defaultValue={address}
+                disabled={useDefaultAddress}
                 onChange={(e) => setAddress(e.target.value)}
                 required
               ></textarea>
@@ -214,7 +250,7 @@ const Checkout = () => {
                 <button
                   className="px-4 py-2 bg-green-500 text-white rounded"
                   onClick={handleOrder}
-                  disabled={!isFormValid}
+                  disabled={address.length < 0}
                 >
                   Place Order
                 </button>

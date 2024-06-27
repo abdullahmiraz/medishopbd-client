@@ -19,6 +19,7 @@ const Cart = () => {
   const handleRemoveItem = (index) => {
     const updatedCart = cartItems.filter((item, i) => i !== index);
     setCartItems(updatedCart);
+    console.log(item);
     localStorage.setItem("medicine_cart", JSON.stringify(updatedCart));
   };
 
@@ -76,13 +77,14 @@ const Cart = () => {
                 className="border p-4 rounded-md flex justify-between items-center"
               >
                 <div>
-                  <h2 className="font-semibold">
+                  <Link href={`../products/${item?.productId}`} className="font-semibold">
                     {item?.name} {item?.measure}
-                  </h2>
+                  </Link>
+                  <p>You've Selected: {item?.stripCount} items</p>
                   <p>Price per strip: Tk. {item?.pricePerStrip}</p>
                   <p>Total Price: Tk. {item?.totalPrice}</p>
                 </div>
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                   <button
                     className="px-2 py-1 border"
                     onClick={() =>
@@ -112,7 +114,7 @@ const Cart = () => {
                   >
                     +
                   </button>
-                </div>
+                </div> */}
                 <button
                   className="bg-red-500 text-white px-4 py-2 rounded"
                   onClick={() => handleRemoveItem(index)}

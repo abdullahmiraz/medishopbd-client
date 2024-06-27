@@ -10,24 +10,18 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Spinner from "../../../components/Shared/Spinner/Spinner";
 import { serverUrl } from "../../../../api";
-import { UserAuth } from "../../../context/AuthContext";
-
-const companyLogoUrl =
-  "https://cdn-icons-png.flaticon.com/512/4599/4599153.png";
 
 const generateInvoiceNumber = () => {
   const date = new Date();
   const formattedDate = `${date.getFullYear()}${(date.getMonth() + 1)
     .toString()
     .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`;
-  const randomDigits = String(uuidv4().slice(0, 6)).toUpperCase();
+  const randomDigits = uuidv4().slice(0, 6).toUpperCase();
   return `INV-${formattedDate}-${randomDigits}`;
 };
 
 const Confirmation = () => {
   const userId = sessionStorage.getItem("mongoUserId");
-  console.log(userId);
-
   const [orderDetails, setOrderDetails] = useState(null);
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const router = useRouter();
@@ -41,9 +35,9 @@ const Confirmation = () => {
       if (savedInvoiceNumber) {
         setInvoiceNumber(savedInvoiceNumber);
       } else {
-        const invoiceNo = generateInvoiceNumber();
-        setInvoiceNumber(invoiceNo);
-        localStorage.setItem("invoice_number", invoiceNo);
+        const newInvoiceNumber = generateInvoiceNumber();
+        setInvoiceNumber(newInvoiceNumber);
+        localStorage.setItem("invoice_number", newInvoiceNumber);
       }
     } else {
       router.push("/");
@@ -52,8 +46,8 @@ const Confirmation = () => {
 
   useEffect(() => {
     if (orderDetails && invoiceNumber && userId) {
-      saveOrderToDatabase(orderDetails, userId); // Pass user._id to save order
-      generatePDF(orderDetails, invoiceNumber); // Call generatePDF once after setting orderDetails and invoiceNumber
+      saveOrderToDatabase(orderDetails, userId);
+      generatePDF(orderDetails, invoiceNumber);
       clearLocalStorage();
     }
   }, [orderDetails, invoiceNumber, userId]);
@@ -79,24 +73,19 @@ const Confirmation = () => {
   };
 
   const generatePDF = (orderDetails, invoiceNumber) => {
-    const doc = new jsPDF("p", "mm", "a4");
+    const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
 
-    doc.addImage(companyLogoUrl, "PNG", 10, 10, 40, 40);
+    doc.setFontSize(10);
+    doc.text("MediShopBD", 10, 10);
+    doc.text("Address: Company Address", 10, 15);
+    doc.text("Phone: +880123456789", 10, 20);
+    doc.text("Email: info@company.com", 10, 25);
 
-    doc.setFontSize(12);
-    doc.text("Company Name", 60, 25);
-    doc.text("Address: Company Address", 60, 35);
-    doc.text("Phone: +880123456789", 60, 45);
-    doc.text("Email: info@company.com", 60, 55);
-
-    doc.setFontSize(18);
-    doc.text("Order Receipt", pageWidth / 2, 80, { align: "center" });
-    doc.setFontSize(12);
-    doc.text(`Invoice Number: ${invoiceNumber}`, pageWidth / 2, 90, {
-      align: "center",
-    });
+    doc.setFontSize(14);
+    doc.text("Order Receipt", pageWidth / 2, 35, { align: "center" });
+    doc.setFontSize(10);
+    doc.text(`Invoice Number: ${invoiceNumber}`, pageWidth / 2, 40, { align: "center" });
 
     const headers = [["Item", "Price per strip", "Quantity", "Total Price"]];
     const data = orderDetails?.cartItems?.map((item) => [
@@ -107,38 +96,17 @@ const Confirmation = () => {
     ]);
 
     doc.autoTable({
-      startY: 120,
+      startY: 50,
       head: headers,
       body: data,
-      didDrawPage: function (data) {
-        doc.setFontSize(10);
-        doc.text("Company Name", pageWidth - 60, pageHeight - 10, {
-          align: "right",
-        });
-        doc.text("Company Address", pageWidth - 60, pageHeight - 5, {
-          align: "right",
-        });
-        doc.text("Phone: +880123456789", pageWidth - 60, pageHeight, {
-          align: "right",
-        });
-        doc.text("Email: info@company.com", pageWidth - 60, pageHeight + 5, {
-          align: "right",
-        });
-      },
     });
 
     const startY = doc.autoTable.previous.finalY + 10;
-    doc.setFontSize(12);
-    doc.text(
-      `Sub Total: Tk. ${calculateSubtotal(orderDetails?.cartItems)?.toFixed(
-        2
-      )}`,
-      20,
-      startY
-    );
-    doc.text("Delivery Fee: Tk. 60.00", 20, startY + 10);
-    doc.text("Discount: - Tk. 0.00", 20, startY + 20);
-    doc.text(`Total: Tk. ${orderDetails.total.toFixed(2)}`, 20, startY + 30);
+    doc.setFontSize(10);
+    doc.text(`Sub Total: Tk. ${calculateSubtotal(orderDetails?.cartItems)?.toFixed(2)}`, 10, startY);
+    doc.text("Delivery Fee: Tk. 60.00", 10, startY + 10);
+    doc.text("Discount: - Tk. 0.00", 10, startY + 20);
+    doc.text(`Total: Tk. ${orderDetails.total.toFixed(2)}`, 10, startY + 30);
 
     doc.save(`${invoiceNumber}.pdf`);
   };
@@ -159,24 +127,18 @@ const Confirmation = () => {
       {orderDetails ? (
         <div>
           <p>Thank you for your order!</p>
-          <p>
-            Your order number is <strong>{invoiceNumber}</strong>.
-          </p>
+          <p>Your order number is <strong>{invoiceNumber}</strong>.</p>
           <p>A PDF receipt has been generated for your records.</p>
-          <div>
-            Our customer care agents will call you shortly to confirm your order
-          </div>
+          <p>Our customer care agents will call you shortly to confirm your order.</p>
           <div className="flex gap-4 my-4">
             <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded">
               Return to Homepage
             </Link>
             <button
-              onClick={
-                () => generatePDF(orderDetails, invoiceNumber) // Call generatePDF once after setting orderDetails and invoiceNumber
-              }
+              onClick={() => generatePDF(orderDetails, invoiceNumber)}
               className="px-4 py-2 bg-blue-500 text-white rounded"
             >
-              Download Reciept
+              Download Receipt
             </button>
           </div>
         </div>
