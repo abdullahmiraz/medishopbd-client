@@ -411,7 +411,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         ))}
         <div>
           {/* upload leaflet here  */}
-          
+
           {/* <PrescriptionUpdate /> */}
         </div>
 
