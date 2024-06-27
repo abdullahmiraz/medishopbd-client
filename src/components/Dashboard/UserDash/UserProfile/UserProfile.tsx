@@ -1,3 +1,5 @@
+// UserProfile.tsx
+
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -23,9 +25,10 @@ const mongoUserId = sessionStorage.getItem("mongoUserId");
 const UserProfile = ({ userId }: { userId: string }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,6 +38,8 @@ const UserProfile = ({ userId }: { userId: string }) => {
         );
         const userData = response.data;
         setUser(userData);
+        setName(userData.name);
+        setEmail(userData.email);
         setPhone(userData.phone);
         setAddress(userData.address);
       } catch (error) {
@@ -45,35 +50,18 @@ const UserProfile = ({ userId }: { userId: string }) => {
     fetchUser();
   }, [userId]);
 
-  const isValidBangladeshiPhoneNumber = (phoneNumber: string) => {
-    const bdPhoneRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
-    return bdPhoneRegex.test(phoneNumber);
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setPhone(value);
-    if (!isValidBangladeshiPhoneNumber(value)) {
-      setPhoneError("Please enter a valid Bangladeshi phone number");
-    } else {
-      setPhoneError(null);
-    }
-  };
-
   const handleUpdateUserDetails = async () => {
-    if (user) {
-      try {
-        const response = await axios.patch(
-          `${serverUrl}/api/users/${user._id}`,
-          { phone, address }
-        );
-        setUser(response.data);
-        setIsEditing(false);
-        toast.success("User updated successfully!");
-      } catch (error) {
-        console.error("Error updating user:", error);
-        toast.error("Error updating user.");
-      }
+    try {
+      const response = await axios.patch(
+        `${serverUrl}/api/users/${user?._id}`,
+        { name, email, phone, address }
+      );
+      setUser(response.data);
+      setIsEditing(false);
+      toast.success("User updated successfully!");
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast.error("Error updating user.");
     }
   };
 
@@ -87,25 +75,46 @@ const UserProfile = ({ userId }: { userId: string }) => {
       <div className="flex items-start gap-8 m-4">
         <div className="mb-4">
           <h3 className="text-xl font-semibold">Personal Information</h3>
-          <p>
-            <strong>Name:</strong> {user.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {user.email}
-          </p>
+          <div>
+            <label>
+              <strong>Name:</strong>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="ml-2 border rounded px-2"
+                />
+              ) : (
+                <span> {user.name}</span>
+              )}
+            </label>
+          </div>
+          <div>
+            <label>
+              <strong>Email:</strong>
+              {isEditing ? (
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="ml-2 border rounded px-2"
+                />
+              ) : (
+                <span> {user.email}</span>
+              )}
+            </label>
+          </div>
           <div>
             <label>
               <strong>Phone:</strong>
               {isEditing ? (
-                <>
-                  <input
-                    type="text"
-                    value={phone}
-                    onChange={handlePhoneChange}
-                    className="ml-2 border rounded px-2"
-                  />
-                  {phoneError && <p className="text-red-500">{phoneError}</p>}
-                </>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="ml-2 border rounded px-2"
+                />
               ) : (
                 <span> {user.phone}</span>
               )}

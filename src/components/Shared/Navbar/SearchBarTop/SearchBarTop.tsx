@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FaCartPlus, FaSearch, FaTruck } from "react-icons/fa";
 import SignUpComp from "../../../SignUp/SignUpComp";
 
+const mongoUserId = sessionStorage.getItem("mongoUserId");
+
 const SearchBarTop = () => {
   return (
     <div className="flex items-center justify-between bg-green-100 px-6 py-0 sm:py-2 md:py-4">

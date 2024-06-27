@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../api";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handlePhoneChange = (e) => {
     setPhone(e.target.value);
@@ -23,9 +25,10 @@ const Login = () => {
         password,
       });
       console.log("Login successfdul:", response.data);
-      localStorage.setItem("loginData", response.data);
+      localStorage.setItem("loginData", JSON.stringify(response.data));
       sessionStorage.setItem("mongoUserId", response.data.userId);
       // handle successful login, e.g., redirect to another page, store token, etc.
+      router.push("/");
     } catch (error) {
       console.error("Error logging in:", error.response?.data || error.message);
       // handle error, e.g., show error message to user

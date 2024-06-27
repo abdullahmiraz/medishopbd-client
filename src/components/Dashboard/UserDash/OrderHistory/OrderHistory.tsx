@@ -19,16 +19,18 @@ type Order = {
   created_at: string;
 };
 
-const OrderHistory = ({ userId }: { userId: string }) => {
+const userId = sessionStorage.getItem("mongoUserId");
+const OrderHistory = () => {
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(
-          `${serverUrl}/api/orders?userId=${userId}`
+          `${serverUrl}/api/users/orders/${userId}`
         );
         setOrders(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -41,7 +43,7 @@ const OrderHistory = ({ userId }: { userId: string }) => {
     <div className="m-4">
       <h2 className="text-2xl font-bold mb-4">Orders</h2>
       {orders.length > 0 ? (
-        orders.map((order) => (
+        orders?.map((order) => (
           <div key={order._id} className="mb-4 p-4 border rounded">
             <p>
               <strong>Order ID:</strong> {order._id}

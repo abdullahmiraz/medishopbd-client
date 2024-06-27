@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../api";
+import { useRouter } from "next/navigation"; // Import useRouter from next/router
 
 const SignUp: React.FC = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter(); // Initialize the router
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhone(e.target.value);
@@ -20,15 +22,29 @@ const SignUp: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${serverUrl}/api/users/signup`, {
+      // Sign up the user
+      const signupResponse = await axios.post(`${serverUrl}/api/users/signup`, {
         phone,
         password,
       });
-      console.log("Sign up successful:", response.data);
-      // handle successful sign up, e.g., redirect to login page
+      console.log("Sign up successful:", signupResponse.data);
+
+      // Log in the user immediately after sign up
+      const loginResponse = await axios.post(`${serverUrl}/api/users/login`, {
+        phone,
+        password,
+      });
+      console.log("Login successful:", loginResponse.data);
+
+      // Store login data in localStorage and sessionStorage
+      localStorage.setItem("loginData", JSON.stringify(loginResponse.data));
+      sessionStorage.setItem("mongoUserId", loginResponse.data.userId);
+
+      // Redirect to the homepage or any other page
+      router.push("/");
     } catch (error) {
-      console.error("Error signing up:", error.response?.data || error.message);
-      // handle error, e.g., show error message to user
+      console.error("Error signing up or logging in:", error.response?.data || error.message);
+      // Handle error, e.g., show error message to user
     }
   };
 
@@ -63,6 +79,14 @@ const SignUp: React.FC = () => {
                 onChange={handlePasswordChange}
                 required
               />
+            </div>
+            <div className="label">
+              <a href="#" className="label-text-alt link link-hover">
+                Forgot password?
+              </a>
+              <a href="../login" className="label-text-alt link link-hover">
+                Login
+              </a>
             </div>
             <div className="form-control gap-4 mt-6">
               <button className="btn btn-primary" type="submit">

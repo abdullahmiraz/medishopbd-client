@@ -122,7 +122,7 @@ const menuItems = {
   ],
 };
 
- console.log(mongoUserId);
+console.log(mongoUserId);
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
