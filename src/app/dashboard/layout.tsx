@@ -9,13 +9,14 @@ const DashboardLayout = ({ children }) => {
       <div className="w-[25%] bg-green-400">
         <Dashboard />
       </div>
-      {user ? (
+      <div className="w-[75%]">{children}</div>
+      {/* {user ? (
         <div className="w-[75%]">{children}</div>
       ) : (
         <div className="w-[75%] flex items-center justify-center">
           <p>Please log in to view this content.</p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
