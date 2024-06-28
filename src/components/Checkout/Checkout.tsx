@@ -38,8 +38,8 @@ const Checkout = () => {
         );
         const userData = response.data;
         console.log(userData);
-        setName(userData.name);
         setUser(userData);
+        setName(userData.name);
         setPhone(userData.phone);
         setAddress(userData.address);
       } catch (error) {
@@ -50,16 +50,7 @@ const Checkout = () => {
     fetchUser();
   }, []);
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item?.totalPrice, 0);
-  };
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const deliveryFee = 60; // Example delivery fee
-    const discount = 0; // Example discount
-    return subtotal + deliveryFee - discount;
-  };
+ 
 
   const handleOrder = () => {
     const orderDetails = {

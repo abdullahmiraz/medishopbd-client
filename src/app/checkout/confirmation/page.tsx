@@ -55,6 +55,7 @@ const Confirmation = () => {
     if (orderDetails && invoiceNumber && userId && checkoutAmount) {
       saveOrderToDatabase(orderDetails, userId, checkoutAmount);
       generatePDF(orderDetails, invoiceNumber, checkoutAmount);
+      // reduce the amount of stock of medicine here
       clearLocalStorage();
     }
   }, [orderDetails, invoiceNumber, userId, checkoutAmount]);
@@ -135,9 +136,9 @@ const Confirmation = () => {
   };
 
   const clearLocalStorage = () => {
-    localStorage.removeItem("order_details");
-    localStorage.removeItem("invoice_number");
-    localStorage.removeItem("medicine_cart");
+    // localStorage.removeItem("order_details");
+    // localStorage.removeItem("invoice_number");
+    // localStorage.removeItem("medicine_cart");
   };
 
   return (

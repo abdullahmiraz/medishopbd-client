@@ -112,6 +112,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
                 <input
                   type="text"
                   value={phone}
+                  disabled
                   onChange={(e) => setPhone(e.target.value)}
                   className="ml-2 border rounded px-2"
                 />

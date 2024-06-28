@@ -1,4 +1,3 @@
-// ProductSingleView.tsx
 "use client";
 
 import axios from "axios";
@@ -28,26 +27,49 @@ const ProductSingleView = ({ productId }) => {
   }, [productId]);
 
   const handleAddToCart = () => {
+    if (!product) {
+      return;
+    }
+
+    handleQuantityChange(1); // reset after you submit the cart
     if (stripCount >= 1) {
+      let productCount = 0;
+
+      // Check if packaging details are available and not null/undefined
+      if (
+        product.packaging &&
+        product.packaging.unitsPerStrip !== null &&
+        product.packaging.stripsPerBox !== null
+      ) {
+        productCount =
+          stripCount *
+          product.packaging.unitsPerStrip *
+          product.packaging.stripsPerBox;
+      } else {
+        productCount = stripCount; // Fallback to stripCount if packaging details are null
+      }
+
       const cartItem = {
-        productId: product?._id,
-        name: product?.productName,
-        measure: product?.measure,
+        productId: product._id,
+        name: product.productName,
+        measure: product.measure,
         stripCount: stripCount,
-        pricePerStrip: product?.pricePerUnit,
-        totalPrice: product?.pricePerUnit * stripCount,
+        productCount: productCount,
+        pricePerStrip: product.pricePerUnit,
+        totalPrice: product.pricePerUnit * productCount,
       };
 
       const existingCart =
         JSON.parse(localStorage.getItem("medicine_cart")) || [];
 
       const existingItemIndex = existingCart.findIndex(
-        (item) => item.productId === product?._id
+        (item) => item.productId === product._id
       );
 
       if (existingItemIndex > -1) {
-        // Update the existing item's strip count and total price
+        // Update the existing item's strip count, product count, and total price
         existingCart[existingItemIndex].stripCount += stripCount;
+        existingCart[existingItemIndex].productCount += productCount;
         existingCart[existingItemIndex].totalPrice += cartItem.totalPrice;
       } else {
         // Add the new item to the cart
@@ -56,7 +78,7 @@ const ProductSingleView = ({ productId }) => {
 
       localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
       console.log(
-        `Added ${stripCount} strips of ${product?.productName} to cart`
+        `Added ${productCount} products (strips) of ${product.productName} to cart`
       );
       toast.success("Product added successfully!");
     } else {
@@ -95,7 +117,7 @@ const ProductSingleView = ({ productId }) => {
           >
             <Image
               src={`https://i.ibb.co/ZGCQxbH/osudpotro-default.webp`}
-              alt={product?.productName}
+              alt={product.productName}
               layout="fill"
               objectFit="cover"
               className="rounded-t-md border"
@@ -104,38 +126,43 @@ const ProductSingleView = ({ productId }) => {
           <div className="info-table grid grid-cols-10 col-span-8">
             <div className="col-span-7">
               <h2 className="font-bold text-2xl mb-4">
-                {product?.productName} {product?.measure}
+                {product.productName} {product.measure}
               </h2>
               <p>
-                <strong>Type:</strong> {product?.productType}
+                <strong>Type:</strong> {product.productType}
               </p>
               <p>
-                <strong>Manufacturer:</strong> {product?.manufacturer}
+                <strong>Manufacturer:</strong> {product.manufacturer}
               </p>
               <p>
-                <strong>Stock:</strong> {product?.availableStock}
+                <strong>Stock:</strong> {product.availableStock}
               </p>
               <p>
                 <strong>Generics:</strong>
                 <span className="font-semibold text-cyan-700">
-                  {product?.activeIngredient}
+                  {product.activeIngredient}
                 </span>
               </p>
               <div className="pack-details">
                 <strong>Pack Details:</strong>
-                <p>
-                  Per Strip: {product?.packaging?.unitsPerStrip}{" "}
-                  {product?.measure || " tablets"}
-                </p>
-                <p>Strips: {product?.packaging?.stripsPerBox}</p>
+                {product.packaging?.unitsPerStrip ? (
+                  <>
+                    <p>
+                      Per Strip: {`${product.packaging?.unitsPerStrip} Tablets`}
+                    </p>
+                    <p>Strips: {product.packaging?.stripsPerBox}</p>
+                  </>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="price-view">
                 <p>
-                  <strong>Best Price:</strong>
-                  <span className="font-bold text-2xl">
+                  <strong>Price:</strong>
+                  <span className="font-bold text-xl">
                     Tk. {product?.pricePerUnit}
                   </span>
-                  / strip
+                  {product?.primaryCategory === "Medicine" ? "/ strip" : ""}
                 </p>
               </div>
               <div className="mt-4">
@@ -176,7 +203,7 @@ const ProductSingleView = ({ productId }) => {
               <h3 className="font-bold text-lg underline mb-4">
                 Extra Information
               </h3>
-              {product?.requiresPrescription ? (
+              {product.requiresPrescription ? (
                 <p className="text-red-500 font-bold mb-4">
                   Prescription required
                 </p>
@@ -197,16 +224,16 @@ const ProductSingleView = ({ productId }) => {
         <ul>
           <li>
             <strong>Main Title:</strong>
-            {product?.usageDetails?.indications?.mainTitle}
+            {product.usageDetails?.indications?.mainTitle}
           </li>
           <li>
             <strong>Subtitles:</strong>
-            {product?.usageDetails?.indications?.subtitles?.map(
+            {product.usageDetails?.indications?.subtitles?.map(
               (subtitle, index) => (
                 <span key={index}>
                   {subtitle}
                   {index !==
-                    product?.usageDetails?.indications?.subtitles?.length - 1 &&
+                    product.usageDetails?.indications?.subtitles?.length - 1 &&
                     ", "}
                 </span>
               )
@@ -216,7 +243,7 @@ const ProductSingleView = ({ productId }) => {
       </div>
       <div className="usage-details mt-4">
         <h3 className="font-bold text-lg">Usage Details:</h3>
-        {product?.usageDetails?.dosageDetails?.map((detail, index) => (
+        {product.usageDetails?.dosageDetails?.map((detail, index) => (
           <div key={index} className="mt-2">
             <h4 className="font-semibold">{detail.ageRange}</h4>
             <p>

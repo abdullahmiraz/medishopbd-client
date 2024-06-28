@@ -7,15 +7,15 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { serverUrl } from "../../../../api";
 
-const mongoUserId = sessionStorage.getItem("mongoUserId");
-
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountedAmount, setDiscountedAmount] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(60);
   const [message, setMessage] = useState("");
+  const [validateCheckout, setValidateCheckout] = useState(false);
 
+  const mongoUserId = sessionStorage.getItem("mongoUserId");
   const router = useRouter();
 
   useEffect(() => {
@@ -31,13 +31,6 @@ const Cart = () => {
 
   const calculateSubtotal = () => {
     return cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
-  };
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const deliveryFee = 60; // Example delivery fee
-    const total = subtotal + deliveryFee;
-    return total;
   };
 
   const applyPromoCode = async () => {
@@ -69,6 +62,36 @@ const Cart = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${serverUrl}/api/users/${mongoUserId}`
+        );
+        const userData = response.data;
+        console.log("Fetched User Data:", userData);
+
+        const { phone, address, name } = userData;
+        if (phone !== "" && address !== "" && name !== "") {
+          setValidateCheckout(true);
+        } else {
+          setValidateCheckout(false); // Ensure it's explicitly set to false if any field is empty
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    if (mongoUserId) {
+      fetchUser();
+    }
+  }, [validateCheckout]);
+
+  // Use this useEffect to log validateCheckout after it has been updated
+  useEffect(() => {
+    console.log("validateCheckout:", validateCheckout);
+  }, [validateCheckout]);
+
   const handlePromoCodeChange = (event) => {
     setPromoCode(event.target.value);
   };
@@ -78,13 +101,17 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    if (mongoUserId) {
-      router?.push("/checkout");
+    if (validateCheckout) {
+      if (mongoUserId) {
+        router?.push("/checkout");
+      } else {
+        toast.error("Login/Signup First", {
+          duration: 5000,
+          position: "bottom-center",
+        });
+      }
     } else {
-      toast.error("Login/Signup First", {
-        duration: 5000,
-        position: "bottom-center",
-      });
+      toast.error("Enter your name and address properly in profile page ");
     }
   };
 
@@ -173,7 +200,7 @@ const Cart = () => {
               <button
                 onClick={handleCheckout}
                 className="px-4 py-2 bg-green-500 text-white rounded"
-              >
+               >
                 Checkout
               </button>
             </div>
