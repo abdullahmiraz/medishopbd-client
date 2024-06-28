@@ -30,7 +30,9 @@ const Confirmation = () => {
   useEffect(() => {
     const savedOrderDetails = JSON.parse(localStorage.getItem("order_details"));
     const savedInvoiceNumber = localStorage.getItem("invoice_number");
-    const savedCheckoutAmount = JSON.parse(localStorage.getItem("checkoutAmount"));
+    const savedCheckoutAmount = JSON.parse(
+      localStorage.getItem("checkoutAmount")
+    );
 
     if (savedOrderDetails) {
       setOrderDetails(savedOrderDetails);
@@ -72,6 +74,7 @@ const Confirmation = () => {
         checkoutAmount: {
           subtotal: checkoutAmount.subtotal,
           discountedAmount: checkoutAmount.discountedAmount,
+          deliveryFee: checkoutAmount.deliveryFee,
           total: checkoutAmount.total,
         },
         status: "Pending",
@@ -119,11 +122,7 @@ const Confirmation = () => {
 
     const startY = doc.autoTable.previous.finalY + 10;
     doc.setFontSize(10);
-    doc.text(
-      `Sub Total: Tk. ${checkoutAmount.subtotal}`,
-      10,
-      startY
-    );
+    doc.text(`Sub Total: Tk. ${checkoutAmount.subtotal}`, 10, startY);
     doc.text("Delivery Fee: Tk. 60.00", 10, startY + 10);
     doc.text(
       `Discount: - Tk. ${checkoutAmount.discountedAmount}`,
@@ -136,9 +135,9 @@ const Confirmation = () => {
   };
 
   const clearLocalStorage = () => {
-    // localStorage.removeItem("order_details");
-    // localStorage.removeItem("invoice_number");
-    // localStorage.removeItem("medicine_cart");
+    localStorage.removeItem("order_details");
+    localStorage.removeItem("invoice_number");
+    localStorage.removeItem("medicine_cart");
   };
 
   return (

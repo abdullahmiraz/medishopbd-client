@@ -50,9 +50,9 @@ const Checkout = () => {
     fetchUser();
   }, []);
 
- 
 
-  const handleOrder = () => {
+
+  const handleOrder = async () => {
     const orderDetails = {
       cartItems,
       name,
@@ -62,9 +62,33 @@ const Checkout = () => {
       checkoutAmount,
     };
 
-    localStorage.setItem("order_details", JSON.stringify(orderDetails));
-    router.push("/checkout/confirmation");
+    // Fetch each product by its ID and update its available stock
+    try {
+      for (const item of cartItems) {
+        const productResponse = await axios.get(`${serverUrl}/api/products/${item.productId}`);
+        const product = productResponse.data;
+
+        // Calculate the new available stock
+        const newStock = product.availableStock - item.stripCount;
+        if (newStock < 0) {
+          throw new Error(`Insufficient stock for ${product.productName}`);
+        }
+
+        // Update the product's available stock
+        await axios.put(`${serverUrl}/api/products/${item.productId}`, {
+          availableStock: newStock,
+        });
+      }
+
+      // If all stock updates are successful, save the order details
+      localStorage.setItem("order_details", JSON.stringify(orderDetails));
+      router.push("/checkout/confirmation");
+    } catch (error) {
+      console.error("Error updating stock:", error);
+      setError(`Error updating stock: ${error.message}`);
+    }
   };
+
 
   if (cartItems.length === 0) {
     return <p className="text-center my-12">Your cart is empty.</p>;
