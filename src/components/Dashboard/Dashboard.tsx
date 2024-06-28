@@ -55,6 +55,11 @@ const menuItems = {
       icon: FaDollarSign,
       text: "Payments",
     },
+    {
+      href: "promocodes",
+      icon: FaCashRegister,
+      text: "Promo Codes",
+    },
   ],
   manager: [
     {

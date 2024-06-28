@@ -2,14 +2,19 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { UserAuth } from "../../../context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { serverUrl } from "../../../../api";
 
 const mongoUserId = sessionStorage.getItem("mongoUserId");
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [promoCode, setPromoCode] = useState("");
+  const [discountedAmount, setDiscountedAmount] = useState(0);
+  const [deliveryFee, setDeliveryFee] = useState(60);
+  const [message, setMessage] = useState("");
 
   const router = useRouter();
 
@@ -21,22 +26,6 @@ const Cart = () => {
   const handleRemoveItem = (index) => {
     const updatedCart = cartItems.filter((item, i) => i !== index);
     setCartItems(updatedCart);
-    console.log(item);
-    localStorage.setItem("medicine_cart", JSON.stringify(updatedCart));
-  };
-
-  const handleQuantityChange = (index, newQuantity) => {
-    if (newQuantity < 1 || newQuantity > 20) return; // Limiting quantity between 1 and 20
-    const updatedCart = cartItems.map((item, i) =>
-      i === index
-        ? {
-            ...item,
-            stripCount: newQuantity,
-            totalPrice: item.pricePerStrip * newQuantity,
-          }
-        : item
-    );
-    setCartItems(updatedCart);
     localStorage.setItem("medicine_cart", JSON.stringify(updatedCart));
   };
 
@@ -47,13 +36,46 @@ const Cart = () => {
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
     const deliveryFee = 60; // Example delivery fee
-    const discount = 0; // Example discount
-    return subtotal + deliveryFee - discount;
+    const total = subtotal + deliveryFee;
+    return total;
   };
 
-  if (cartItems.length === 0) {
-    return <p className="text-center my-12">Your cart is empty.</p>;
-  }
+  const applyPromoCode = async () => {
+    try {
+      const response = await axios.post(
+        `${serverUrl}/api/promocodes/validate`,
+        {
+          code: promoCode,
+        }
+      );
+
+      const { discount, discountType } = response.data;
+
+      let calculatedDiscount = 0;
+      if (discountType === "percentage") {
+        calculatedDiscount = (discount / 100) * calculateSubtotal();
+      } else if (discountType === "fixed") {
+        calculatedDiscount = discount;
+      }
+
+      setDiscountedAmount(calculatedDiscount);
+      setMessage("Promo code applied successfully!");
+      toast.success("Promo code applied successfully!");
+    } catch (error) {
+      console.error("Error applying promo code:", error);
+      setMessage(error.response.data.message || "Invalid promo code.");
+      toast.error(error.response.data.message || "Invalid promo code.");
+      setDiscountedAmount(0);
+    }
+  };
+
+  const handlePromoCodeChange = (event) => {
+    setPromoCode(event.target.value);
+  };
+
+  const handleApplyPromoCode = () => {
+    applyPromoCode();
+  };
 
   const handleCheckout = () => {
     if (mongoUserId) {
@@ -65,6 +87,15 @@ const Cart = () => {
       });
     }
   };
+
+  const checkoutAmount = {
+    subtotal: calculateSubtotal(),
+    discountedAmount: discountedAmount.toFixed(2),
+    deliveryFee: deliveryFee,
+    total: `${calculateSubtotal() - discountedAmount + deliveryFee}`,
+  };
+
+  localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
 
   return (
     <div className="container mx-auto my-12 px-6">
@@ -89,37 +120,6 @@ const Cart = () => {
                   <p>Price per strip: Tk. {item?.pricePerStrip}</p>
                   <p>Total Price: Tk. {item?.totalPrice}</p>
                 </div>
-                {/* <div className="flex items-center">
-                  <button
-                    className="px-2 py-1 border"
-                    onClick={() =>
-                      handleQuantityChange(
-                        index,
-                        item.stripCount > 1 ? item.stripCount - 1 : 1
-                      )
-                    }
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    className="border rounded px-2 py-1 text-center mx-2"
-                    value={item.stripCount}
-                    min="1"
-                    max="20"
-                    onChange={(e) =>
-                      handleQuantityChange(index, parseInt(e.target.value))
-                    }
-                  />
-                  <button
-                    className="px-2 py-1 border"
-                    onClick={() =>
-                      handleQuantityChange(index, item.stripCount + 1)
-                    }
-                  >
-                    +
-                  </button>
-                </div> */}
                 <button
                   className="bg-red-500 text-white px-4 py-2 rounded"
                   onClick={() => handleRemoveItem(index)}
@@ -135,20 +135,37 @@ const Cart = () => {
             <h2 className="font-bold text-xl mb-4">Cart Summary</h2>
             <div className="flex justify-between mb-2">
               <span>Sub Total</span>
-              <span>৳{calculateSubtotal().toFixed(2)}</span>
+              <span>৳{checkoutAmount?.subtotal}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span>Delivery Fee</span>
-              <span>৳60.00</span>
+              <span>৳{checkoutAmount?.deliveryFee}</span>
             </div>
             <div className="flex justify-between mb-2">
-              <span>Discount</span>
-              <span>- ৳0.00</span>
+              <span>Promo Discount</span>
+              <span>- ৳{checkoutAmount?.discountedAmount}</span>
             </div>
             <div className="border-t pt-2 mt-2 flex justify-between">
               <span>Total</span>
-              <span className="font-bold">৳{calculateTotal().toFixed(2)}</span>
+              <span className="font-bold">৳{checkoutAmount?.total}</span>
             </div>
+            <div className="mt-4 flex gap-4">
+              <input
+                type="text"
+                placeholder="Enter Promo Code"
+                value={promoCode}
+                onChange={handlePromoCodeChange}
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full"
+              />
+              <button
+                type="button"
+                onClick={handleApplyPromoCode}
+                className="px-4 py-2 bg-blue-500 text-white rounded text-sm"
+              >
+                Apply Promo Code
+              </button>
+            </div>
+            {message && <p className="mt-2">{message}</p>}
             <div className="flex justify-between mt-4">
               <button className="px-4 py-2 bg-blue-500 text-white rounded">
                 Buy More
