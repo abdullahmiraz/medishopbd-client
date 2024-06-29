@@ -2,10 +2,10 @@
 
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { serverUrl } from "../../../../api";
-import Link from "next/link";
+import { placeholderImage, serverUrl } from "../../../../api";
 
 const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
@@ -116,7 +116,7 @@ const ProductSingleView = ({ productId }) => {
             style={{ paddingBottom: "60%" }}
           >
             <Image
-              src={`https://i.ibb.co/ZGCQxbH/osudpotro-default.webp`}
+              src={`${product?.productImage}` || placeholderImage}
               alt={product.productName}
               layout="fill"
               objectFit="cover"
@@ -209,7 +209,7 @@ const ProductSingleView = ({ productId }) => {
                 </p>
               ) : null}
               <Link
-                href={"https://www.placehold.co/850x850"}
+                href={product?.leafletImage || placeholderImage}
                 className="cursor-pointer bg-orange-500 text-white py-2 px-4 rounded-xl"
                 target="_blank"
               >

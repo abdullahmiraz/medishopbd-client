@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { ProductData } from "./products.types";
 import AdditionalInputs from "./AdditionalInputs";
-import PrescriptionMedicine from "../../../HomeView/PrescriptionMedicines/PrescriptionMedicine";
-import PrescriptionUpdate from "../../PrescriptionUpdate/PrescriptionUpdate";
+import axios from "axios";
 
 interface ProductFormProps {
   initialProduct?: ProductData;
   onSubmit: (product: ProductData) => void;
 }
+
+const imageHostingKey = process.env.NEXT_PUBLIC_IMAGE_HOSTING_KEY;
+const imageHostingAPI = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
+
 const ProductForm: React.FC<ProductFormProps> = ({
   initialProduct,
   onSubmit,
 }) => {
   const [productData, setProductData] = useState<ProductData>(
     initialProduct || {
-      productId: "",
+      productId: 0,  // Changed from "" to 0
       productName: "",
       measure: "",
       activeIngredient: "",
@@ -34,6 +37,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       requiresPrescription: false,
       pageCategory: "",
       productImage: "",
+      leafletImage: "",
       usageDetails: {
         indications: { mainTitle: "", subtitles: [""] },
         dosageDetails: [
@@ -43,6 +47,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       pharmacology: "",
     }
   );
+
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const productImageInputRef = useRef<HTMLInputElement>(null);
+  const leafletImageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (initialProduct) {
@@ -121,9 +130,96 @@ const ProductForm: React.FC<ProductFormProps> = ({
     setProductData(updatedData);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(productData);
+    setIsSubmitting(true);
+
+    // Create promises for image uploads
+    const uploadImagePromises: Promise<void>[] = [];
+    let productImageURL = productData.productImage;
+    let leafletImageURL = productData.leafletImage;
+
+    if (productImageInputRef.current?.files?.[0]) {
+      const formData = new FormData();
+      formData.append("image", productImageInputRef.current.files[0]);
+      uploadImagePromises.push(
+        axios
+          .post(imageHostingAPI, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+          .then((response) => {
+            if (response.data.success) {
+              productImageURL = response.data.data.url;
+            }
+          })
+      );
+    }
+
+    if (leafletImageInputRef.current?.files?.[0]) {
+      const formData = new FormData();
+      formData.append("image", leafletImageInputRef.current.files[0]);
+      uploadImagePromises.push(
+        axios
+          .post(imageHostingAPI, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+          .then((response) => {
+            if (response.data.success) {
+              leafletImageURL = response.data.data.url;
+            }
+          })
+      );
+    }
+
+    // Wait for all image uploads to complete
+    await Promise.all(uploadImagePromises);
+
+    // Update product data with image URLs
+    const updatedProductData = {
+      ...productData,
+      productImage: productImageURL,
+      leafletImage: leafletImageURL,
+    };
+
+    // Submit the form data
+    onSubmit(updatedProductData);
+
+    // Clear the form fields after submission
+    setProductData({
+      productId: "",
+      productName: "",
+      measure: "",
+      activeIngredient: "",
+      dosageForm: "",
+      applicationArea: "",
+      primaryCategory: "",
+      subCategory: "",
+      productType: "",
+      packaging: { unitsPerStrip: "", stripsPerBox: "" },
+      pricePerUnit: "",
+      availableStock: "",
+      manufacturer: "",
+      expirationDate: "",
+      batchNumber: "",
+      aisleLocation: "",
+      requiresPrescription: false,
+      pageCategory: "",
+      productImage: "",
+      leafletImage: "",
+      usageDetails: {
+        indications: { mainTitle: "", subtitles: [""] },
+        dosageDetails: [
+          { ageRange: "", userGroup: "", dosageInstructions: [""] },
+        ],
+      },
+      pharmacology: "",
+    });
+
+    // Clear the file inputs
+    if (productImageInputRef.current) productImageInputRef.current.value = "";
+    if (leafletImageInputRef.current) leafletImageInputRef.current.value = "";
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -409,14 +505,29 @@ const ProductForm: React.FC<ProductFormProps> = ({
             ))}
           </div>
         ))}
-        <div>
-          {/* upload leaflet here  */}
 
-          {/* <PrescriptionUpdate /> */}
+        <div className="mb-4 col-span-2  ">
+          <label className="block mb-1">Product Image</label>
+          <input
+            type="file"
+            className="file-input w-full bg-gray-200"
+            ref={productImageInputRef}
+          />
         </div>
-
-        <button type="submit" className="btn btn-primary w-full">
-          {initialProduct ? "Update Product" : "Add Product"}
+        <div className="mb-4 col-span-2 ">
+          <label className="block mb-1">Leaflet Image</label>
+          <input
+            type="file"
+            className="file-input w-full bg-gray-200"
+            ref={leafletImageInputRef}
+          />
+        </div>
+        <button
+          type="submit"
+          className="btn btn-primary w-full my-8"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>

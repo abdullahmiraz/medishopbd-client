@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
+import { placeholderImage } from "../../../../api";
 
 export default function ProductsViewCarousel({ title, products }: any) {
   console.log(products);
@@ -29,7 +30,7 @@ export default function ProductsViewCarousel({ title, products }: any) {
         }}
         aria-label="React Splide Example"
         extensions={{ AutoScroll }}
-        className=" mx-6"
+        className="mx-6"
       >
         {products?.map((product, index) => (
           <SplideSlide key={index}>
@@ -37,12 +38,15 @@ export default function ProductsViewCarousel({ title, products }: any) {
               <div className="cursor-pointer rounded-md w-56 my-8 shadow-md">
                 <figure className="relative" style={{ paddingBottom: "60%" }}>
                   <Image
-                    src={"https://via.placeholder.com/450x250"}
-                    // product?.productImage ||
+                    src={product?.productImage || placeholderImage}
                     alt={product?.productName}
                     layout="fill"
                     objectFit="cover"
                     className="rounded-t-md"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        placeholderImage;
+                    }}
                   />
                 </figure>
                 <div className="card-body flex flex-col  justify-between p-2 h-40 ">

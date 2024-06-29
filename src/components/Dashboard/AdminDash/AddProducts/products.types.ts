@@ -20,27 +20,34 @@ export interface UsageDetails {
   dosageDetails?: DosageDetail[];
 }
 
-export interface ProductData {
-  productId?: number;
-  productName?: string;
-  measure?: string;
-  activeIngredient?: string;
-  dosageForm?: string;
-  applicationArea?: string;
-  primaryCategory?: string;
-  subCategory?: string;
-  productType?: string;
-  packaging?: Packaging;
-  pricePerUnit?: number;
-  availableStock?: number;
-  manufacturer?: string;
-  expirationDate?: string;
-  batchNumber?: string;
-  aisleLocation?: string;
-  requiresPrescription?: boolean;
-  pageCategory?: string;
-  productImage?: string;
-  leafletImage?: string;
-  usageDetails?: UsageDetails;
-  pharmacology?: string;
+interface ProductData {
+  productId: number; // Change to number
+  productName: string;
+  measure: string;
+  activeIngredient: string;
+  dosageForm: string;
+  applicationArea: string;
+  primaryCategory: string;
+  subCategory: string;
+  productType: string;
+  packaging: { unitsPerStrip: string; stripsPerBox: string };
+  pricePerUnit: string;
+  availableStock: string;
+  manufacturer: string;
+  expirationDate: string;
+  batchNumber: string;
+  aisleLocation: string;
+  requiresPrescription: boolean;
+  pageCategory: string;
+  productImage: string;
+  leafletImage: string;
+  usageDetails: {
+    indications: { mainTitle: string; subtitles: string[] };
+    dosageDetails: {
+      ageRange: string;
+      userGroup: string;
+      dosageInstructions: string[];
+    }[];
+  };
+  pharmacology: string;
 }

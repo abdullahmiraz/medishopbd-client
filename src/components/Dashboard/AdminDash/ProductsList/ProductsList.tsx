@@ -83,6 +83,7 @@ const ProductsList: React.FC = () => {
               <th>Requires Prescription</th>
               <th>Page Category</th>
               <th>Product Image</th>
+              <th>Leaflet Image</th>
               <th>Main Title</th>
               <th>Subtitles</th>
               <th>Age Range</th>
@@ -134,6 +135,7 @@ const ProductsList: React.FC = () => {
                 <td>{product?.requiresPrescription ? "Yes" : "No"}</td>
                 <td>{product?.pageCategory}</td>
                 <td>{product?.productImage}</td>
+                <td>{product?.leafletImage}</td>
                 <td>{product?.usageDetails?.indications?.mainTitle}</td>
                 <td>
                   {product?.usageDetails?.indications?.subtitles.join(", ")}
