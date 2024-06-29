@@ -1,6 +1,7 @@
 "use client";
 
 import axios from "axios";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
@@ -32,117 +33,185 @@ const ProductViewer: React.FC<{ productId: string }> = ({ productId }) => {
     router.push(`../product/print/${productId}`);
   };
 
+  if (!product) {
+    return <div className="text-center my-20">Loading...</div>;
+  }
+
   return (
-    <div className="p-6 bg-gray-100">
+    <div className="p-6 bg-gray-100 min-h-screen">
       <Toaster />
-      <div className="bg-white rounded-md p-6">
-        <h2 className="text-2xl font-bold text-center pt-6">View Product</h2>
-        {product ? (
-          <div>
-            <div className="my-4">
-              <p>
-                <strong>Product ID:</strong> {product.productId}
-              </p>
-              <p>
-                <strong>Name:</strong> {product.productName}
-              </p>
-              <p>
-                <strong>Measure:</strong> {product.measure}
-              </p>
-              <p>
-                <strong>Active Ingredient:</strong> {product.activeIngredient}
-              </p>
-              <p>
-                <strong>Dosage Form:</strong> {product.dosageForm}
-              </p>
-              <p>
-                <strong>Application Area:</strong> {product.applicationArea}
-              </p>
-              <p>
-                <strong>Primary Category:</strong> {product.primaryCategory}
-              </p>
-              <p>
-                <strong>Sub Category:</strong> {product.subCategory}
-              </p>
-              <p>
-                <strong>Product Type:</strong> {product.productType}
-              </p>
-              <p>
-                <strong>Price Per Unit:</strong> {product.pricePerUnit}
-              </p>
-              <p>
-                <strong>Available Stock:</strong> {product.availableStock}
-              </p>
-              <p>
-                <strong>Manufacturer:</strong> {product.manufacturer}
-              </p>
-              <p>
-                <strong>Expiration Date:</strong> {product.expirationDate}
-              </p>
-              <p>
-                <strong>Batch Number:</strong> {product.batchNumber}
-              </p>
-              <p>
-                <strong>Aisle Location:</strong> {product.aisleLocation}
-              </p>
-              <p>
-                <strong>Requires Prescription:</strong>{" "}
-                {product.requiresPrescription ? "Yes" : "No"}
-              </p>
-              <p>
-                <strong>Page Category:</strong> {product.pageCategory}
-              </p>
-              {product.productImage && (
-                <div>
-                  <strong>Image:</strong>
-                  <img
-                    src={product.productImage}
-                    alt={product.productName}
-                    className="my-2"
-                  />
-                </div>
-              )}
-              <p>
-                <strong>Pharmacology:</strong> {product.pharmacology}
-              </p>
-              <div>
-                <strong>Packaging Details:</strong>
-                <p>Units Per Strip: {product.packaging?.unitsPerStrip}</p>
-                <p>Strips Per Box: {product.packaging?.stripsPerBox}</p>
-              </div>
-              <div>
-                <strong>Usage Details:</strong>
-                <p>Indications:</p>
-                <p>
-                  Main Title: {product.usageDetails?.indications?.mainTitle}
-                </p>
-                <p>
-                  Subtitles:{" "}
-                  {product.usageDetails?.indications?.subtitles?.join(", ")}
-                </p>
-                <p>Dosage Details:</p>
-                {product.usageDetails?.dosageDetails?.map((dosage, index) => (
-                  <div key={index}>
-                    <p>Age Range: {dosage.ageRange}</p>
-                    <p>User Group: {dosage.userGroup}</p>
-                    <p>
-                      Dosage Instructions:{" "}
-                      {dosage.dosageInstructions?.join(", ")}
-                    </p>
-                  </div>
-                ))}
-              </div>
+      <div className="bg-white rounded-md shadow-md p-6">
+        <h2 className="text-2xl font-bold text-center mb-6">View Product</h2>
+        <div className="">
+          {product.productImage && (
+            <div className="w-full w-full">
+              <Image
+                src={product.productImage}
+                alt={product.productName}
+                width={500}
+                height={500}
+                className="rounded-md border border-gray-300 mx-auto my-5"
+              />
             </div>
-            <button
-              onClick={handlePrint}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Print
-            </button>
+          )}
+          <div className="w-full  ">
+            <table className="min-w-full divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200">
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Product ID
+                  </th>
+                  <td className="px-4 py-2">{product.productId}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">Name</th>
+                  <td className="px-4 py-2">{product.productName}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">Measure</th>
+                  <td className="px-4 py-2">{product.measure}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Active Ingredient
+                  </th>
+                  <td className="px-4 py-2">{product.activeIngredient}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Dosage Form
+                  </th>
+                  <td className="px-4 py-2">{product.dosageForm}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Application Area
+                  </th>
+                  <td className="px-4 py-2">{product.applicationArea}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Primary Category
+                  </th>
+                  <td className="px-4 py-2">{product.primaryCategory}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Sub Category
+                  </th>
+                  <td className="px-4 py-2">{product.subCategory}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Product Type
+                  </th>
+                  <td className="px-4 py-2">{product.productType}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Price Per Unit
+                  </th>
+                  <td className="px-4 py-2">{product.pricePerUnit}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Available Stock
+                  </th>
+                  <td className="px-4 py-2">{product.availableStock}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Manufacturer
+                  </th>
+                  <td className="px-4 py-2">{product.manufacturer}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Expiration Date
+                  </th>
+                  <td className="px-4 py-2">{product.expirationDate}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Batch Number
+                  </th>
+                  <td className="px-4 py-2">{product.batchNumber}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Aisle Location
+                  </th>
+                  <td className="px-4 py-2">{product.aisleLocation}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Requires Prescription
+                  </th>
+                  <td className="px-4 py-2">
+                    {product.requiresPrescription ? "Yes" : "No"}
+                  </td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Page Category
+                  </th>
+                  <td className="px-4 py-2">{product.pageCategory}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Pharmacology
+                  </th>
+                  <td className="px-4 py-2">{product.pharmacology}</td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Packaging Details
+                  </th>
+                  <td className="px-4 py-2">
+                    Units Per Strip: {product.packaging?.unitsPerStrip}
+                    <br />
+                    Strips Per Box: {product.packaging?.stripsPerBox}
+                  </td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Usage Details
+                  </th>
+                  <td className="px-4 py-2">
+                    <p>
+                      Main Title: {product.usageDetails?.indications?.mainTitle}
+                    </p>
+                    <p>
+                      Subtitles:{" "}
+                      {product.usageDetails?.indications?.subtitles?.join(", ")}
+                    </p>
+                    <div>
+                      <p>Dosage Details:</p>
+                      {product.usageDetails?.dosageDetails?.map(
+                        (dosage, index) => (
+                          <div key={index} className="mt-2">
+                            <p>Age Range: {dosage.ageRange}</p>
+                            <p>User Group: {dosage.userGroup}</p>
+                            <p>
+                              Dosage Instructions:{" "}
+                              {dosage.dosageInstructions?.join(", ")}
+                            </p>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        ) : (
-          <p>Loading...</p>
-        )}
+        </div>
+        <button
+          onClick={handlePrint}
+          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Print
+        </button>
       </div>
     </div>
   );

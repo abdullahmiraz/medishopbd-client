@@ -159,6 +159,7 @@ const ProductSingleView = ({ productId }) => {
         await axios.post(`${serverUrl}/api/reviews`, {
           productId,
           userId,
+          name,
           rating,
           comment,
         });
@@ -408,9 +409,9 @@ const ProductSingleView = ({ productId }) => {
       <div className="reviews mt-8">
         <h3 className="font-bold text-lg">Reviews</h3>
         {reviews?.length > 0 ? (
-          <ul className="list-disc ml-4">
+          <ul className="list-disc my-4">
             {reviews?.map((review) => (
-              <li key={review?._id} className="mt-2">
+              <li key={review?._id} className="mt-2 list-none bg-slate-100 p-3 rounded-md">
                 <div>
                   <strong>User:</strong> {name}{" "}
                   <span className="text-yellow-500">
