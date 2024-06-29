@@ -10,6 +10,14 @@ import { placeholderImage, serverUrl } from "../../../../api";
 const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
   const [stripCount, setStripCount] = useState(1);
+  const [rating, setRating] = useState(1);
+  const [comment, setComment] = useState("");
+  const [reviews, setReviews] = useState([]);
+  const [name, setName] = useState("");
+  const [reviewIdToEdit, setReviewIdToEdit] = useState(null);
+  const [editedRating, setEditedRating] = useState(1);
+  const [editedComment, setEditedComment] = useState("");
+  const userId = sessionStorage.getItem("mongoUserId");
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -21,8 +29,21 @@ const ProductSingleView = ({ productId }) => {
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+        const res = await axios.get(
+          `${serverUrl}/api/reviews/product/${productId}`
+        );
+        setReviews(res.data);
+        console.log(res.data);
+      } catch (error) {
+        console.error("Error fetching reviews", error);
+      }
+    };
+
     if (productId) {
       fetchProduct();
+      fetchReviews();
     }
   }, [productId]);
 
@@ -99,6 +120,81 @@ const ProductSingleView = ({ productId }) => {
       setStripCount(0); // Reset to 0 if input is empty or zero
     } else {
       setStripCount(product.availableStock); // Maximum strip count is availableStock
+    }
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
+        const userData = response.data;
+        setName(userData.name);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  const handleSubmitReview = async (event) => {
+    event.preventDefault();
+    if (!userId) {
+      toast.error("You must be logged in to submit a review.");
+      return;
+    }
+    try {
+      if (reviewIdToEdit) {
+        // Update review
+        await axios.put(`${serverUrl}/api/reviews/${reviewIdToEdit}`, {
+          rating: editedRating,
+          comment: editedComment,
+        });
+        toast.success("Review updated successfully!");
+        setReviewIdToEdit(null);
+        setEditedRating(1);
+        setEditedComment("");
+      } else {
+        // Create a new review
+        await axios.post(`${serverUrl}/api/reviews`, {
+          productId,
+          userId,
+          rating,
+          comment,
+        });
+        toast.success("Review submitted successfully!");
+      }
+      // Clear the form and fetch new reviews
+      setRating(1);
+      setComment("");
+      const res = await axios.get(
+        `${serverUrl}/api/reviews/product/${productId}`
+      );
+      setReviews(res.data);
+    } catch (error) {
+      console.error("Error submitting review", error);
+      toast.error("Failed to submit review.");
+    }
+  };
+
+  const handleEditReview = (review) => {
+    setReviewIdToEdit(review._id);
+    setEditedRating(review.rating);
+    setEditedComment(review.comment);
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await axios.delete(`${serverUrl}/api/reviews/${reviewId}`);
+      toast.success("Review deleted successfully!");
+      // Fetch new reviews
+      const res = await axios.get(
+        `${serverUrl}/api/reviews/product/${productId}`
+      );
+      setReviews(res.data);
+    } catch (error) {
+      console.error("Error deleting review", error);
+      toast.error("Failed to delete review.");
     }
   };
 
@@ -256,6 +352,98 @@ const ProductSingleView = ({ productId }) => {
             </ul>
           </div>
         ))}
+      </div>
+      {/* Review Form */}
+      <div className="review-form mt-8">
+        <h3 className="font-bold text-lg">
+          {reviewIdToEdit ? "Edit Your Review" : "Submit a Review"}
+        </h3>
+        <form onSubmit={handleSubmitReview} className="mt-4">
+          <div className="mb-4">
+            <label htmlFor="rating" className="block text-sm font-semibold">
+              Rating:
+            </label>
+            <select
+              id="rating"
+              value={reviewIdToEdit ? editedRating : rating}
+              onChange={(e) =>
+                reviewIdToEdit
+                  ? setEditedRating(Number(e.target.value))
+                  : setRating(Number(e.target.value))
+              }
+              className="border rounded px-2 py-1"
+            >
+              {[1, 2, 3, 4, 5].map((star) => (
+                <option key={star} value={star}>
+                  {star} Star{star > 1 ? "s" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label htmlFor="comment" className="block text-sm font-semibold">
+              Comment:
+            </label>
+            <textarea
+              id="comment"
+              value={reviewIdToEdit ? editedComment : comment}
+              onChange={(e) =>
+                reviewIdToEdit
+                  ? setEditedComment(e.target.value)
+                  : setComment(e.target.value)
+              }
+              className="border rounded px-2 py-1 w-full"
+              rows="4"
+            />
+          </div>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            {reviewIdToEdit ? "Update Review" : "Submit Review"}
+          </button>
+        </form>
+      </div>
+      {/* Reviews Section */}
+      <div className="reviews mt-8">
+        <h3 className="font-bold text-lg">Reviews</h3>
+        {reviews?.length > 0 ? (
+          <ul className="list-disc ml-4">
+            {reviews?.map((review) => (
+              <li key={review?._id} className="mt-2">
+                <div>
+                  <strong>User:</strong> {name}{" "}
+                  <span className="text-yellow-500">
+                    {"⭐".repeat(review.rating)}
+                  </span>
+                </div>
+                <p>{review?.comment}</p>
+                <p className="text-gray-500 text-sm">
+                  <strong>Submitted on:</strong>{" "}
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </p>
+                {review?.userId?._id === userId && (
+                  <div className="mt-2 flex space-x-2">
+                    <button
+                      onClick={() => handleEditReview(review)}
+                      className="text-blue-500 underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteReview(review._id)}
+                      className="text-red-500 underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No reviews yet. Be the first to review!</p>
+        )}
       </div>
     </div>
   );
