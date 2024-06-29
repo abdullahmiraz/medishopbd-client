@@ -8,11 +8,12 @@ import Link from "next/link";
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
 import { placeholderImage } from "../../../../api";
+import ProductCard from "../ProductCard/ProductCard";
 
 export default function ProductsViewCarousel({ title, products }: any) {
   console.log(products);
   return (
-    <div className="shadow-md max-h-min  pb-4">
+    <div className="shadow-md  flex flex-col gap-8  border-b-8   my-16  ">
       <TitleStyle title={title} />
       <Splide
         options={{
@@ -24,9 +25,10 @@ export default function ProductsViewCarousel({ title, products }: any) {
           autoScroll: {
             speed: 1,
           },
-          gap: "1rem",
-          fixedWidth: "15rem",
-          fixedHeight: "23rem",
+          gap: "2rem",
+          fixedWidth: "18rem",
+          // fixedHeight: "23rem",
+          pagination: false, // hides the dots
         }}
         aria-label="React Splide Example"
         extensions={{ AutoScroll }}
@@ -34,37 +36,7 @@ export default function ProductsViewCarousel({ title, products }: any) {
       >
         {products?.map((product, index) => (
           <SplideSlide key={index}>
-            <Link href={`/products/${product._id}`}>
-              <div className="cursor-pointer rounded-md w-56 my-8 shadow-md">
-                <figure className="relative" style={{ paddingBottom: "60%" }}>
-                  <Image
-                    src={product?.productImage || placeholderImage}
-                    alt={product?.productName}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-md"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src =
-                        placeholderImage;
-                    }}
-                  />
-                </figure>
-                <div className="card-body flex flex-col  justify-between p-2 h-40 ">
-                  <h2 className="card-title">
-                    {product.productName} {product.measure}
-                  </h2>
-                  <p>{product.productType}</p>
-                  <div className="price-view">
-                    <p>
-                      Price:{" "}
-                      <span className="font-bold">
-                        Tk. {product.pricePerUnit}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Link>
+            <ProductCard product={product} />
           </SplideSlide>
         ))}
       </Splide>

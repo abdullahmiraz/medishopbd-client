@@ -18,7 +18,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
   const [productData, setProductData] = useState<ProductData>(
     initialProduct || {
-      productId: 0,  // Changed from "" to 0
+      productId: 0, // Changed from "" to 0
       productName: "",
       measure: "",
       activeIngredient: "",
@@ -47,7 +47,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
       pharmacology: "",
     }
   );
-
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const productImageInputRef = useRef<HTMLInputElement>(null);
@@ -378,17 +377,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               required
             />
           </div>
-          <div className="mb-4">
-            <label className="block mb-1">Product Image URL</label>
-            <input
-              type="text"
-              name="productImage"
-              value={productData.productImage}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-              required
-            />
-          </div>
+
           <div className="mb-4">
             <label className="block mb-1">Indications Main Title</label>
             <input

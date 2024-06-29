@@ -41,9 +41,9 @@ const menuItems = {
       text: "Products List",
     },
     {
-      href: "sales",
+      href: "orders",
       icon: FaCashRegister,
-      text: "Sales",
+      text: "Orders/Sales",
     },
     {
       href: "addproducts",
@@ -73,9 +73,9 @@ const menuItems = {
       text: "Products List",
     },
     {
-      href: "sales",
+      href: "orders",
       icon: FaCashRegister,
-      text: "Sales",
+      text: "Orders/Sales",
     },
     {
       href: "addproducts",

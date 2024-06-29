@@ -144,7 +144,7 @@ const UserProfile = ({ userId }: { userId: string }) => {
                 href={user.prescription}
                 target="_blank"
               >
-                Check <FaArrowRight />
+                View <FaArrowRight />
               </Link>
             </div>
           )}

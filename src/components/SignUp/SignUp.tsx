@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../api";
 import { useRouter } from "next/navigation"; // Import useRouter from next/router
+import toast, { Toaster } from "react-hot-toast";
 
 const SignUp: React.FC = () => {
   const [phone, setPhone] = useState("");
@@ -42,14 +43,20 @@ const SignUp: React.FC = () => {
 
       // Redirect to the homepage or any other page
       router.push("/");
-    } catch (error) {
-      console.error("Error signing up or logging in:", error.response?.data || error.message);
+    } catch (error: any) {
+      toast.error(error.response?.data.message || error.message);
+
+      console.error(
+        "Error signing up or logging in:",
+        error.response?.data || error.message
+      );
       // Handle error, e.g., show error message to user
     }
   };
 
   return (
     <div className="hero min-h-screen bg-base-200">
+      <Toaster />
       <div className="hero-content flex-col">
         <h1 className="text-3xl font-bold">Sign Up now!</h1>
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

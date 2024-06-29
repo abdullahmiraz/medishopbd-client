@@ -101,17 +101,17 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    if (validateCheckout) {
-      if (mongoUserId) {
+    if (!mongoUserId) {
+      toast.error("Login/Signup First", {
+        duration: 5000,
+        position: "bottom-center",
+      });
+    } else {
+      if (validateCheckout) {
         router?.push("/checkout");
       } else {
-        toast.error("Login/Signup First", {
-          duration: 5000,
-          position: "bottom-center",
-        });
+        toast.error("Enter your name and address properly in profile page ");
       }
-    } else {
-      toast.error("Enter your name and address properly in profile page ");
     }
   };
 
@@ -200,7 +200,7 @@ const Cart = () => {
               <button
                 onClick={handleCheckout}
                 className="px-4 py-2 bg-green-500 text-white rounded"
-               >
+              >
                 Checkout
               </button>
             </div>

@@ -110,9 +110,9 @@ const ProductSingleView = ({ productId }) => {
     <div className="flex flex-col container mx-auto my-12 px-6">
       <Toaster />
       <div className="">
-        <div className="grid grid-cols-12 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
           <div
-            className="relative col-span-4 min-h-52"
+            className="relative md:col-span-1 xl:col-span-1 min-h-52"
             style={{ paddingBottom: "60%" }}
           >
             <Image
@@ -123,8 +123,8 @@ const ProductSingleView = ({ productId }) => {
               className="rounded-t-md border"
             />
           </div>
-          <div className="info-table grid grid-cols-10 col-span-8">
-            <div className="col-span-7">
+          <div className="info-table grid grid-cols-1 md:grid-cols-1 xl:grid-cols-10 md:col-span-1 xl:col-span-2 gap-4">
+            <div className="xl:col-span-7">
               <h2 className="font-bold text-2xl mb-4">
                 {product.productName} {product.measure}
               </h2>
@@ -138,7 +138,7 @@ const ProductSingleView = ({ productId }) => {
                 <strong>Stock:</strong> {product.availableStock}
               </p>
               <p>
-                <strong>Generics:</strong>
+                <strong>Generics: </strong>
                 <span className="font-semibold text-cyan-700">
                   {product.activeIngredient}
                 </span>
@@ -199,8 +199,8 @@ const ProductSingleView = ({ productId }) => {
                 Add to Cart
               </button>
             </div>
-            <div className="extra-infos col-span-3 px-2">
-              <h3 className="font-bold text-lg underline mb-4">
+            <div className="extra-infos xl:col-span-3 ">
+              <h3 className="font-bold text-lg underline mb-4  ">
                 Extra Information
               </h3>
               {product.requiresPrescription ? (
