@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { serverUrl } from "../../../../../api";
 
 interface User {
   id: number;
@@ -9,13 +10,17 @@ interface User {
 }
 
 const DeliveryAddress: React.FC = () => {
+  const mongoUserId = sessionStorage.getItem("mongoUserId");
   const [userAddress, setUserAddress] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUserAddress = async () => {
       try {
-        const response = await axios.get("http://localhost:3002/users/1");
-        setUserAddress(response.data); // Assuming user ID is 1
+        const response = await axios.get(
+          `${serverUrl}/api/users/${mongoUserId}`
+        );
+        setUserAddress(response?.data); // Assuming user ID is 1
+        console.log(response?.data);
       } catch (error) {
         console.error("Error fetching user address:", error);
       }
@@ -23,6 +28,7 @@ const DeliveryAddress: React.FC = () => {
 
     fetchUserAddress();
   }, []);
+  console.log(userAddress?.address);
 
   return (
     <div className="p-6 m-4 rounded-lg shadow-md">
@@ -36,7 +42,7 @@ const DeliveryAddress: React.FC = () => {
               </label>
               <input
                 type="text"
-                value={userAddress.address}
+                defaultValue={userAddress.address}
                 className="input input-bordered"
                 readOnly
               />

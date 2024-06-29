@@ -1,7 +1,7 @@
 const ProductPageSingleLayout = ({ children }) => {
   return (
     <>
-      <div className="h-screen">{children}</div>
+      <div className="min-h-screen overflow-y-auto">{children}</div>
     </>
   );
 };

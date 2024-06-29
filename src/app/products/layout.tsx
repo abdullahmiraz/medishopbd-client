@@ -7,7 +7,7 @@ const ProductsPageLayout = ({ children }) => {
     <>
       <SearchBarTop />
       <OptionBar />
-      <div >{children}</div>
+      <div className="min-h-screen overflow-y-auto">{children}</div>
       <Footer />
     </>
   );

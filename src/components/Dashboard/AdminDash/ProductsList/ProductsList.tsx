@@ -62,66 +62,66 @@ const ProductsList: React.FC = () => {
           <thead>
             <tr>
               <th>Actions</th>
-              <th>Serial</th>
+              {/* <th>Serial</th> */}
               <th>ID</th>
               <th>Name</th>
               <th>Measure</th>
-              <th>Active Ingredient</th>
-              <th>Dosage Form</th>
-              <th>Application Area</th>
-              <th>Primary Category</th>
-              <th>Sub Category</th>
-              <th>Product Type</th>
-              <th>Units Per Strip</th>
-              <th>Strips Per Box</th>
-              <th>Price Per Unit</th>
+              {/* <th>Active Ingredient</th> */}
+              {/* <th>Dosage Form</th> */}
+              {/* <th>Application Area</th> */}
+              <th>Primary-Cat</th>
+              <th>Sub-Cat</th>
+              {/* <th>Product Type</th> */}
+              {/* <th>Units Per Strip</th> */}
+              {/* <th>Strips Per Box</th> */}
+              <th>Price/Unit</th>
               <th>Available Stock</th>
               <th>Manufacturer</th>
               <th>Expiration Date</th>
-              <th>Batch Number</th>
-              <th>Aisle Location</th>
-              <th>Requires Prescription</th>
-              <th>Page Category</th>
-              <th>Product Image</th>
-              <th>Leaflet Image</th>
-              <th>Main Title</th>
-              <th>Subtitles</th>
-              <th>Age Range</th>
-              <th>User Group</th>
-              <th>Dosage Instructions</th>
-              <th>Pharmacology</th>
+              <th>Batch No</th>
+              <th>Aisle </th>
+              <th>Prescription?</th>
+              {/* <th>Page Category</th> */}
+              {/* <th>Product Image</th> */}
+              {/* <th>Leaflet Image</th> */}
+              {/* <th>Main Title</th> */}
+              {/* <th>Subtitles</th> */}
+              {/* <th>Age Range</th> */}
+              {/* <th>User Group</th> */}
+              {/* <th>Dosage Instructions</th> */}
+              {/* <th>Pharmacology</th> */}
             </tr>
           </thead>
           <tbody>
             {products.map((product, index) => (
               <tr key={product._id}>
-                <td className="flex gap-2 items-center mt-[15%]">
-                  <button className="text-blue-500  cursor-pointer p-2 ">
-                    <Link href={`/dashboard/product/${product._id}`}>
+                <td className="flex gap-2  items-center h-20">
+                  <Link href={`/dashboard/product/${product._id}`}>
+                    <button className="bg-blue-500 rounded-md text-white cursor-pointer px-2 py-1 flex ">
                       <FaEye />
-                    </Link>
-                  </button>
-                  <button className="text-blue-500  cursor-pointer p-2 ">
-                    <Link href={`/dashboard/editproduct/${product._id}`}>
+                    </button>
+                  </Link>
+                  <Link href={`/dashboard/editproduct/${product._id}`}>
+                    <button className="bg-green-500 rounded-md text-white cursor-pointer px-2 py-1">
                       <FaEdit />
-                    </Link>
-                  </button>
-                  <button className="text-red-500 cursor-pointer">
+                    </button>
+                  </Link>
+                  <button className="bg-red-500 rounded-md text-white cursor-pointer px-2 py-1">
                     <FaTrash onClick={() => handleDelete(product._id)} />
                   </button>
                 </td>
                 <td>{index + 1}</td>
-                <td>{product.productId}</td>
+                {/* <td>{product.productId}</td> */}
                 <td>{product?.productName}</td>
                 <td>{product?.measure}</td>
-                <td>{product?.activeIngredient}</td>
+                {/* <td>{product?.activeIngredient}</td>
                 <td>{product?.dosageForm}</td>
-                <td>{product?.applicationArea}</td>
+                <td>{product?.applicationArea}</td> */}
                 <td>{product?.primaryCategory}</td>
                 <td>{product?.subCategory}</td>
-                <td>{product?.productType}</td>
+                {/* <td>{product?.productType}</td>
                 <td>{product?.packaging?.unitsPerStrip}</td>
-                <td>{product?.packaging?.stripsPerBox}</td>
+                <td>{product?.packaging?.stripsPerBox}</td> */}
                 <td>{product?.pricePerUnit}</td>
                 <td>{product?.availableStock}</td>
                 <td>{product?.manufacturer}</td>
@@ -133,7 +133,7 @@ const ProductsList: React.FC = () => {
                 <td>{product?.batchNumber}</td>
                 <td>{product?.aisleLocation}</td>
                 <td>{product?.requiresPrescription ? "Yes" : "No"}</td>
-                <td>{product?.pageCategory}</td>
+                {/* <td>{product?.pageCategory}</td>
                 <td>{product?.productImage}</td>
                 <td>{product?.leafletImage}</td>
                 <td>{product?.usageDetails?.indications?.mainTitle}</td>
@@ -147,7 +147,7 @@ const ProductsList: React.FC = () => {
                     ", "
                   )}
                 </td>
-                <td>{product?.pharmacology}</td>
+                <td>{product?.pharmacology}</td> */}
               </tr>
             ))}
           </tbody>

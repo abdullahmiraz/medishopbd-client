@@ -165,7 +165,14 @@ const UserProfile = ({ userId }: { userId: string }) => {
           </button>
         )}
       </div>
-      <OrderHistory userId={mongoUserId} />
+      <div tabIndex={0} className="collapse border rounded-md ">
+        <div className="collapse-title text-md">
+          Order History : Click to Open
+        </div>
+        <div className="collapse-content">
+          <OrderHistory userId={mongoUserId} />
+        </div>
+      </div>
     </div>
   );
 };

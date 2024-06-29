@@ -99,11 +99,11 @@ const menuItems = {
       icon: FaHistory,
       text: "Order History",
     },
-    {
-      href: "deliveryaddress",
-      icon: FaMapMarker,
-      text: "Delivery Address",
-    },
+    // {
+    //   href: "deliveryaddress",
+    //   icon: FaMapMarker,
+    //   text: "Delivery Address",
+    // },
     {
       href: "myprescription",
       icon: FaFileMedicalAlt,

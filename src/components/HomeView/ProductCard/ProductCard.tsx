@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const ProductCard = ({ product }) => {
-  console.log(product);
+  // console.log(product);
   return (
     <Link href={`/products/${product._id}`}>
       <div className="flex flex-col border cursor-pointer rounded-md shadow-md overflow-hidden h-full text-sm md:text-base">

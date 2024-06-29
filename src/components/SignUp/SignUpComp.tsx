@@ -18,15 +18,8 @@ const SignUpComp = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [mongoUserId, setMongoUserId] = useState<string | null>(null);
-
   const router = useRouter();
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userId = sessionStorage.getItem("mongoUserId");
-      setMongoUserId(userId);
-    }
-  }, []);
+  const mongoUserId = sessionStorage.getItem("mongoUserId");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,7 +39,7 @@ const SignUpComp = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [mongoUserId]);
 
   const handleSignOut = () => {
     setIsLoggedIn(false);
