@@ -4,7 +4,7 @@ import { FiAirplay } from "react-icons/fi";
 
 const Footer = () => {
   return (
-    <div className="mt-12">
+    <div className=" ">
       <footer className="footer footer-center p-10 bg-cyan-800 text-primary-content">
         <aside>
           <FiAirplay size={52} />

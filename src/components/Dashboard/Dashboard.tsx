@@ -109,11 +109,11 @@ const menuItems = {
       icon: FaFileMedicalAlt,
       text: "My Prescription",
     },
-    {
-      href: "submitreview",
-      icon: FaStar,
-      text: "Submit Review",
-    },
+    // {
+    //   href: "submitreview",
+    //   icon: FaStar,
+    //   text: "Submit Review",
+    // },
     {
       href: "../../",
       icon: FaHome,
@@ -154,7 +154,7 @@ const Dashboard = () => {
 
   const isAdmin: boolean = user?.role === "Admin" || false;
   const isManager: boolean = user?.role === "Manager" || false;
-  const isUser: boolean = user?.role === "User" || false;
+  const isUser: boolean = user?.role === "Customer" || false;
 
   const dashLocation = isAdmin
     ? "admin"
@@ -165,12 +165,15 @@ const Dashboard = () => {
     : "/error";
 
   return (
-    <div className="flex h-screen bg-green-400">
+    <div className="flex h-screen ">
       {/* dashboard side bar */}
-      <div className="min-w-32 w-full h-screen text-[darkblue] bg-green-400">
+      <div className="min-w-32 w-full h-screen text-[darkblue]  ">
         <ul className="menu p-0">
           {menuItems[dashLocation]?.map((item) => (
-            <li key={item.href} className="border-b-2 border-b-green-300">
+            <li
+              key={item.href}
+              className="border-b-2 border-b-green-300 text-xl p-4"
+            >
               <Link href={`/dashboard/${item.href}`} className="dashboard-link">
                 <item.icon />
                 {item.text}

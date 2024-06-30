@@ -9,7 +9,7 @@ interface User {
   _id: string;
   name: string;
   email: string;
-  role: "Admin" | "Manager" | "User";
+  role: "Admin" | "Manager" | "Customer";
   phone: string;
   address: string;
   prescription: string;
@@ -146,7 +146,7 @@ const UsersList = (): JSX.Element => {
                     >
                       <option value="Admin">Admin</option>
                       <option value="Manager">Manager</option>
-                      <option value="User">User</option>
+                      <option value="Customer">Customer</option>
                     </select>
                   ) : (
                     user.role

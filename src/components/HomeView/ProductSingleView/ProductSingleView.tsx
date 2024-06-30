@@ -10,6 +10,7 @@ import { placeholderImage, serverUrl } from "../../../../api";
 const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
   const [stripCount, setStripCount] = useState(1);
+  const [stockOutAlert, setStockOutAlert] = useState(false);
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState([]);
@@ -108,6 +109,9 @@ const ProductSingleView = ({ productId }) => {
   };
 
   const handleQuantityChange = (newValue) => {
+    if (product?.availableStock < 1) {
+      setStockOutAlert(true);
+    }
     // Handle direct input or backspace
     const newCount = Number(newValue);
     if (
@@ -231,9 +235,14 @@ const ProductSingleView = ({ productId }) => {
               <p>
                 <strong>Manufacturer:</strong> {product.manufacturer}
               </p>
-              <p>
-                <strong>Stock:</strong> {product.availableStock}
-              </p>
+              <div className="flex gap-2">
+                <strong>Stock:</strong>{" "}
+                {product.availableStock > 0 ? (
+                  product.availableStock
+                ) : (
+                  <p className="text-red-600">Stock Out !!</p>
+                )}
+              </div>
               <p>
                 <strong>Generics: </strong>
                 <span className="font-semibold text-cyan-700">
@@ -241,9 +250,9 @@ const ProductSingleView = ({ productId }) => {
                 </span>
               </p>
               <div className="pack-details">
-                <strong>Pack Details:</strong>
                 {product.packaging?.unitsPerStrip ? (
                   <>
+                    <strong>Pack Details:</strong>
                     <p>
                       Per Strip: {`${product.packaging?.unitsPerStrip} Tablets`}
                     </p>
@@ -269,6 +278,7 @@ const ProductSingleView = ({ productId }) => {
                 <div className="flex items-center text-3xl font-bold">
                   <button
                     className="px-2 py-1 border bg-red-400"
+                    disabled={stockOutAlert}
                     onClick={() => handleQuantityChange(stripCount - 1)}
                   >
                     -
@@ -283,6 +293,7 @@ const ProductSingleView = ({ productId }) => {
                   />
                   <button
                     className="px-2 py-1 border bg-green-400"
+                    disabled={stockOutAlert}
                     onClick={() => handleQuantityChange(stripCount + 1)}
                   >
                     +
@@ -291,6 +302,7 @@ const ProductSingleView = ({ productId }) => {
               </div>
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                disabled={stockOutAlert}
                 onClick={handleAddToCart}
               >
                 Add to Cart
@@ -305,30 +317,32 @@ const ProductSingleView = ({ productId }) => {
                   Prescription required
                 </p>
               ) : null}
-              <Link
-                href={product?.leafletImage || placeholderImage}
-                className="cursor-pointer bg-orange-500 text-white py-2 px-4 rounded-xl"
-                target="_blank"
-              >
-                Leaflet
-              </Link>
+              {product?.leafletImage ? (
+                <Link
+                  href={product?.leafletImage || placeholderImage}
+                  className="cursor-pointer bg-orange-500 text-white py-2 px-4 rounded-xl"
+                  target="_blank"
+                >
+                  Leaflet
+                </Link>
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </div>
       </div>
-      <div className="indications mt-4">
-        <h3 className="font-bold text-lg">Usage Indications:</h3>
+      <div className="indications mt-12">
+        <h3 className="font-bold text-lg p-2 bg-slate-100 rounded-md">
+          Usage Indications of {product?.productName}
+        </h3>
         <ul>
+          <div>{product.usageDetails?.indications?.mainTitle}</div>
           <li>
-            <strong>Main Title:</strong>
-            {product.usageDetails?.indications?.mainTitle}
-          </li>
-          <li>
-            <strong>Subtitles:</strong>
             {product.usageDetails?.indications?.subtitles?.map(
               (subtitle, index) => (
-                <span key={index}>
-                  {subtitle}
+                <span key={index} className="flex">
+                  {index + 1}. {subtitle}
                   {index !==
                     product.usageDetails?.indications?.subtitles?.length - 1 &&
                     ", "}
@@ -339,21 +353,26 @@ const ProductSingleView = ({ productId }) => {
         </ul>
       </div>
       <div className="usage-details mt-4">
-        <h3 className="font-bold text-lg">Usage Details:</h3>
+        <h3 className="font-bold text-lg  p-2 bg-slate-100 rounded-md">
+          Dosage & Administration of {product?.productName}
+        </h3>
         {product.usageDetails?.dosageDetails?.map((detail, index) => (
           <div key={index} className="mt-2">
             <h4 className="font-semibold">{detail.ageRange}</h4>
-            <p>
-              <strong>User Group:</strong> {detail.userGroup}
-            </p>
+            <p>{detail.userGroup}</p>
             <ul>
               {detail.dosageInstructions.map((instruction, idx) => (
-                <li key={idx}>{instruction}</li>
+                <div key={idx}>
+                  <li>
+                    {idx + 1}. {instruction}
+                  </li>
+                </div>
               ))}
             </ul>
           </div>
         ))}
       </div>
+      <div className="divider"></div>
       {/* Review Form */}
       <div className="review-form mt-8">
         <h3 className="font-bold text-lg">
@@ -411,7 +430,10 @@ const ProductSingleView = ({ productId }) => {
         {reviews?.length > 0 ? (
           <ul className="list-disc my-4">
             {reviews?.map((review) => (
-              <li key={review?._id} className="mt-2 list-none bg-slate-100 p-3 rounded-md">
+              <li
+                key={review?._id}
+                className="mt-2 list-none bg-slate-100 p-3 rounded-md"
+              >
                 <div>
                   <strong>User:</strong> {name}{" "}
                   <span className="text-yellow-500">

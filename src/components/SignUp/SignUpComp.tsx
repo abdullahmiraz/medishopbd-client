@@ -81,7 +81,7 @@ const SignUpComp = () => {
               alt={user?.displayName || "User"}
             />
             <div className="flex items-center">
-              Hi, User {user?.displayName ? user.displayName.split(" ")[0] : ""}
+              Hi, {user?.name ? user?.name.split(" ")[0] : ""}
             </div>
           </Link>
           <p
