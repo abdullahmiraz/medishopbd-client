@@ -48,9 +48,15 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange }) => {
           className="select select-bordered w-full"
         >
           <option value="">Select Primary Category</option>
-          <option value="Healthcare">Healthcare</option>
-          <option value="Personal Care">Personal Care</option>
+          <option value="Medicine">Medicine</option>
           <option value="Nutrition">Nutrition</option>
+          <option value="Personal Care">Personal Care</option>
+          <option value="Baby Care">Baby Care</option>
+          <option value="Health Care">Health Care</option>
+          <option value="Herbal Products">Herbal Products</option>
+          <option value="Baby Food">Baby Food</option>
+          <option value="Skin Care">Skin Care</option>
+          <option value="Uncategorized">Uncategorized</option>
         </select>
       </div>
       <div className="mb-4">

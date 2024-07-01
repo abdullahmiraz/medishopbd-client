@@ -26,6 +26,8 @@ const ProductsList: React.FC = () => {
     fetchProducts();
   }, []);
 
+  console.log(products);
+
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
 

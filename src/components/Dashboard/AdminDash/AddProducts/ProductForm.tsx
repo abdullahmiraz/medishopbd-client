@@ -284,8 +284,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 handleNestedChange(e, "packaging", 0, "unitsPerStrip")
               }
               className="input input-bordered w-full"
-              required
-            />
+             />
           </div>
           <div className="mb-4">
             <label className="block mb-1">Strips Per Box</label>
@@ -297,8 +296,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 handleNestedChange(e, "packaging", 0, "stripsPerBox")
               }
               className="input input-bordered w-full"
-              required
-            />
+             />
           </div>
           <div className="mb-4">
             <label className="block mb-1">Price Per Unit</label>
