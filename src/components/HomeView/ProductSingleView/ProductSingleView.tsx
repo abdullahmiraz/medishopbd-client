@@ -52,7 +52,6 @@ const ProductSingleView = ({ productId }) => {
     if (!product) {
       return;
     }
-
     handleQuantityChange(1); // reset after you submit the cart
     if (stripCount >= 1) {
       let productCount = 0;
@@ -100,7 +99,7 @@ const ProductSingleView = ({ productId }) => {
 
       localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
       console.log(
-        `Added ${productCount} products (strips) of ${product.productName} to cart`
+        `Added ${productCount} products (strips) of ${product?.productName} to cart`
       );
       toast.success("Product added successfully!");
     } else {
@@ -302,7 +301,7 @@ const ProductSingleView = ({ productId }) => {
               </div>
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                disabled={stockOutAlert}
+                disabled={product?.availableStock < 1}
                 onClick={handleAddToCart}
               >
                 Add to Cart
