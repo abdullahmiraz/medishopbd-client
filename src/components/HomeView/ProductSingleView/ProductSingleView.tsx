@@ -206,6 +206,8 @@ const ProductSingleView = ({ productId }) => {
     return <div className="text-center my-20">Loading...</div>;
   }
 
+  const isExpired = new Date(product?.expirationDate)
+  console.log(isExpired);
   return (
     <div className="flex flex-col container mx-auto my-12 px-6">
       <Toaster />

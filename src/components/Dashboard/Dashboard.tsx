@@ -41,14 +41,14 @@ const menuItems = {
       text: "Products List",
     },
     {
-      href: "orders",
-      icon: FaCashRegister,
-      text: "Orders/Sales",
-    },
-    {
       href: "addproducts",
       icon: FaUtensils,
       text: "Add Products",
+    },
+    {
+      href: "orders",
+      icon: FaCashRegister,
+      text: "Orders/Sales",
     },
     {
       href: "payments",
@@ -73,14 +73,14 @@ const menuItems = {
       text: "Products List",
     },
     {
-      href: "orders",
-      icon: FaCashRegister,
-      text: "Orders/Sales",
-    },
-    {
       href: "addproducts",
       icon: FaUtensils,
       text: "Add Products",
+    },
+    {
+      href: "orders",
+      icon: FaCashRegister,
+      text: "Orders/Sales",
     },
     {
       href: "payments",

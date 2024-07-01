@@ -20,7 +20,7 @@ export interface UsageDetails {
   dosageDetails?: DosageDetail[];
 }
 
-interface ProductData {
+export interface ProductData {
   productId: number; // Change to number
   productName: string;
   measure: string;

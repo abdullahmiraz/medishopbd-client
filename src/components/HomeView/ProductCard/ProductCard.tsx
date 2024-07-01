@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { placeholderImage } from "../../../../api";
 
 const ProductCard = ({ product }) => {
   // console.log(product);
@@ -8,10 +9,7 @@ const ProductCard = ({ product }) => {
       <div className="flex flex-col border cursor-pointer rounded-md shadow-md overflow-hidden h-full text-sm md:text-base">
         <figure className="relative" style={{ paddingBottom: "60%" }}>
           <Image
-            src={
-              `${product?.productImage}` ||
-              `https://i.ibb.co/ZGCQxbH/osudpotro-default.webp`
-            }
+            src={`${product?.productImage}` || placeholderImage}
             alt={product?.productName}
             layout="fill"
             objectFit="cover"
