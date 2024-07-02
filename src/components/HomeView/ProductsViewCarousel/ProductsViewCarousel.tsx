@@ -12,7 +12,7 @@ import ProductCard from "../ProductCard/ProductCard";
 import { ProductData } from "../../Dashboard/AdminDash/AddProducts/products.types";
 
 export default function ProductsViewCarousel({ title, products }: any) {
-  console.log(products);
+  // console.log(products);
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
   console.log(currentDate);
   return (

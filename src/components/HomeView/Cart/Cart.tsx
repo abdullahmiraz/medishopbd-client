@@ -101,7 +101,11 @@ const Cart = () => {
   };
 
   const handleApplyPromoCode = () => {
-    applyPromoCode();
+    if (mongoUserId) {
+      toast.error("Login In First");
+    } else {
+      applyPromoCode();
+    }
   };
 
   const handleCheckout = () => {

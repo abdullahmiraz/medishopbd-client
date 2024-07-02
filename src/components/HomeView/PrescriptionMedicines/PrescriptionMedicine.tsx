@@ -3,29 +3,35 @@
 import "@splidejs/react-splide/css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { baseUrl, serverUrl } from "../../../../api";
+import { serverUrl } from "../../../../api";
 import ProductsViewCarousel from "../ProductsViewCarousel/ProductsViewCarousel";
 
 export default function PrescriptionMedicine() {
-  const [products, setProducts] = useState();
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchProducts = async () => {
       try {
         const res = await axios.get(`${serverUrl}/api/products`);
-        setProducts(res.data);
+        const allProducts = res.data;
+        setProducts(allProducts);
+        const medicineProducts = allProducts.filter(
+          (product) => product.primaryCategory === "Medicine"
+        );
+        setFilteredProducts(medicineProducts);
       } catch (error) {
-        console.error("Error fetching users", error);
+        console.error("Error fetching products", error);
       }
     };
 
-    fetchUsers();
+    fetchProducts();
   }, []);
 
-  console.log(products);
   return (
     <ProductsViewCarousel
       title={"Prescription Medicines"}
-      products={products}
+      products={filteredProducts}
     />
   );
 }
