@@ -9,6 +9,7 @@ import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
 import { placeholderImage } from "../../../../api";
 import ProductCard from "../ProductCard/ProductCard";
+import { ProductData } from "../../Dashboard/AdminDash/AddProducts/products.types";
 
 export default function ProductsViewCarousel({ title, products }: any) {
   console.log(products);
@@ -36,7 +37,7 @@ export default function ProductsViewCarousel({ title, products }: any) {
         extensions={{ AutoScroll }}
         className="mx-6"
       >
-        {products?.map((product, index) =>
+        {products?.map((product: ProductData, index) =>
           product.expirationDate >= currentDate ? (
             <SplideSlide key={index}>
               <ProductCard product={product} />

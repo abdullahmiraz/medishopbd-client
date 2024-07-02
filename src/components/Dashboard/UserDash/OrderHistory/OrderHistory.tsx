@@ -37,7 +37,7 @@ const OrderHistory = () => {
     };
 
     fetchOrders();
-  }, [userId]);
+  }, []);
 
   return (
     <div className="m-4">
