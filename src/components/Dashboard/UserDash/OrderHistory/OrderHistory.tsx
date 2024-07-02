@@ -36,8 +36,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
       try {
         let response;
         if (userId) {
+          // fetching specific users order history
           response = await axios.get(`${serverUrl}/api/users/orders/${userId}`);
         } else {
+          // fetching all orders history
           response = await axios.get(`${serverUrl}/api/orders`);
         }
         setOrders(response?.data);
