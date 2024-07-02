@@ -12,6 +12,8 @@ import ProductCard from "../ProductCard/ProductCard";
 
 export default function ProductsViewCarousel({ title, products }: any) {
   console.log(products);
+  const currentDate = JSON.stringify(new Date()).substring(1, 11);
+  console.log(currentDate);
   return (
     <div className="shadow-md  flex flex-col gap-8  border-b-8   my-16  ">
       <TitleStyle title={title} />
@@ -34,11 +36,13 @@ export default function ProductsViewCarousel({ title, products }: any) {
         extensions={{ AutoScroll }}
         className="mx-6"
       >
-        {products?.map((product, index) => (
-          <SplideSlide key={index}>
-            <ProductCard product={product} />
-          </SplideSlide>
-        ))}
+        {products?.map((product, index) =>
+          product.expirationDate >= currentDate ? (
+            <SplideSlide key={index}>
+              <ProductCard product={product} />
+            </SplideSlide>
+          ) : null
+        )}
       </Splide>
       <BannerWide />
     </div>
