@@ -1,7 +1,8 @@
 // TypeScript export interfaces for the schema
+
 export interface Packaging {
-  unitsPerStrip?: number;
-  stripsPerBox?: number;
+  unitsPerStrip?: number;  // Changed from string to number
+  stripsPerBox?: number;   // Changed from string to number
 }
 
 export interface DosageDetail {
@@ -20,17 +21,22 @@ export interface UsageDetails {
   dosageDetails?: DosageDetail[];
 }
 
+export interface Category {
+  id: string;   // Added `id` field
+  name: string; // Added `name` field
+}
+
 export interface ProductData {
-  productId: number; // Change to number
+  productId: number;  // Changed from string to number
   productName: string;
   measure: string;
   activeIngredient: string;
   dosageForm: string;
   applicationArea: string;
-  primaryCategory: string;
-  subCategory: string;
+  primaryCategory: Category;  // Updated to use `Category` interface
+  subCategory: Category;     // Updated to use `Category` interface
   productType: string;
-  packaging: { unitsPerStrip: string; stripsPerBox: string };
+  packaging: Packaging;     // Updated to use `Packaging` interface
   pricePerUnit: string;
   availableStock: string;
   manufacturer: string;
@@ -41,13 +47,6 @@ export interface ProductData {
   pageCategory: string;
   productImage: string;
   leafletImage: string;
-  usageDetails: {
-    indications: { mainTitle: string; subtitles: string[] };
-    dosageDetails: {
-      ageRange: string;
-      userGroup: string;
-      dosageInstructions: string[];
-    }[];
-  };
+  usageDetails: UsageDetails;  // Updated to use `UsageDetails` interface
   pharmacology: string;
 }

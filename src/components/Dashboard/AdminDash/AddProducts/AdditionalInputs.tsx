@@ -1,13 +1,70 @@
-// AdditionalInputs.tsx
+"use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { serverUrl } from "../../../../../api";
+import { ProductData } from "../../../../../types/products.types";  // Import the correct ProductData type
 
-interface Props {
-  productData: any; // Use 'any' for simplicity in this example, consider updating with proper types
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; // Change event type to HTMLSelectElement
+interface SubCategory {
+  id: string;
+  name: string;
 }
 
-const AdditionalInputs: React.FC<Props> = ({ productData, onChange }) => {
+interface Category {
+  id: string;
+  name: string;
+  subCategories: SubCategory[];
+}
+
+interface Props {
+  productData: ProductData;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onCategoryChange: (categoryId: string) => void;
+  onSubCategoryChange: (subCategoryId: string) => void;
+}
+
+const AdditionalInputs: React.FC<Props> = ({ productData, onChange, onCategoryChange, onSubCategoryChange }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/api/categories`);
+        setCategories(response.data);
+      } catch (err) {
+        setError("Failed to fetch categories");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (productData.primaryCategory && productData.primaryCategory.id) {
+      setSelectedCategoryId(productData?.primaryCategory?.id);
+    } else {
+      setSelectedCategoryId(null);
+    }
+  }, [productData.primaryCategory]);
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCategoryId = e.target.value;
+    setSelectedCategoryId(selectedCategoryId);
+    onChange(e);  // Pass the event to the parent component
+    onCategoryChange(selectedCategoryId);  // Call the additional handler for category change
+  };
+
+  const handleSubCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onChange(e);  // Pass the event to the parent component
+    onSubCategoryChange(e.target.value);  // Call the additional handler for sub-category change
+  };
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
   return (
     <>
       <div className="mb-4">
@@ -29,7 +86,7 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange }) => {
         <label className="block mb-1">Application Area</label>
         <select
           name="applicationArea"
-          value={productData.applicationArea}
+          value={productData?.applicationArea}
           onChange={onChange}
           className="select select-bordered w-full"
         >
@@ -42,35 +99,37 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange }) => {
       <div className="mb-4">
         <label className="block mb-1">Primary Category</label>
         <select
-          name="primaryCategory"
-          value={productData.primaryCategory}
-          onChange={onChange}
+          name="primaryCategory.id"
+          value={productData?.primaryCategory.id}
+          onChange={handleCategoryChange}
           className="select select-bordered w-full"
         >
           <option value="">Select Primary Category</option>
-          <option value="Medicine">Medicine</option>
-          <option value="Nutrition">Nutrition</option>
-          <option value="Personal Care">Personal Care</option>
-          <option value="Baby Care">Baby Care</option>
-          <option value="Health Care">Health Care</option>
-          <option value="Herbal Products">Herbal Products</option>
-          <option value="Baby Food">Baby Food</option>
-          <option value="Skin Care">Skin Care</option>
-          <option value="Uncategorized">Uncategorized</option>
+          {categories.map((category) => (
+            <option key={category?.id} value={category?.id}>
+              {category?.name}
+            </option>
+          ))}
         </select>
       </div>
       <div className="mb-4">
         <label className="block mb-1">Sub Category</label>
         <select
-          name="subCategory"
-          value={productData.subCategory}
-          onChange={onChange}
+          name="subCategory.id"
+          value={productData?.subCategory?.id}
+          onChange={handleSubCategoryChange}
           className="select select-bordered w-full"
+          disabled={!selectedCategoryId}
         >
           <option value="">Select Sub Category</option>
-          <option value="Pain Relief">Pain Relief</option>
-          <option value="Skin Care">Skin Care</option>
-          <option value="Vitamins">Vitamins</option>
+          {selectedCategoryId &&
+            categories
+              .find((category) => category.id === selectedCategoryId)
+              ?.subCategories?.map((subCategory) => (
+                <option key={subCategory.id} value={subCategory.id}>
+                  {subCategory.name}
+                </option>
+              ))}
         </select>
       </div>
       <div className="mb-4">

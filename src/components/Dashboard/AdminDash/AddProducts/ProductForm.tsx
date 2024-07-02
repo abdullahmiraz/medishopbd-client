@@ -24,10 +24,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
       activeIngredient: "",
       dosageForm: "",
       applicationArea: "",
-      primaryCategory: "",
-      subCategory: "",
+      primaryCategory: { id: "", name: "" },
+      subCategory: { id: "", name: "" },
       productType: "",
-      packaging: { unitsPerStrip: "", stripsPerBox: "" },
+      packaging: { unitsPerStrip: 0, stripsPerBox: 0 },
       pricePerUnit: "",
       availableStock: "",
       manufacturer: "",
@@ -182,6 +182,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
     // Submit the form data
     onSubmit(updatedProductData);
+    console.log(updatedProductData);
 
     // Clear the form fields after submission
     setProductData({
@@ -284,7 +285,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 handleNestedChange(e, "packaging", 0, "unitsPerStrip")
               }
               className="input input-bordered w-full"
-             />
+            />
           </div>
           <div className="mb-4">
             <label className="block mb-1">Strips Per Box</label>
@@ -296,7 +297,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 handleNestedChange(e, "packaging", 0, "stripsPerBox")
               }
               className="input input-bordered w-full"
-             />
+            />
           </div>
           <div className="mb-4">
             <label className="block mb-1">Price Per Unit</label>

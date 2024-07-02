@@ -41,6 +41,11 @@ const menuItems = {
       text: "Products List",
     },
     {
+      href: "categorylist",
+      icon: FaList,
+      text: "Category List",
+    },
+    {
       href: "addproducts",
       icon: FaUtensils,
       text: "Add Products",
@@ -71,6 +76,11 @@ const menuItems = {
       href: "productlist",
       icon: FaList,
       text: "Products List",
+    },
+    {
+      href: "categorylist",
+      icon: FaList,
+      text: "Category List",
     },
     {
       href: "addproducts",
