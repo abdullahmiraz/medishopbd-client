@@ -51,9 +51,13 @@ const Cart = () => {
         calculatedDiscount = discount;
       }
 
-      setDiscountedAmount(calculatedDiscount);
-      setMessage("Promo code applied successfully!");
-      toast.success("Promo code applied successfully!");
+      if (calculatedDiscount >= totalAmount) {
+        toast.error("Promo code cannnot be less than total price!");
+      } else {
+        setDiscountedAmount(calculatedDiscount);
+        setMessage("Promo code applied successfully!");
+        toast.success("Promo code applied successfully!");
+      }
     } catch (error) {
       console.error("Error applying promo code:", error);
       setMessage(error.response.data.message || "Invalid promo code.");
@@ -115,11 +119,15 @@ const Cart = () => {
     }
   };
 
+  const totalAmount =
+    calculateSubtotal() >= discountedAmount
+      ? calculateSubtotal() - discountedAmount + deliveryFee
+      : 0;
   const checkoutAmount = {
     subtotal: calculateSubtotal(),
     discountedAmount: discountedAmount.toFixed(2),
     deliveryFee: deliveryFee,
-    total: `${calculateSubtotal() - discountedAmount + deliveryFee}`,
+    total: totalAmount,
   };
 
   localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
