@@ -107,24 +107,27 @@ const UserProfile = () => {
               </div>
             )}
           </div>
-          {isEditing ? (
-            <button
-              onClick={handleUpdateUserDetails}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Save
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Edit
-            </button>
-          )}
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
+          <div className="flex justify-between">
+            <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
+            {isEditing ? (
+              <button
+                onClick={handleUpdateUserDetails}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Save Profile Editing
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Edit Profile
+              </button>
+            )}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 font-bold mb-1">

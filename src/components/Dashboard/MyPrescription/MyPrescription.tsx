@@ -9,16 +9,12 @@ import Image from "next/image";
 
 const MyPrescription = () => {
   const mongoUserId = sessionStorage.getItem("mongoUserId");
-  const [currentPrescription, setCurrentPrescription] = useState<string | null>(
-    null
-  );
+  const [currentPrescription, setCurrentPrescription] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCurrentPrescription = async () => {
       try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/${mongoUserId}`
-        );
+        const response = await axios.get(`${serverUrl}/api/users/${mongoUserId}`);
         if (response.data && response.data.prescription) {
           setCurrentPrescription(response.data.prescription);
         }
@@ -33,12 +29,9 @@ const MyPrescription = () => {
 
   const handleImageUploadSuccess = async (imageUrl: string) => {
     try {
-      const updateResponse = await axios.patch(
-        `${serverUrl}/api/users/${mongoUserId}`,
-        {
-          prescription: imageUrl,
-        }
-      );
+      const updateResponse = await axios.patch(`${serverUrl}/api/users/${mongoUserId}`, {
+        prescription: imageUrl,
+      });
 
       if (updateResponse.data) {
         toast.success("Prescription updated successfully!");
@@ -47,6 +40,20 @@ const MyPrescription = () => {
     } catch (error) {
       console.error("Error updating user:", error);
       toast.error("Error updating user.");
+    }
+  };
+
+  const deletePrescription = async () => {
+    try {
+      await axios.patch(`${serverUrl}/api/users/${mongoUserId}`, {
+        prescription: null,
+      });
+
+      toast.success("Prescription deleted successfully!");
+      setCurrentPrescription(null); // Clear the displayed prescription image
+    } catch (error) {
+      console.error("Error deleting prescription:", error);
+      toast.error("Error deleting prescription.");
     }
   };
 
@@ -71,6 +78,12 @@ const MyPrescription = () => {
               alt="Current Prescription"
               className="max-w-full h-auto rounded"
             />
+            <button
+              onClick={deletePrescription}
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded text-sm"
+            >
+              Delete Prescription
+            </button>
           </div>
         )}
       </div>

@@ -1,8 +1,8 @@
 import React from "react";
-import AllOrdersList from "../../../components/Dashboard/AdminDash/AllOrdersList/AllOrdersList";
+import OrderHistory from "../../../components/Dashboard/UserDash/OrderHistory/OrderHistory";
 
 const OrdersPage = () => {
-  return <AllOrdersList />;
+  return <OrderHistory />;
 };
 
 export default OrdersPage;

@@ -13,6 +13,7 @@ interface PromoCode {
   expiryDate: string;
   usageLimit: number;
   usageCount: number;
+  disabled: boolean;
 }
 
 const AdminPromoCodes: React.FC = () => {
@@ -54,6 +55,20 @@ const AdminPromoCodes: React.FC = () => {
       fetchAllPromoCodes(); // Refresh promo codes list after deletion
     } catch (error) {
       toast.error("Error deleting promo code");
+    }
+  };
+
+  const handleTogglePromoCodeStatus = async (code: string) => {
+    try {
+      const response = await axios.post(`${serverUrl}/api/promocodes/toggle`, {
+        code,
+      });
+
+      toast.success(response.data.message);
+      console.log(response.data.message);
+      fetchAllPromoCodes(); // Refresh promo codes list after toggling status
+    } catch (error) {
+      toast.error("Error toggling promo code status");
     }
   };
 
@@ -231,6 +246,9 @@ const AdminPromoCodes: React.FC = () => {
                 Used
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Disabled
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -253,11 +271,25 @@ const AdminPromoCodes: React.FC = () => {
                   {code.usageCount}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <button
+                  {code.disabled ? "Yes" : "No"}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {/* button to delete a promo code  */}
+                  {/* <button
                     onClick={() => handleDeletePromoCode(code.code)}
                     className="text-sm font-medium text-red-600 hover:text-red-900"
                   >
                     Delete
+                  </button> */}
+                  <button
+                    onClick={() => handleTogglePromoCodeStatus(code.code)}
+                    className={`text-sm font-medium ml-4 ${
+                      code.disabled
+                        ? "text-green-600 hover:text-green-900"
+                        : "text-red-600 hover:text-red-900"
+                    }`}
+                  >
+                    {code.disabled ? "Enable" : "Disable"}
                   </button>
                 </td>
               </tr>
