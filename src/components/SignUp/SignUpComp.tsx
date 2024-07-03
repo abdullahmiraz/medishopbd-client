@@ -28,7 +28,7 @@ const SignUpComp = () => {
           `${serverUrl}/api/users/${mongoUserId}`
         );
         const userData = response.data;
-        console.log(userData);
+        // console.log(userData);
         setMongoUser(true);
         setUser(userData);
         setIsLoggedIn(true);

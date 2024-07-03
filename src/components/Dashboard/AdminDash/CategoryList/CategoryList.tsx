@@ -10,6 +10,7 @@ interface SubCategory {
   name: string;
   description?: string;
   categoryImage?: string;
+  subCategoryCode: string; // Changed from categoryCode to subCategoryCode
 }
 
 interface Category {
@@ -17,6 +18,7 @@ interface Category {
   name: string;
   description?: string;
   categoryImage?: string;
+  categoryCode: string;
   subCategories: SubCategory[];
 }
 
@@ -40,7 +42,11 @@ const CategoryList: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${serverUrl}/api/categories`);
-        setCategories(response.data);
+        if (Array.isArray(response.data)) {
+          setCategories(response.data);
+        } else {
+          setError("Invalid data format received from the server.");
+        }
       } catch (err) {
         setError("Failed to fetch categories");
       } finally {
@@ -104,10 +110,12 @@ const CategoryList: React.FC = () => {
     e.preventDefault();
     try {
       if (editingSubCategory) {
+        console.log("Updating subcategory:", editingSubCategory);
         const response = await axios.put(
-          `${serverUrl}/api/subcategories/${editingSubCategory._id}`,
+          `${serverUrl}/api/categories/${selectedCategoryId}/subcategories/${editingSubCategory._id}`,
           editingSubCategory
         );
+        console.log("Updated subcategory:", response.data);
         setCategories(
           categories.map((cat) => ({
             ...cat,
@@ -118,10 +126,12 @@ const CategoryList: React.FC = () => {
         );
         setEditingSubCategory(null);
       } else if (selectedCategoryId) {
+        console.log("Adding new subcategory:", newSubCategory);
         const response = await axios.post(
           `${serverUrl}/api/categories/${selectedCategoryId}/subcategories`,
           newSubCategory
         );
+        console.log("Added subcategory:", response.data);
         setCategories(
           categories.map((cat) =>
             cat._id === selectedCategoryId
@@ -132,6 +142,7 @@ const CategoryList: React.FC = () => {
       }
       setNewSubCategory({});
     } catch (err) {
+      console.error("Failed to save subcategory", err);
       setError("Failed to save subcategory");
     }
   };
@@ -159,11 +170,13 @@ const CategoryList: React.FC = () => {
   };
 
   const handleDeleteSubCategory = async (
-    subCategoryId: string,
-    categoryId: string
+    categoryId: string,
+    subCategoryId: string
   ) => {
     try {
-      await axios.delete(`${serverUrl}/api/subcategories/${subCategoryId}`);
+      await axios.delete(
+        `${serverUrl}/api/categories/${categoryId}/subcategories/${subCategoryId}`
+      );
       setCategories(
         categories.map((cat) =>
           cat._id === categoryId
@@ -224,6 +237,17 @@ const CategoryList: React.FC = () => {
             onChange={handleCategoryInputChange}
             className="border p-2 rounded"
           />
+          <input
+            type="text"
+            name="categoryCode"
+            placeholder="Category Code"
+            value={
+              editingCategory?.categoryCode || newCategory.categoryCode || ""
+            }
+            onChange={handleCategoryInputChange}
+            className="border p-2 rounded"
+            required
+          />
         </div>
         <button
           type="submit"
@@ -269,6 +293,19 @@ const CategoryList: React.FC = () => {
               onChange={handleSubCategoryInputChange}
               className="border p-2 rounded"
             />
+            <input
+              type="text"
+              name="subCategoryCode"
+              placeholder="Subcategory Code"
+              value={
+                editingSubCategory?.subCategoryCode ||
+                newSubCategory.subCategoryCode ||
+                ""
+              }
+              onChange={handleSubCategoryInputChange}
+              className="border p-2 rounded"
+              required
+            />
           </div>
           <button
             type="submit"
@@ -295,6 +332,7 @@ const CategoryList: React.FC = () => {
             />
             <h2 className="text-xl font-semibold">{category.name}</h2>
             <p className="text-gray-700">{category.description}</p>
+            <p className="text-gray-700">Code: {category.categoryCode}</p>
             <h3 className="text-lg font-semibold mt-4">Subcategories</h3>
             <ul className="list-disc list-inside ml-4">
               {category.subCategories.map((subCategory) => (
@@ -309,6 +347,10 @@ const CategoryList: React.FC = () => {
                         {subCategory.description}
                       </p>
                     )}
+                    <p className="text-gray-600 text-sm">
+                      Code: {subCategory.subCategoryCode}{" "}
+                      {/* Changed from subCategoryCode */}
+                    </p>
                   </div>
                   <button
                     onClick={() =>
@@ -320,7 +362,7 @@ const CategoryList: React.FC = () => {
                   </button>
                   <button
                     onClick={() =>
-                      handleDeleteSubCategory(subCategory._id, category._id)
+                      handleDeleteSubCategory(category._id, subCategory._id)
                     }
                     className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
                   >

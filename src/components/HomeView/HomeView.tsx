@@ -15,7 +15,7 @@ import { UserAuth } from "../../context/AuthContext";
 
 const HomeView = () => {
   const { user } = UserAuth();
-  console.log(user || "");
+  // console.log(user || "");
 
   // const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);

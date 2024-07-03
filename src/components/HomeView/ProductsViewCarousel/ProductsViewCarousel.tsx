@@ -14,7 +14,7 @@ import { ProductData } from "../../Dashboard/AdminDash/AddProducts/products.type
 export default function ProductsViewCarousel({ title, products }: any) {
   // console.log(products);
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
-  console.log(currentDate);
+  // console.log(currentDate);
   return (
     <div className="shadow-md  flex flex-col gap-8  border-b-8   my-16  ">
       <TitleStyle title={title} />

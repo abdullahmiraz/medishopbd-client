@@ -137,7 +137,7 @@ const menuItems = {
   ],
 };
 
-console.log(mongoUserId);
+// console.log(mongoUserId);
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -149,7 +149,7 @@ const Dashboard = () => {
           `${serverUrl}/api/users/${mongoUserId}`
         );
         const userData = response.data;
-        console.log(userData);
+        // console.log(userData);
         setUser(userData); // Assuming userData contains a 'role' property
       } catch (error) {
         console.error("Error fetching user:", error);
