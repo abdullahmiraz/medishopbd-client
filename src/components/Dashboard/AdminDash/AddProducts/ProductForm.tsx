@@ -1,8 +1,8 @@
+import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
+import { serverUrl } from "../../../../../api";
 import { ProductData } from "./products.types";
-import AdditionalInputs from "./AdditionalInputs";
-import axios from "axios";
 
 interface ProductFormProps {
   initialProduct?: ProductData;
@@ -18,14 +18,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
   const [productData, setProductData] = useState<ProductData>(
     initialProduct || {
-      productId: 0, // Changed from "" to 0
+      productId: 0,
       productName: "",
       measure: "",
       activeIngredient: "",
       dosageForm: "",
       applicationArea: "",
-      primaryCategory: { id: "", name: "" },
-      subCategory: { id: "", name: "" },
+      primaryCategory: "", // Updated to a string
+      subCategory: "", // Updated to a string
       productType: "",
       packaging: { unitsPerStrip: 0, stripsPerBox: 0 },
       pricePerUnit: "",
@@ -49,6 +49,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subCategories, setSubCategories] = useState<Category[]>([]);
   const productImageInputRef = useRef<HTMLInputElement>(null);
   const leafletImageInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,7 +61,34 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }
   }, [initialProduct]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/api/categories`);
+        setCategories(response.data);
+        // Initialize subCategories based on the initial product's primaryCategory
+        const initialCategory = response.data.find(
+          (cat) => cat._id === productData.primaryCategory
+        );
+        setSubCategories(initialCategory ? initialCategory.subCategories : []);
+      } catch (err) {
+        console.error("Failed to fetch categories", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const selectedCategory = categories.find(
+      (category) => category._id === productData.primaryCategory
+    );
+    setSubCategories(selectedCategory ? selectedCategory.subCategories : []);
+  }, [productData.primaryCategory, categories]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
       setProductData({ ...productData, [name]: checked });
@@ -67,66 +97,21 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
-  const handleNestedChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    nestedKey: string,
-    index: number,
-    subKey: string
-  ) => {
-    const { value } = e.target;
-    const updatedData = { ...productData };
-
-    // Split nested keys to handle deep nested objects
-    const keys = nestedKey.split(".");
-
-    // Traverse through the nested structure to the correct level
-    let nestedObj: any = updatedData;
-    for (let i = 0; i < keys.length; i++) {
-      if (!nestedObj[keys[i]]) {
-        nestedObj[keys[i]] = i === keys.length - 1 ? {} : [];
-      }
-      if (i === keys.length - 1) {
-        if (Array.isArray(nestedObj[keys[i]])) {
-          nestedObj[keys[i]][index][subKey] = value;
-        } else {
-          nestedObj[keys[i]][subKey] = value;
-        }
-      } else {
-        nestedObj = nestedObj[keys[i]];
-      }
-    }
-
-    setProductData(updatedData);
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const categoryId = e.target.value;
+    setProductData({
+      ...productData,
+      primaryCategory: categoryId,
+      subCategory: "", // Clear sub-category when category changes
+    });
   };
 
-  const handleArrayChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    nestedKey: string,
-    index: number,
-    subIndex: number
-  ) => {
-    const { value } = e.target;
-    const updatedData = { ...productData };
-
-    const keys = nestedKey.split(".");
-
-    let nestedObj: any = updatedData;
-    for (let i = 0; i < keys.length; i++) {
-      if (!nestedObj[keys[i]]) {
-        nestedObj[keys[i]] = i === keys.length - 1 ? [] : {};
-      }
-      nestedObj = nestedObj[keys[i]];
-    }
-
-    // Ensure the nested array at index exists
-    if (!Array.isArray(nestedObj)) {
-      nestedObj = [];
-    }
-
-    // Directly update the subtitle at index
-    nestedObj[index] = value;
-
-    setProductData(updatedData);
+  const handleSubCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const subCategoryId = e.target.value;
+    setProductData({
+      ...productData,
+      subCategory: subCategoryId,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -186,16 +171,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
     // Clear the form fields after submission
     setProductData({
-      productId: "",
+      productId: 0,
       productName: "",
       measure: "",
       activeIngredient: "",
       dosageForm: "",
       applicationArea: "",
-      primaryCategory: "",
-      subCategory: "",
+      primaryCategory: "", // Reset to empty string
+      subCategory: "", // Reset to empty string
       productType: "",
-      packaging: { unitsPerStrip: "", stripsPerBox: "" },
+      packaging: { unitsPerStrip: 0, stripsPerBox: 0 },
       pricePerUnit: "",
       availableStock: "",
       manufacturer: "",
@@ -229,7 +214,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         onSubmit={handleSubmit}
         className="w-full mx-auto p-8 shadow-md rounded-lg"
       >
-        <div className=" grid grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
           <div className="mb-4">
             <label className="block mb-1">Product ID</label>
             <input
@@ -270,11 +255,74 @@ const ProductForm: React.FC<ProductFormProps> = ({
               value={productData.activeIngredient}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
             />
           </div>
-          <AdditionalInputs productData={productData} onChange={handleChange} />
-          {/* Add remaining fields here */}
+          <div className="mb-4">
+            <label className="block mb-1">Dosage Form</label>
+            <input
+              type="text"
+              name="dosageForm"
+              value={productData.dosageForm}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Application Area</label>
+            <input
+              type="text"
+              name="applicationArea"
+              value={productData.applicationArea}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1">Primary Category</label>
+            <select
+              name="primaryCategory"
+              value={productData.primaryCategory}
+              onChange={handleCategoryChange}
+              className="select select-bordered w-full"
+            >
+              <option value="">Select Category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1">Sub-Category</label>
+            <select
+              name="subCategory"
+              value={productData.subCategory}
+              onChange={handleSubCategoryChange}
+              className="select select-bordered w-full"
+              disabled={!productData.primaryCategory} // Disable if no category is selected
+            >
+              <option value="">Select Sub Category</option>
+              {subCategories.map((subCategory) => (
+                <option key={subCategory._id} value={subCategory._id}>
+                  {subCategory.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1">Product Type</label>
+            <input
+              type="text"
+              name="productType"
+              value={productData.productType}
+              onChange={handleChange}
+              className="input input-bordered w-full"
+            />
+          </div>
           <div className="mb-4">
             <label className="block mb-1">Units Per Strip</label>
             <input
@@ -282,7 +330,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
               name="unitsPerStrip"
               value={productData.packaging.unitsPerStrip}
               onChange={(e) =>
-                handleNestedChange(e, "packaging", 0, "unitsPerStrip")
+                setProductData({
+                  ...productData,
+                  packaging: {
+                    ...productData.packaging,
+                    unitsPerStrip: +e.target.value,
+                  },
+                })
               }
               className="input input-bordered w-full"
             />
@@ -294,7 +348,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
               name="stripsPerBox"
               value={productData.packaging.stripsPerBox}
               onChange={(e) =>
-                handleNestedChange(e, "packaging", 0, "stripsPerBox")
+                setProductData({
+                  ...productData,
+                  packaging: {
+                    ...productData.packaging,
+                    stripsPerBox: +e.target.value,
+                  },
+                })
               }
               className="input input-bordered w-full"
             />
@@ -302,23 +362,21 @@ const ProductForm: React.FC<ProductFormProps> = ({
           <div className="mb-4">
             <label className="block mb-1">Price Per Unit</label>
             <input
-              type="number"
+              type="text"
               name="pricePerUnit"
               value={productData.pricePerUnit}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
             />
           </div>
           <div className="mb-4">
             <label className="block mb-1">Available Stock</label>
             <input
-              type="number"
+              type="text"
               name="availableStock"
               value={productData.availableStock}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
             />
           </div>
           <div className="mb-4">
@@ -329,7 +387,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
               value={productData.manufacturer}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
             />
           </div>
           <div className="mb-4">
@@ -340,7 +397,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
               value={productData.expirationDate}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
             />
           </div>
           <div className="mb-4">
@@ -351,7 +407,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
               value={productData.batchNumber}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
             />
           </div>
           <div className="mb-4">
@@ -362,7 +417,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
               value={productData.aisleLocation}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Requires Prescription</label>
+            <input
+              type="checkbox"
+              name="requiresPrescription"
+              checked={productData.requiresPrescription}
+              onChange={handleChange}
+              className="checkbox checkbox-primary"
             />
           </div>
           <div className="mb-4">
@@ -373,149 +437,262 @@ const ProductForm: React.FC<ProductFormProps> = ({
               value={productData.pageCategory}
               onChange={handleChange}
               className="input input-bordered w-full"
-              required
             />
           </div>
 
           <div className="mb-4">
-            <label className="block mb-1">Indications Main Title</label>
+            <label className="block mb-1">Product Image</label>
+            <input
+              type="file"
+              ref={productImageInputRef}
+              className="file-input file-input-bordered w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Leaflet Image</label>
+            <input
+              type="file"
+              ref={leafletImageInputRef}
+              className="file-input file-input-bordered w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1">Indications</label>
             <input
               type="text"
-              name="mainTitle"
+              name="indications"
               value={productData.usageDetails.indications.mainTitle}
               onChange={(e) =>
-                handleNestedChange(
-                  e,
-                  "usageDetails.indications",
-                  0,
-                  "mainTitle"
-                )
+                setProductData({
+                  ...productData,
+                  usageDetails: {
+                    ...productData.usageDetails,
+                    indications: {
+                      ...productData.usageDetails.indications,
+                      mainTitle: e.target.value,
+                    },
+                  },
+                })
               }
               className="input input-bordered w-full"
             />
+            {productData.usageDetails.indications.subtitles.map(
+              (subtitle, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={subtitle}
+                  onChange={(e) => {
+                    const newSubtitles = [
+                      ...productData.usageDetails.indications.subtitles,
+                    ];
+                    newSubtitles[index] = e.target.value;
+                    setProductData({
+                      ...productData,
+                      usageDetails: {
+                        ...productData.usageDetails,
+                        indications: {
+                          ...productData.usageDetails.indications,
+                          subtitles: newSubtitles,
+                        },
+                      },
+                    });
+                  }}
+                  className="input input-bordered w-full mt-2"
+                />
+              )
+            )}
           </div>
-          {productData.usageDetails.indications.subtitles.map(
-            (subtitle, index) => (
-              <div key={index} className="mb-4">
-                <label className="block mb-1">Subtitle {index + 1}</label>
+
+          <div className="mb-4">
+            <label className="block mb-1">Dosage Details</label>
+            {productData.usageDetails.dosageDetails.map((detail, index) => (
+              <div key={index} className="mb-4 border p-4 rounded">
                 <input
                   type="text"
-                  name={`subtitle-${index}`}
-                  value={subtitle}
-                  onChange={(e) =>
-                    handleArrayChange(
-                      e,
-                      "usageDetails.indications.subtitles",
-                      index,
-                      0
-                    )
-                  }
-                  className="input input-bordered w-full"
+                  value={detail.ageRange}
+                  onChange={(e) => {
+                    const newDosageDetails = [
+                      ...productData.usageDetails.dosageDetails,
+                    ];
+                    newDosageDetails[index].ageRange = e.target.value;
+                    setProductData({
+                      ...productData,
+                      usageDetails: {
+                        ...productData.usageDetails,
+                        dosageDetails: newDosageDetails,
+                      },
+                    });
+                  }}
+                  placeholder="Age Range"
+                  className="input input-bordered w-full mb-2"
                 />
+                <input
+                  type="text"
+                  value={detail.userGroup}
+                  onChange={(e) => {
+                    const newDosageDetails = [
+                      ...productData.usageDetails.dosageDetails,
+                    ];
+                    newDosageDetails[index].userGroup = e.target.value;
+                    setProductData({
+                      ...productData,
+                      usageDetails: {
+                        ...productData.usageDetails,
+                        dosageDetails: newDosageDetails,
+                      },
+                    });
+                  }}
+                  placeholder="User Group"
+                  className="input input-bordered w-full mb-2"
+                />
+                <input
+                  type="text"
+                  value={detail.dosageInstructions}
+                  onChange={(e) => {
+                    const newDosageDetails = [
+                      ...productData.usageDetails.dosageDetails,
+                    ];
+                    newDosageDetails[index].dosageInstructions = e.target.value;
+                    setProductData({
+                      ...productData,
+                      usageDetails: {
+                        ...productData.usageDetails,
+                        dosageDetails: newDosageDetails,
+                      },
+                    });
+                  }}
+                  placeholder="Dosage Instructions"
+                  className="input input-bordered w-full mb-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newDosageDetails = [
+                      ...productData.usageDetails.dosageDetails,
+                    ];
+                    newDosageDetails.splice(index, 1);
+                    setProductData({
+                      ...productData,
+                      usageDetails: {
+                        ...productData.usageDetails,
+                        dosageDetails: newDosageDetails,
+                      },
+                    });
+                  }}
+                  className="btn btn-danger w-full"
+                >
+                  Remove
+                </button>
               </div>
-            )
-          )}
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                setProductData({
+                  ...productData,
+                  usageDetails: {
+                    ...productData.usageDetails,
+                    dosageDetails: [
+                      ...productData.usageDetails.dosageDetails,
+                      { ageRange: "", userGroup: "", dosageInstructions: "" },
+                    ],
+                  },
+                })
+              }
+              className="btn btn-primary w-full"
+            >
+              Add Dosage Detail
+            </button>
+          </div>
+
           <div className="mb-4">
-            <label className="block mb-1">Pharmacology</label>
-            <input
-              name="pharmacology"
-              value={productData.pharmacology}
-              onChange={handleChange}
+            <label className="block mb-1">Side Effects</label>
+            <textarea
+              name="sideEffects"
+              value={productData.usageDetails.sideEffects}
+              onChange={(e) =>
+                setProductData({
+                  ...productData,
+                  usageDetails: {
+                    ...productData.usageDetails,
+                    sideEffects: e.target.value,
+                  },
+                })
+              }
               className="textarea textarea-bordered w-full"
             />
           </div>
+
           <div className="mb-4">
-            <label className="block mb-1">Requires Prescription</label>
-            <input
-              type="checkbox"
-              name="requiresPrescription"
-              checked={productData.requiresPrescription}
-              onChange={handleChange}
-              className="checkbox"
+            <label className="block mb-1">Precautions</label>
+            <textarea
+              name="precautions"
+              value={productData.usageDetails.precautions}
+              onChange={(e) =>
+                setProductData({
+                  ...productData,
+                  usageDetails: {
+                    ...productData.usageDetails,
+                    precautions: e.target.value,
+                  },
+                })
+              }
+              className="textarea textarea-bordered w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1">Interactions</label>
+            <textarea
+              name="interactions"
+              value={productData.usageDetails.interactions}
+              onChange={(e) =>
+                setProductData({
+                  ...productData,
+                  usageDetails: {
+                    ...productData.usageDetails,
+                    interactions: e.target.value,
+                  },
+                })
+              }
+              className="textarea textarea-bordered w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1">Storage Instructions</label>
+            <textarea
+              name="storageInstructions"
+              value={productData.storageInstructions}
+              onChange={(e) =>
+                setProductData({
+                  ...productData,
+                  storageInstructions: e.target.value,
+                })
+              }
+              className="textarea textarea-bordered w-full"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1">Additional Information</label>
+            <textarea
+              name="additionalInformation"
+              value={productData.additionalInformation}
+              onChange={(e) =>
+                setProductData({
+                  ...productData,
+                  additionalInformation: e.target.value,
+                })
+              }
+              className="textarea textarea-bordered w-full"
             />
           </div>
         </div>
-        {productData.usageDetails.dosageDetails.map((detail, index) => (
-          <div key={index} className="grid grid-cols-3 gap-4">
-            <div className="mb-4">
-              <label className="block mb-1">Age Range</label>
-              <input
-                type="text"
-                name="ageRange"
-                value={detail.ageRange}
-                onChange={(e) =>
-                  handleNestedChange(
-                    e,
-                    "usageDetails.dosageDetails",
-                    index,
-                    "ageRange"
-                  )
-                }
-                className="input input-bordered w-full"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1">User Group</label>
-              <input
-                type="text"
-                name="userGroup"
-                value={detail.userGroup}
-                onChange={(e) =>
-                  handleNestedChange(
-                    e,
-                    "usageDetails.dosageDetails",
-                    index,
-                    "userGroup"
-                  )
-                }
-                className="input input-bordered w-full"
-              />
-            </div>
-            {detail?.dosageInstructions?.map((instruction, subIndex) => (
-              <div key={subIndex} className="mb-4">
-                <label className="block mb-1">
-                  Dosage Instruction {subIndex + 1}
-                </label>
-                <input
-                  type="text"
-                  value={instruction}
-                  onChange={(e) =>
-                    handleArrayChange(
-                      e,
-                      `usageDetails.dosageDetails.${index}.dosageInstructions`,
-                      index,
-                      subIndex
-                    )
-                  }
-                  className="input input-bordered w-full"
-                />
-              </div>
-            ))}
-          </div>
-        ))}
-
-        <div className="mb-4 col-span-2  ">
-          <label className="block mb-1">Product Image</label>
-          <input
-            type="file"
-            className="file-input w-full bg-gray-200"
-            ref={productImageInputRef}
-          />
-        </div>
-        <div className="mb-4 col-span-2 ">
-          <label className="block mb-1">Leaflet Image</label>
-          <input
-            type="file"
-            className="file-input w-full bg-gray-200"
-            ref={leafletImageInputRef}
-          />
-        </div>
-        <button
-          type="submit"
-          className="btn btn-primary w-full my-8"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Submitting..." : "Submit"}
+        <button type="submit" className="btn btn-primary w-full">
+          Save Changes
         </button>
       </form>
     </div>

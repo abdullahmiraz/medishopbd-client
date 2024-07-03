@@ -141,6 +141,7 @@ const CategoryList: React.FC = () => {
         );
       }
       setNewSubCategory({});
+      setSelectedCategoryId(null); // Close the subcategory form after submit
     } catch (err) {
       console.error("Failed to save subcategory", err);
       setError("Failed to save subcategory");

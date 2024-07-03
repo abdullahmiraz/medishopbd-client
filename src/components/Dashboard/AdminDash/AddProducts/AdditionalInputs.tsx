@@ -3,18 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../../../api";
-import { ProductData } from "../../../../../types/products.types";  // Import the correct ProductData type
-
-interface SubCategory {
-  id: string;
-  name: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  subCategories: SubCategory[];
-}
+import { ProductData, Category } from "./products.types";
 
 interface Props {
   productData: ProductData;
@@ -23,9 +12,16 @@ interface Props {
   onSubCategoryChange: (subCategoryId: string) => void;
 }
 
-const AdditionalInputs: React.FC<Props> = ({ productData, onChange, onCategoryChange, onSubCategoryChange }) => {
+const AdditionalInputs: React.FC<Props> = ({
+  productData,
+  onChange,
+  onCategoryChange,
+  onSubCategoryChange,
+}) => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    productData.primaryCategory._id || ""
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,23 +38,19 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange, onCategoryCh
   }, []);
 
   useEffect(() => {
-    if (productData.primaryCategory && productData.primaryCategory.id) {
-      setSelectedCategoryId(productData?.primaryCategory?.id);
-    } else {
-      setSelectedCategoryId(null);
-    }
-  }, [productData.primaryCategory]);
+    setSelectedCategoryId(productData.primaryCategory._id || "");
+    onCategoryChange(productData.primaryCategory._id || "");
+  }, [productData.primaryCategory._id, onCategoryChange]);
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCategoryId = e.target.value;
     setSelectedCategoryId(selectedCategoryId);
-    onChange(e);  // Pass the event to the parent component
-    onCategoryChange(selectedCategoryId);  // Call the additional handler for category change
+    onCategoryChange(selectedCategoryId);
   };
 
   const handleSubCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(e);  // Pass the event to the parent component
-    onSubCategoryChange(e.target.value);  // Call the additional handler for sub-category change
+    const selectedSubCategoryId = e.target.value;
+    onSubCategoryChange(selectedSubCategoryId);
   };
 
   if (error) {
@@ -86,7 +78,7 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange, onCategoryCh
         <label className="block mb-1">Application Area</label>
         <select
           name="applicationArea"
-          value={productData?.applicationArea}
+          value={productData.applicationArea}
           onChange={onChange}
           className="select select-bordered w-full"
         >
@@ -100,14 +92,14 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange, onCategoryCh
         <label className="block mb-1">Primary Category</label>
         <select
           name="primaryCategory.id"
-          value={productData?.primaryCategory.id}
+          value={selectedCategoryId}
           onChange={handleCategoryChange}
           className="select select-bordered w-full"
         >
           <option value="">Select Primary Category</option>
           {categories.map((category) => (
-            <option key={category?.id} value={category?.id}>
-              {category?.name}
+            <option key={category._id} value={category._id}>
+              {category.name}
             </option>
           ))}
         </select>
@@ -116,7 +108,7 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange, onCategoryCh
         <label className="block mb-1">Sub Category</label>
         <select
           name="subCategory.id"
-          value={productData?.subCategory?.id}
+          value={productData.subCategory._id || ""}
           onChange={handleSubCategoryChange}
           className="select select-bordered w-full"
           disabled={!selectedCategoryId}
@@ -124,9 +116,9 @@ const AdditionalInputs: React.FC<Props> = ({ productData, onChange, onCategoryCh
           <option value="">Select Sub Category</option>
           {selectedCategoryId &&
             categories
-              .find((category) => category.id === selectedCategoryId)
+              .find((category) => category._id === selectedCategoryId)
               ?.subCategories?.map((subCategory) => (
-                <option key={subCategory.id} value={subCategory.id}>
+                <option key={subCategory._id} value={subCategory._id}>
                   {subCategory.name}
                 </option>
               ))}
