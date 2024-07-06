@@ -10,7 +10,7 @@ interface SubCategory {
   name: string;
   description?: string;
   categoryImage?: string;
-  subCategoryCode: string; // Changed from categoryCode to subCategoryCode
+  subCategoryCode: string;
 }
 
 interface Category {
@@ -27,16 +27,10 @@ const CategoryList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState<Partial<Category>>({});
-  const [editingCategory, setEditingCategory] =
-    useState<Partial<Category> | null>(null);
-  const [editingSubCategory, setEditingSubCategory] =
-    useState<Partial<SubCategory> | null>(null);
-  const [newSubCategory, setNewSubCategory] = useState<Partial<SubCategory>>(
-    {}
-  );
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null
-  );
+  const [editingCategory, setEditingCategory] = useState<Partial<Category> | null>(null);
+  const [editingSubCategory, setEditingSubCategory] = useState<Partial<SubCategory> | null>(null);
+  const [newSubCategory, setNewSubCategory] = useState<Partial<SubCategory>>({});
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -110,12 +104,10 @@ const CategoryList: React.FC = () => {
     e.preventDefault();
     try {
       if (editingSubCategory) {
-        console.log("Updating subcategory:", editingSubCategory);
         const response = await axios.put(
-          `${serverUrl}/api/categories/${selectedCategoryId}/subcategories/${editingSubCategory._id}`,
+          `${serverUrl}/api/categories/${selectedCategoryId}/subcategories/${editingSubCategory?._id}`,
           editingSubCategory
         );
-        console.log("Updated subcategory:", response.data);
         setCategories(
           categories.map((cat) => ({
             ...cat,
@@ -126,12 +118,10 @@ const CategoryList: React.FC = () => {
         );
         setEditingSubCategory(null);
       } else if (selectedCategoryId) {
-        console.log("Adding new subcategory:", newSubCategory);
         const response = await axios.post(
           `${serverUrl}/api/categories/${selectedCategoryId}/subcategories`,
           newSubCategory
         );
-        console.log("Added subcategory:", response.data);
         setCategories(
           categories.map((cat) =>
             cat._id === selectedCategoryId
@@ -143,7 +133,6 @@ const CategoryList: React.FC = () => {
       setNewSubCategory({});
       setSelectedCategoryId(null); // Close the subcategory form after submit
     } catch (err) {
-      console.error("Failed to save subcategory", err);
       setError("Failed to save subcategory");
     }
   };
@@ -319,7 +308,7 @@ const CategoryList: React.FC = () => {
 
       {/* Categories List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <div
             key={category._id}
             className="border p-4 rounded-lg shadow-lg relative"
@@ -331,7 +320,7 @@ const CategoryList: React.FC = () => {
               height={200}
               className="w-full h-40 object-cover rounded-md mb-4"
             />
-            <h2 className="text-xl font-semibold">{category.name}</h2>
+            <h2 className="text-xl font-semibold">{index+1}. {category.name}</h2>
             <p className="text-gray-700">{category.description}</p>
             <p className="text-gray-700">Code: {category.categoryCode}</p>
             <h3 className="text-lg font-semibold mt-4">Subcategories</h3>
@@ -349,8 +338,7 @@ const CategoryList: React.FC = () => {
                       </p>
                     )}
                     <p className="text-gray-600 text-sm">
-                      Code: {subCategory.subCategoryCode}{" "}
-                      {/* Changed from subCategoryCode */}
+                      Code: {subCategory.subCategoryCode}
                     </p>
                   </div>
                   <button

@@ -25,12 +25,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
       dosageForm: "",
       applicationArea: "",
       primaryCategory: {
+        id: "",
         name: "",
         description: "",
         categoryImage: "",
         categoryCode: "",
       },
       subCategory: {
+        id: "",
         name: "",
         description: "",
         categoryImage: "",
@@ -38,12 +40,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       },
       productType: "",
       packaging: {
-        // Default to optional fields if they are not provided
         unitsPerStrip: 0,
         stripsPerBox: 0,
       },
-      pricePerUnit: 0, // Changed from string to number
-      availableStock: 0, // Changed from string to number
+      pricePerUnit: 0,
+      availableStock: 0,
       manufacturer: "",
       expirationDate: "",
       batchNumber: "",
@@ -64,7 +65,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<Category[]>([]);
   const productImageInputRef = useRef<HTMLInputElement>(null);
@@ -81,9 +81,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
       try {
         const response = await axios.get(`${serverUrl}/api/categories`);
         setCategories(response.data);
+
         // Initialize subCategories based on the initial product's primaryCategory
         const initialCategory = response.data.find(
-          (cat) => cat._id === productData.primaryCategory
+          (cat) => cat._id === productData.primaryCategory.id
         );
         setSubCategories(initialCategory ? initialCategory.subCategories : []);
       } catch (err) {
@@ -92,14 +93,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
     };
 
     fetchCategories();
-  }, []);
+  }, [productData.primaryCategory.id]); // Updated dependency to productData.primaryCategory.id
 
   useEffect(() => {
     const selectedCategory = categories.find(
-      (category) => category._id === productData.primaryCategory
+      (category) => category._id === productData.primaryCategory.id
     );
     setSubCategories(selectedCategory ? selectedCategory.subCategories : []);
-  }, [productData.primaryCategory, categories]);
+  }, [productData.primaryCategory.id, categories]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -118,16 +119,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
     setProductData({
       ...productData,
-      primaryCategory: selectedCategory || {
-        _id: "",
-        name: "",
-        description: "",
-        categoryImage: "",
-        categoryCode: "",
-        subCategories: [],
+      primaryCategory: {
+        id: selectedCategory ? selectedCategory._id : "",
+        name: selectedCategory ? selectedCategory.name : "",
+        description: selectedCategory ? selectedCategory.description : "",
+        categoryImage: selectedCategory ? selectedCategory.categoryImage : "",
+        categoryCode: selectedCategory ? selectedCategory.categoryCode : "",
       },
       subCategory: {
-        _id: "",
+        id: "",
         name: "",
         description: "",
         categoryImage: "",
@@ -147,122 +147,102 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
     setProductData({
       ...productData,
-      subCategory: selectedSubCategory || {
-        _id: "",
-        name: "",
-        description: "",
-        categoryImage: "",
-        subCategoryCode: "",
+      subCategory: {
+        id: selectedSubCategory ? selectedSubCategory._id : "",
+        name: selectedSubCategory ? selectedSubCategory.name : "",
+        description: selectedSubCategory ? selectedSubCategory.description : "",
+        categoryImage: selectedSubCategory
+          ? selectedSubCategory.categoryImage
+          : "",
+        subCategoryCode: selectedSubCategory
+          ? selectedSubCategory.subCategoryCode
+          : "",
       },
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleImageUpload = async (
+    file: File,
+    imageType: "productImage" | "leafletImage"
+  ) => {
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await axios.post(imageHostingAPI, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response.data && response.data.data && response.data.data.url) {
+        setProductData({
+          ...productData,
+          [imageType]: response.data.data.url,
+        });
+      }
+    } catch (error) {
+      console.error("Image upload failed", error);
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setIsSubmitting(true);
 
-    // Create promises for image uploads
-    const uploadImagePromises: Promise<void>[] = [];
-    let productImageURL = productData.productImage;
-    let leafletImageURL = productData.leafletImage;
-
-    if (productImageInputRef.current?.files?.[0]) {
-      const formData = new FormData();
-      formData.append("image", productImageInputRef.current.files[0]);
-      uploadImagePromises.push(
-        axios
-          .post(imageHostingAPI, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-          .then((response) => {
-            if (response.data.success) {
-              productImageURL = response.data.data.url;
-            }
-          })
+    try {
+      await onSubmit(productData);
+      setProductData(
+        initialProduct || {
+          productId: 0,
+          productName: "",
+          measure: "",
+          activeIngredient: "",
+          dosageForm: "",
+          applicationArea: "",
+          primaryCategory: {
+            id: "",
+            name: "",
+            description: "",
+            categoryImage: "",
+            categoryCode: "",
+          },
+          subCategory: {
+            id: "",
+            name: "",
+            description: "",
+            categoryImage: "",
+            subCategoryCode: "",
+          },
+          productType: "",
+          packaging: {
+            unitsPerStrip: 0,
+            stripsPerBox: 0,
+          },
+          pricePerUnit: 0,
+          availableStock: 0,
+          manufacturer: "",
+          expirationDate: "",
+          batchNumber: "",
+          aisleLocation: "",
+          requiresPrescription: false,
+          pageCategory: "",
+          productImage: "",
+          leafletImage: "",
+          usageDetails: {
+            indications: {
+              mainTitle: "",
+              subtitles: [],
+            },
+            dosageDetails: [],
+          },
+          pharmacology: "",
+        }
       );
+    } catch (error) {
+      console.error("Submit failed", error);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (leafletImageInputRef.current?.files?.[0]) {
-      const formData = new FormData();
-      formData.append("image", leafletImageInputRef.current.files[0]);
-      uploadImagePromises.push(
-        axios
-          .post(imageHostingAPI, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-          .then((response) => {
-            if (response.data.success) {
-              leafletImageURL = response.data.data.url;
-            }
-          })
-      );
-    }
-
-    // Wait for all image uploads to complete
-    await Promise.all(uploadImagePromises);
-
-    // Update product data with image URLs
-    const updatedProductData = {
-      ...productData,
-      productImage: productImageURL,
-      leafletImage: leafletImageURL,
-    };
-
-    // Submit the form data
-    onSubmit(updatedProductData);
-    console.log(updatedProductData);
-
-    // Clear the form fields after submission
-    setProductData({
-      productId: 0,
-      productName: "",
-      measure: "",
-      activeIngredient: "",
-      dosageForm: "",
-      applicationArea: "",
-      primaryCategory: {
-        name: "",
-        description: "",
-        categoryImage: "",
-        categoryCode: "",
-      },
-      subCategory: {
-        name: "",
-        description: "",
-        categoryImage: "",
-        subCategoryCode: "",
-      },
-      productType: "",
-      packaging: {
-        // Default to optional fields if they are not provided
-        unitsPerStrip: 0,
-        stripsPerBox: 0,
-      },
-      pricePerUnit: 0, // Changed from string to number
-      availableStock: 0, // Changed from string to number
-      manufacturer: "",
-      expirationDate: "",
-      batchNumber: "",
-      aisleLocation: "",
-      requiresPrescription: false,
-      pageCategory: "",
-      productImage: "",
-      leafletImage: "",
-      usageDetails: {
-        indications: {
-          mainTitle: "",
-          subtitles: [],
-        },
-        dosageDetails: [],
-      },
-      pharmacology: "",
-    });
-
-    // Clear the file inputs
-    if (productImageInputRef.current) productImageInputRef.current.value = "";
-    if (leafletImageInputRef.current) leafletImageInputRef.current.value = "";
-
-    setIsSubmitting(false);
   };
 
   return (
@@ -340,7 +320,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             <label className="block mb-1">Primary Category</label>
             <select
               name="primaryCategory"
-              value={productData.primaryCategory}
+              value={productData.primaryCategory.id} // Use the ID for the value
               onChange={handleCategoryChange}
               className="select select-bordered w-full"
             >
@@ -355,12 +335,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
           <div className="mb-4">
             <label className="block mb-1">Sub-Category</label>
+
             <select
               name="subCategory"
-              value={productData.subCategory}
+              value={productData.subCategory.id} // Use the ID for the value
               onChange={handleSubCategoryChange}
               className="select select-bordered w-full"
-              disabled={!productData.primaryCategory} // Disable if no category is selected
+              disabled={!productData.primaryCategory.id} // Disable if no category is selected
             >
               <option value="">Select Sub Category</option>
               {subCategories.map((subCategory) => (
