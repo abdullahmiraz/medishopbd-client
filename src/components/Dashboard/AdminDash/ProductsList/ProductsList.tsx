@@ -10,37 +10,38 @@ import toast, { Toaster } from "react-hot-toast";
 
 const ProductsList: React.FC = () => {
   const [products, setProducts] = useState<ProductData[]>([]);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get<ProductData[]>(
-          `${serverUrl}/api/products`
-        );
+        const response = await axios.get<ProductData[]>(`${serverUrl}/api/products`);
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
+        toast.error("Error fetching products.");
+      } finally {
+        setLoading(false); // Set loading to false when done
       }
     };
 
     fetchProducts();
   }, []);
 
-  console.log(products);
-
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
 
     if (confirmDelete) {
       try {
-        toast.promise(axios.delete(`${serverUrl}/api/products/${id}`), {
-          loading: "Deleting...",
-          success: <b>Product deleted!</b>,
-          error: <b>Error deleting product.</b>,
-        });
-        const updatedProducts = products.filter(
-          (product) => product._id !== id
+        await toast.promise(
+          axios.delete(`${serverUrl}/api/products/${id}`),
+          {
+            loading: "Deleting...",
+            success: <b>Product deleted!</b>,
+            error: <b>Error deleting product.</b>,
+          }
         );
+        const updatedProducts = products.filter((product) => product._id !== id);
         setProducts(updatedProducts);
       } catch (error) {
         console.error("Error deleting product:", error);
@@ -49,57 +50,39 @@ const ProductsList: React.FC = () => {
     }
   };
 
-  if (products === undefined) {
+  if (loading) {
     return <div>Loading...</div>; // Handle loading state
   }
 
   return (
-    <div className="container mx-auto p-4 shadow-xl  ">
+    <div className="container mx-auto p-4 shadow-xl">
       <Toaster />
-      <h2 className="font-extrabold text-2xl text-center my-4">
-        Products List
-      </h2>
+      <h2 className="font-extrabold text-2xl text-center my-4">Products List</h2>
       <div className="overflow-x-auto overflow-y-auto">
-        <table className="table table-zebra table-xs  table-pin-rows table-pin-cols">
+        <table className="table table-zebra table-xs table-pin-rows table-pin-cols">
           <thead>
             <tr>
               <th>Actions</th>
-              {/* <th>Serial</th> */}
               <th>ID</th>
               <th>Name</th>
               <th>Measure</th>
-              {/* <th>Active Ingredient</th> */}
-              {/* <th>Dosage Form</th> */}
-              {/* <th>Application Area</th> */}
               <th>Primary-Cat</th>
               <th>Sub-Cat</th>
-              {/* <th>Product Type</th> */}
-              {/* <th>Units Per Strip</th> */}
-              {/* <th>Strips Per Box</th> */}
               <th>Price/Unit</th>
               <th>Available Stock</th>
               <th>Manufacturer</th>
               <th>Expiration Date</th>
               <th>Batch No</th>
-              <th>Aisle </th>
+              <th>Aisle</th>
               <th>Prescription?</th>
-              {/* <th>Page Category</th> */}
-              {/* <th>Product Image</th> */}
-              {/* <th>Leaflet Image</th> */}
-              {/* <th>Main Title</th> */}
-              {/* <th>Subtitles</th> */}
-              {/* <th>Age Range</th> */}
-              {/* <th>User Group</th> */}
-              {/* <th>Dosage Instructions</th> */}
-              {/* <th>Pharmacology</th> */}
             </tr>
           </thead>
           <tbody>
             {products.map((product, index) => (
               <tr key={product._id}>
-                <td className="flex gap-2  items-center h-20">
+                <td className="flex gap-2 items-center h-20">
                   <Link href={`/dashboard/product/${product._id}`}>
-                    <button className="bg-blue-500 rounded-md text-white cursor-pointer px-2 py-1 flex ">
+                    <button className="bg-blue-500 rounded-md text-white cursor-pointer px-2 py-1 flex">
                       <FaEye />
                     </button>
                   </Link>
@@ -108,22 +91,18 @@ const ProductsList: React.FC = () => {
                       <FaEdit />
                     </button>
                   </Link>
-                  <button className="bg-red-500 rounded-md text-white cursor-pointer px-2 py-1">
-                    <FaTrash onClick={() => handleDelete(product._id)} />
+                  <button
+                    className="bg-red-500 rounded-md text-white cursor-pointer px-2 py-1"
+                    onClick={() => handleDelete(product._id)}
+                  >
+                    <FaTrash />
                   </button>
                 </td>
                 <td>{index + 1}</td>
-                {/* <td>{product.productId}</td> */}
                 <td>{product?.productName}</td>
                 <td>{product?.measure}</td>
-                {/* <td>{product?.activeIngredient}</td>
-                <td>{product?.dosageForm}</td>
-                <td>{product?.applicationArea}</td> */}
-                <td>{product?.primaryCategory}</td>
-                <td>{product?.subCategory}</td>
-                {/* <td>{product?.productType}</td>
-                <td>{product?.packaging?.unitsPerStrip}</td>
-                <td>{product?.packaging?.stripsPerBox}</td> */}
+                <td>{product?.primaryCategory?.name || product?.primaryCategory}</td>
+                <td>{product?.subCategory?.name || product?.subCategory }</td>
                 <td>{product?.pricePerUnit}</td>
                 <td>{product?.availableStock}</td>
                 <td>{product?.manufacturer}</td>
@@ -135,21 +114,6 @@ const ProductsList: React.FC = () => {
                 <td>{product?.batchNumber}</td>
                 <td>{product?.aisleLocation}</td>
                 <td>{product?.requiresPrescription ? "Yes" : "No"}</td>
-                {/* <td>{product?.pageCategory}</td>
-                <td>{product?.productImage}</td>
-                <td>{product?.leafletImage}</td>
-                <td>{product?.usageDetails?.indications?.mainTitle}</td>
-                <td>
-                  {product?.usageDetails?.indications?.subtitles.join(", ")}
-                </td>
-                <td>{product?.usageDetails?.dosageDetails?.[0]?.ageRange}</td>
-                <td>{product?.usageDetails?.dosageDetails?.[0]?.userGroup}</td>
-                <td>
-                  {product?.usageDetails?.dosageDetails?.[0]?.dosageInstructions.join(
-                    ", "
-                  )}
-                </td>
-                <td>{product?.pharmacology}</td> */}
               </tr>
             ))}
           </tbody>

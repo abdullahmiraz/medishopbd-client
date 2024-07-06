@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../../api";
-import { ProductData } from "./products.types";
+import { Category, ProductData } from "./products.types";
 
 interface ProductFormProps {
   initialProduct?: ProductData;
@@ -24,12 +24,26 @@ const ProductForm: React.FC<ProductFormProps> = ({
       activeIngredient: "",
       dosageForm: "",
       applicationArea: "",
-      primaryCategory: "", // Updated to a string
-      subCategory: "", // Updated to a string
+      primaryCategory: {
+        name: "",
+        description: "",
+        categoryImage: "",
+        categoryCode: "",
+      },
+      subCategory: {
+        name: "",
+        description: "",
+        categoryImage: "",
+        subCategoryCode: "",
+      },
       productType: "",
-      packaging: { unitsPerStrip: 0, stripsPerBox: 0 },
-      pricePerUnit: "",
-      availableStock: "",
+      packaging: {
+        // Default to optional fields if they are not provided
+        unitsPerStrip: 0,
+        stripsPerBox: 0,
+      },
+      pricePerUnit: 0, // Changed from string to number
+      availableStock: 0, // Changed from string to number
       manufacturer: "",
       expirationDate: "",
       batchNumber: "",
@@ -39,10 +53,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       productImage: "",
       leafletImage: "",
       usageDetails: {
-        indications: { mainTitle: "", subtitles: [""] },
-        dosageDetails: [
-          { ageRange: "", userGroup: "", dosageInstructions: [""] },
-        ],
+        indications: {
+          mainTitle: "",
+          subtitles: [],
+        },
+        dosageDetails: [],
       },
       pharmacology: "",
     }
@@ -99,18 +114,46 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const categoryId = e.target.value;
+    const selectedCategory = categories.find((cat) => cat._id === categoryId);
+
     setProductData({
       ...productData,
-      primaryCategory: categoryId,
-      subCategory: "", // Clear sub-category when category changes
+      primaryCategory: selectedCategory || {
+        _id: "",
+        name: "",
+        description: "",
+        categoryImage: "",
+        categoryCode: "",
+        subCategories: [],
+      },
+      subCategory: {
+        _id: "",
+        name: "",
+        description: "",
+        categoryImage: "",
+        subCategoryCode: "",
+      },
     });
+
+    // Initialize subCategories based on the selected category
+    setSubCategories(selectedCategory ? selectedCategory.subCategories : []);
   };
 
   const handleSubCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const subCategoryId = e.target.value;
+    const selectedSubCategory = subCategories.find(
+      (subCat) => subCat._id === subCategoryId
+    );
+
     setProductData({
       ...productData,
-      subCategory: subCategoryId,
+      subCategory: selectedSubCategory || {
+        _id: "",
+        name: "",
+        description: "",
+        categoryImage: "",
+        subCategoryCode: "",
+      },
     });
   };
 
@@ -177,12 +220,26 @@ const ProductForm: React.FC<ProductFormProps> = ({
       activeIngredient: "",
       dosageForm: "",
       applicationArea: "",
-      primaryCategory: "", // Reset to empty string
-      subCategory: "", // Reset to empty string
+      primaryCategory: {
+        name: "",
+        description: "",
+        categoryImage: "",
+        categoryCode: "",
+      },
+      subCategory: {
+        name: "",
+        description: "",
+        categoryImage: "",
+        subCategoryCode: "",
+      },
       productType: "",
-      packaging: { unitsPerStrip: 0, stripsPerBox: 0 },
-      pricePerUnit: "",
-      availableStock: "",
+      packaging: {
+        // Default to optional fields if they are not provided
+        unitsPerStrip: 0,
+        stripsPerBox: 0,
+      },
+      pricePerUnit: 0, // Changed from string to number
+      availableStock: 0, // Changed from string to number
       manufacturer: "",
       expirationDate: "",
       batchNumber: "",
@@ -192,10 +249,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       productImage: "",
       leafletImage: "",
       usageDetails: {
-        indications: { mainTitle: "", subtitles: [""] },
-        dosageDetails: [
-          { ageRange: "", userGroup: "", dosageInstructions: [""] },
-        ],
+        indications: {
+          mainTitle: "",
+          subtitles: [],
+        },
+        dosageDetails: [],
       },
       pharmacology: "",
     });
@@ -372,7 +430,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
           <div className="mb-4">
             <label className="block mb-1">Available Stock</label>
             <input
-              type="text"
+              type="number"
               name="availableStock"
               value={productData.availableStock}
               onChange={handleChange}
