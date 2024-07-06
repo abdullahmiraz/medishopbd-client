@@ -46,7 +46,7 @@ const SignUpComp = () => {
     setIsLoggedIn(false);
 
     router.push("/");
-    window.location.reload();
+    // window.location.reload();
     sessionStorage.clear();
     localStorage.clear();
   };

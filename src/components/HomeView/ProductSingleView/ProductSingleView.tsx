@@ -266,12 +266,17 @@ const ProductSingleView = ({ productId }) => {
                   <span className="font-bold text-xl">
                     Tk. {product?.pricePerUnit}
                   </span>
-                  {product?.primaryCategory === "Medicine" ? "/ strip" : ""}
+                  {/* {product?.primaryCategory === "Medicine" ? "/ strip" : ""} */}
                 </p>
               </div>
               <div className="mt-4">
                 <label>
-                  <strong>Quantity:</strong> (strips)
+                  <strong>Quantity:</strong>
+                  {/* (
+                  {product?.primaryCategory === "Medicine"
+                    ? "strip"
+                    : "Single Unit"}
+                  ) */}
                 </label>
                 <div className="flex items-center text-3xl font-bold">
                   <button

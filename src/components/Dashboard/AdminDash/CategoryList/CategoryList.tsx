@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import { serverUrl } from "../../../../../api";
+import React, { useEffect, useState } from "react";
+import { placeholderImage, serverUrl } from "../../../../../api";
 
 interface SubCategory {
   _id: string;
@@ -27,10 +27,16 @@ const CategoryList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState<Partial<Category>>({});
-  const [editingCategory, setEditingCategory] = useState<Partial<Category> | null>(null);
-  const [editingSubCategory, setEditingSubCategory] = useState<Partial<SubCategory> | null>(null);
-  const [newSubCategory, setNewSubCategory] = useState<Partial<SubCategory>>({});
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [editingCategory, setEditingCategory] =
+    useState<Partial<Category> | null>(null);
+  const [editingSubCategory, setEditingSubCategory] =
+    useState<Partial<SubCategory> | null>(null);
+  const [newSubCategory, setNewSubCategory] = useState<Partial<SubCategory>>(
+    {}
+  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -314,21 +320,25 @@ const CategoryList: React.FC = () => {
             className="border p-4 rounded-lg shadow-lg relative"
           >
             <Image
-              src={category.categoryImage || "/placeholder.jpg"}
+              src={category.categoryImage || placeholderImage}
               alt={category.name}
               width={400}
               height={200}
               className="w-full h-40 object-cover rounded-md mb-4"
             />
-            <h2 className="text-xl font-semibold">{index+1}. {category.name}</h2>
+            <h2 className="text-xl font-semibold">
+              {index + 1}. {category.name}
+            </h2>
             <p className="text-gray-700">{category.description}</p>
             <p className="text-gray-700">Code: {category.categoryCode}</p>
-            <h3 className="text-lg font-semibold mt-4">Subcategories</h3>
+            <h3 className="text-lg font-semibold mt-4  ">
+              Subcategories ---------
+            </h3>
             <ul className="list-disc list-inside ml-4">
               {category.subCategories.map((subCategory) => (
                 <li
                   key={subCategory._id}
-                  className="flex justify-between items-center"
+                  className="flex justify-between items-center border p-1 my-2"
                 >
                   <div>
                     <span>{subCategory.name}</span>

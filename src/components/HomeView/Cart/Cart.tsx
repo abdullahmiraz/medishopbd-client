@@ -8,6 +8,7 @@ import axios from "axios";
 import { serverUrl } from "../../../../api";
 
 const Cart = () => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountedAmount, setDiscountedAmount] = useState(0);
@@ -72,6 +73,7 @@ const Cart = () => {
         const response = await axios.get(
           `${serverUrl}/api/users/${mongoUserId}`
         );
+        setCurrentUser(response.data);
         const userData = response.data;
         console.log("Fetched User Data:", userData);
 
@@ -110,6 +112,11 @@ const Cart = () => {
         duration: 5000,
         position: "bottom-center",
       });
+    } else if (!currentUser?.prescription) {
+      toast.error("Upload Your Prescription to checkout", {
+        duration: 5000,
+      });
+      router?.push(`../dashboard/profile/${currentUser?._id}`);
     } else {
       if (validateCheckout) {
         router?.push("/checkout");
@@ -168,6 +175,7 @@ const Cart = () => {
         <div className="lg:col-span-4">
           <div className="border p-4 rounded-md">
             <h2 className="font-bold text-xl mb-4">Cart Summary</h2>
+            {/* <h2>{JSON.stringify(currentUser)}</h2> */}
             <div className="flex justify-between mb-2">
               <span>Sub Total</span>
               <span>৳{checkoutAmount?.subtotal}</span>
