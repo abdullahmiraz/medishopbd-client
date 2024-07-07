@@ -78,7 +78,7 @@ const ProductSingleView = ({ productId }) => {
         productCount: productCount,
         pricePerStrip: product.pricePerUnit,
         totalPrice: product?.pricePerUnit * productCount,
-        presciption: product?.requiresPrescription,
+        prescription: product?.requiresPrescription,
       };
 
       console.log(cartItem);

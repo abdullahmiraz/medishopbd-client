@@ -15,27 +15,28 @@ const Cart = () => {
   const [deliveryFee, setDeliveryFee] = useState(60);
   const [message, setMessage] = useState("");
   const [validateCheckout, setValidateCheckout] = useState(false);
-  const [requiredPresciption, setRequiredPrescription] = useState("");
+  const [requiresPrescription, setRequiresPrescription] = useState(false);
 
   const mongoUserId = sessionStorage.getItem("mongoUserId");
   const router = useRouter();
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("medicine_cart")) || [];
+    console.log(savedCart);
     setCartItems(savedCart);
   }, []);
+
+  useEffect(() => {
+    const prescriptionRequired = cartItems.some((item) => item.prescription);
+    setRequiresPrescription(prescriptionRequired);
+  }, [cartItems]);
+  localStorage.setItem("prescription", requiresPrescription);
 
   const handleRemoveItem = (index) => {
     const updatedCart = cartItems.filter((item, i) => i !== index);
     setCartItems(updatedCart);
     localStorage.setItem("medicine_cart", JSON.stringify(updatedCart));
   };
-
-  cartItems.map((item) => {
-    console.log(item?.presciption);
-    item?.prescription ? setRequiredPrescription(true) : null;
-  });
-  localStorage.setItem("prescription", requiredPresciption);
 
   const calculateSubtotal = () => {
     return cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
@@ -45,14 +46,12 @@ const Cart = () => {
     try {
       const response = await axios.post(
         `${serverUrl}/api/promocodes/validate`,
-        {
-          code: promoCode,
-        }
+        { code: promoCode }
       );
 
       const { discount, discountType } = response.data;
-
       let calculatedDiscount = 0;
+
       if (discountType === "percentage") {
         calculatedDiscount = (discount / 100) * calculateSubtotal();
       } else if (discountType === "fixed") {
@@ -60,7 +59,7 @@ const Cart = () => {
       }
 
       if (calculatedDiscount >= totalAmount) {
-        toast.error("Promo code cannnot be less than total price!");
+        toast.error("Promo code cannot be less than total price!");
       } else {
         setDiscountedAmount(calculatedDiscount);
         setMessage("Promo code applied successfully!");
@@ -114,13 +113,14 @@ const Cart = () => {
   };
 
   console.log(currentUser);
+
   const handleCheckout = () => {
     if (!mongoUserId) {
       toast.error("Login/Signup First", {
         duration: 5000,
         position: "bottom-center",
       });
-    } else if (!currentUser?.prescription) {
+    } else if (requiresPrescription && !currentUser?.prescription) {
       toast.error("Upload Your Prescription to checkout", {
         duration: 5000,
       });
