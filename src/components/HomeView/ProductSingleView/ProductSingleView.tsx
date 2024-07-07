@@ -77,8 +77,12 @@ const ProductSingleView = ({ productId }) => {
         stripCount: stripCount,
         productCount: productCount,
         pricePerStrip: product.pricePerUnit,
-        totalPrice: product.pricePerUnit * productCount,
+        totalPrice: product?.pricePerUnit * productCount,
+        presciption: product?.requiresPrescription,
       };
+
+      console.log(cartItem);
+      console.log(product);
 
       const existingCart =
         JSON.parse(localStorage.getItem("medicine_cart")) || [];
@@ -98,6 +102,7 @@ const ProductSingleView = ({ productId }) => {
       }
 
       localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
+
       console.log(
         `Added ${productCount} products (strips) of ${product?.productName} to cart`
       );
@@ -149,7 +154,7 @@ const ProductSingleView = ({ productId }) => {
     try {
       if (reviewIdToEdit) {
         // Update review
-        await axios.put(`${serverUrl}/api/reviews/${reviewIdToEdit}`, {
+        await axios.patch(`${serverUrl}/api/reviews/${reviewIdToEdit}`, {
           rating: editedRating,
           comment: editedComment,
         });
@@ -269,6 +274,7 @@ const ProductSingleView = ({ productId }) => {
                   {/* {product?.primaryCategory === "Medicine" ? "/ strip" : ""} */}
                 </p>
               </div>
+
               <div className="mt-4">
                 <label>
                   <strong>Quantity:</strong>
@@ -386,22 +392,23 @@ const ProductSingleView = ({ productId }) => {
             <label htmlFor="rating" className="block text-sm font-semibold">
               Rating:
             </label>
-            <select
-              id="rating"
-              value={reviewIdToEdit ? editedRating : rating}
-              onChange={(e) =>
-                reviewIdToEdit
-                  ? setEditedRating(Number(e.target.value))
-                  : setRating(Number(e.target.value))
-              }
-              className="border rounded px-2 py-1"
-            >
+            <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <option key={star} value={star}>
-                  {star} Star{star > 1 ? "s" : ""}
-                </option>
+                <span
+                  key={star}
+                  onClick={() =>
+                    reviewIdToEdit ? setEditedRating(star) : setRating(star)
+                  }
+                  className={`cursor-pointer text-2xl ${
+                    (reviewIdToEdit ? editedRating : rating) >= star
+                      ? "text-yellow-500"
+                      : "text-gray-300"
+                  }`}
+                >
+                  ★
+                </span>
               ))}
-            </select>
+            </div>
           </div>
           <div className="mb-4">
             <label htmlFor="comment" className="block text-sm font-semibold">
@@ -429,7 +436,19 @@ const ProductSingleView = ({ productId }) => {
       </div>
       {/* Reviews Section */}
       <div className="reviews mt-8">
-        <h3 className="font-bold text-lg">Reviews</h3>
+        <div className="flex justify-between">
+          <h3 className="font-bold text-lg flex items-center gap-2">Reviews</h3>
+
+          <div className="font-bold">
+            Average Rating:{" "}
+            {reviews.length > 0
+              ? (
+                  reviews.reduce((sum, review) => sum + review?.rating, 0) /
+                  reviews.length
+                ).toFixed(1)
+              : "No reviews yet"}
+          </div>
+        </div>
         {reviews?.length > 0 ? (
           <ul className="list-disc my-4">
             {reviews?.map((review) => (

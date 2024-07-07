@@ -15,6 +15,7 @@ const Cart = () => {
   const [deliveryFee, setDeliveryFee] = useState(60);
   const [message, setMessage] = useState("");
   const [validateCheckout, setValidateCheckout] = useState(false);
+  const [requiredPresciption, setRequiredPrescription] = useState("");
 
   const mongoUserId = sessionStorage.getItem("mongoUserId");
   const router = useRouter();
@@ -29,6 +30,12 @@ const Cart = () => {
     setCartItems(updatedCart);
     localStorage.setItem("medicine_cart", JSON.stringify(updatedCart));
   };
+
+  cartItems.map((item) => {
+    console.log(item?.presciption);
+    item?.prescription ? setRequiredPrescription(true) : null;
+  });
+  localStorage.setItem("prescription", requiredPresciption);
 
   const calculateSubtotal = () => {
     return cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
@@ -106,6 +113,7 @@ const Cart = () => {
     applyPromoCode();
   };
 
+  console.log(currentUser);
   const handleCheckout = () => {
     if (!mongoUserId) {
       toast.error("Login/Signup First", {

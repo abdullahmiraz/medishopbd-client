@@ -83,9 +83,11 @@ const SignUpComp = () => {
                 alt={user?.displayName || "User"}
               />
             </div>
-            <div className="flex items-center">
-              Hi, {user?.name ? user?.name.split(" ")[0] : ""}
-            </div>
+            {user && (
+              <div className="flex items-center">
+                Hi, {user?.name ? user?.name.split(" ")[0] : ""}
+              </div>
+            )}
           </Link>
           <p
             onClick={handleSignOut}
