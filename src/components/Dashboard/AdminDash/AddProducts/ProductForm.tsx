@@ -1,90 +1,89 @@
+"use client";
+
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
-import { Toaster } from "react-hot-toast";
+import React, { useEffect, useState } from "react";
 import { serverUrl } from "../../../../../api";
-import { Category, ProductData } from "./products.types";
+import BasicInformation from "./BasicInformation";
+import CategoryDetails from "./CategoryDetails";
+import ImageUpload from "./ImageUpload";
+import Packaging from "./Packaging";
+import StockInformation from "./StockInformation";
+import UsageDetails from "./UsageDetails";
 
-interface ProductFormProps {
-  initialProduct?: ProductData;
-  onSubmit: (product: ProductData) => void;
-}
+const ProductForm: React.FC = ({ onSubmit }) => {
+  const [product, setProduct] = useState<{
+    productName: string;
+    measure: string;
+    activeIngredient: string;
+    dosageForm: string;
+    applicationArea: string;
+    productType: string;
+    primaryCategory: string;
+    subCategory: string;
+    unitsPerStrip: number;
+    stripsPerBox: number;
+    batchNumber: string;
+    quantity: number;
+    expirationDate: string;
+    aisleLocation: string;
+    productImage: string;
+    leafletImage: string;
+    indications: string;
+    ageRange: string;
+    userGroup: string;
+    dosageInstructions: string;
+    pharmacology: string;
+  }>({
+    productName: "",
+    measure: "",
+    activeIngredient: "",
+    dosageForm: "",
+    applicationArea: "",
+    productType: "",
+    primaryCategory: "",
+    subCategory: "",
+    unitsPerStrip: 0,
+    stripsPerBox: 0,
+    batchNumber: "",
+    quantity: 0,
+    expirationDate: "",
+    aisleLocation: "",
+    productImage: "",
+    leafletImage: "",
+    indications: "",
+    ageRange: "",
+    userGroup: "",
+    dosageInstructions: "",
+    pharmacology: "",
+  });
 
-const imageHostingKey = process.env.NEXT_PUBLIC_IMAGE_HOSTING_KEY;
-const imageHostingAPI = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
-
-const ProductForm: React.FC<ProductFormProps> = ({
-  initialProduct,
-  onSubmit,
-}) => {
-  const [productData, setProductData] = useState<ProductData>(
-    initialProduct || {
-      productId: 0,
-      productName: "",
-      measure: "",
-      activeIngredient: "",
-      dosageForm: "",
-      applicationArea: "",
-      primaryCategory: {
-        id: "",
-        name: "",
-        description: "",
-        categoryImage: "",
-        categoryCode: "",
-      },
-      subCategory: {
-        id: "",
-        name: "",
-        description: "",
-        categoryImage: "",
-        subCategoryCode: "",
-      },
-      productType: "",
-      packaging: {
-        unitsPerStrip: 0,
-        stripsPerBox: 0,
-      },
-      pricePerUnit: 0,
-      availableStock: 0,
-      manufacturer: "",
-      expirationDate: "",
-      batchNumber: "",
-      aisleLocation: "",
-      requiresPrescription: false,
-      pageCategory: "",
-      productImage: "",
-      leafletImage: "",
-      usageDetails: {
-        indications: {
-          mainTitle: "",
-          subtitles: [],
-        },
-        dosageDetails: [],
-      },
-      pharmacology: "",
-    }
+  const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
+    []
+  );
+  const [subCategories, setSubCategories] = useState<
+    { _id: string; name: string }[]
+  >([]);
+  const [loadingProduct, setLoadingProduct] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedProductImage, setSelectedProductImage] = useState<File | null>(
+    null
+  );
+  const [selectedLeafletImage, setSelectedLeafletImage] = useState<File | null>(
+    null
   );
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [subCategories, setSubCategories] = useState<Category[]>([]);
-  const productImageInputRef = useRef<HTMLInputElement>(null);
-  const leafletImageInputRef = useRef<HTMLInputElement>(null);
+  const imageHostingKey = process.env.NEXT_PUBLIC_IMAGE_HOSTING_KEY;
+  const imageHostingAPI = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
 
   useEffect(() => {
-    if (initialProduct) {
-      setProductData(initialProduct);
-    }
-  }, [initialProduct]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
+    const loadCategories = async () => {
       try {
         const response = await axios.get(`${serverUrl}/api/categories`);
         setCategories(response.data);
 
         // Initialize subCategories based on the initial product's primaryCategory
         const initialCategory = response.data.find(
-          (cat) => cat._id === productData.primaryCategory.id
+          (cat: any) => cat._id === product.primaryCategory?.id
         );
         setSubCategories(initialCategory ? initialCategory.subCategories : []);
       } catch (err) {
@@ -92,649 +91,176 @@ const ProductForm: React.FC<ProductFormProps> = ({
       }
     };
 
-    fetchCategories();
-  }, [productData.primaryCategory.id]); // Updated dependency to productData.primaryCategory.id
+    loadCategories();
+  }, [product.primaryCategory?.id]);
 
   useEffect(() => {
     const selectedCategory = categories.find(
-      (category) => category._id === productData.primaryCategory.id
+      (category) => category._id === product.primaryCategory?.id
     );
     setSubCategories(selectedCategory ? selectedCategory.subCategories : []);
-  }, [productData.primaryCategory.id, categories]);
+  }, [product.primaryCategory?.id, categories]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
-      setProductData({ ...productData, [name]: checked });
-    } else {
-      setProductData({ ...productData, [name]: value });
-    }
-  };
-
+  // Handle category change
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const categoryId = e.target.value;
-    const selectedCategory = categories.find((cat) => cat._id === categoryId);
-
-    setProductData({
-      ...productData,
-      primaryCategory: {
-        id: selectedCategory ? selectedCategory._id : "",
-        name: selectedCategory ? selectedCategory.name : "",
-        description: selectedCategory ? selectedCategory.description : "",
-        categoryImage: selectedCategory ? selectedCategory.categoryImage : "",
-        categoryCode: selectedCategory ? selectedCategory.categoryCode : "",
-      },
-      subCategory: {
-        id: "",
-        name: "",
-        description: "",
-        categoryImage: "",
-        subCategoryCode: "",
-      },
-    });
-
-    // Initialize subCategories based on the selected category
-    setSubCategories(selectedCategory ? selectedCategory.subCategories : []);
+    setProduct((prev) => ({
+      ...prev,
+      primaryCategory: e.target.value,
+      subCategory: "",
+    }));
   };
 
+  // Handle sub-category change
   const handleSubCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const subCategoryId = e.target.value;
-    const selectedSubCategory = subCategories.find(
-      (subCat) => subCat._id === subCategoryId
-    );
-
-    setProductData({
-      ...productData,
-      subCategory: {
-        id: selectedSubCategory ? selectedSubCategory._id : "",
-        name: selectedSubCategory ? selectedSubCategory.name : "",
-        description: selectedSubCategory ? selectedSubCategory.description : "",
-        categoryImage: selectedSubCategory
-          ? selectedSubCategory.categoryImage
-          : "",
-        subCategoryCode: selectedSubCategory
-          ? selectedSubCategory.subCategoryCode
-          : "",
-      },
-    });
+    setProduct((prev) => ({
+      ...prev,
+      subCategory: e.target.value,
+    }));
   };
 
-  const handleImageUpload = async (
-    file: File,
-    imageType: "productImage" | "leafletImage"
+  // Handle input change
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const response = await axios.post(imageHostingAPI, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      if (response.data && response.data.data && response.data.data.url) {
-        setProductData({
-          ...productData,
-          [imageType]: response.data.data.url,
-        });
-      }
-    } catch (error) {
-      console.error("Image upload failed", error);
-    }
+    const { name, value } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsSubmitting(true);
+  // Handle image file change and notify parent
+  const handleImageChange = (
+    productImage: File | null,
+    leafletImage: File | null
+  ) => {
+    setSelectedProductImage(productImage);
+    setSelectedLeafletImage(leafletImage);
+  };
+
+  // Upload images and submit the form
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent page reload
+
+    setLoadingProduct(true);
 
     try {
-      await onSubmit(productData);
-      setProductData(
-        initialProduct || {
-          productId: 0,
-          productName: "",
-          measure: "",
-          activeIngredient: "",
-          dosageForm: "",
-          applicationArea: "",
-          primaryCategory: {
-            id: "",
-            name: "",
-            description: "",
-            categoryImage: "",
-            categoryCode: "",
-          },
-          subCategory: {
-            id: "",
-            name: "",
-            description: "",
-            categoryImage: "",
-            subCategoryCode: "",
-          },
-          productType: "",
-          packaging: {
-            unitsPerStrip: 0,
-            stripsPerBox: 0,
-          },
-          pricePerUnit: 0,
-          availableStock: 0,
-          manufacturer: "",
-          expirationDate: "",
-          batchNumber: "",
-          aisleLocation: "",
-          requiresPrescription: false,
-          pageCategory: "",
-          productImage: "",
-          leafletImage: "",
-          usageDetails: {
-            indications: {
-              mainTitle: "",
-              subtitles: [],
-            },
-            dosageDetails: [],
-          },
-          pharmacology: "",
+      let productImageUrl = product.productImage;
+      if (selectedProductImage) {
+        const formDataProduct = new FormData();
+        formDataProduct.append("image", selectedProductImage);
+        const responseProduct = await fetch(imageHostingAPI, {
+          method: "POST",
+          body: formDataProduct,
+        });
+
+        const dataProduct = await responseProduct.json();
+        if (dataProduct && dataProduct.data && dataProduct.data.url) {
+          productImageUrl = dataProduct.data.url;
+        } else {
+          throw new Error("Product image upload failed");
         }
-      );
+      }
+
+      let leafletImageUrl = product.leafletImage;
+      if (selectedLeafletImage) {
+        const formDataLeaflet = new FormData();
+        formDataLeaflet.append("image", selectedLeafletImage);
+        const responseLeaflet = await fetch(imageHostingAPI, {
+          method: "POST",
+          body: formDataLeaflet,
+        });
+
+        const dataLeaflet = await responseLeaflet.json();
+        if (dataLeaflet && dataLeaflet.data && dataLeaflet.data.url) {
+          leafletImageUrl = dataLeaflet.data.url;
+        } else {
+          throw new Error("Leaflet image upload failed");
+        }
+      }
+
+      // Submit product data
+      // Final product data
+      const productData = {
+        ...product,
+        productImage: productImageUrl,
+        leafletImage: leafletImageUrl,
+      };
+
+      // Call the onSubmit prop function with the product data
+      onSubmit(productData);
+      // Replace with actual form submission logic
+      console.log("Form submitted with data:", productData);
+      // Example: await saveProduct(productData);
+      alert("Product saved successfully!");
     } catch (error) {
-      console.error("Submit failed", error);
+      console.error("Failed to save product", error);
+      alert("Failed to save product. Please try again.");
     } finally {
-      setIsSubmitting(false);
+      setLoadingProduct(false);
     }
   };
 
   return (
-    <div>
-      <Toaster />
-      <form
-        onSubmit={handleSubmit}
-        className="w-full mx-auto p-8 shadow-md rounded-lg"
+    <form onSubmit={handleFormSubmit}>
+      <BasicInformation
+        productName={product.productName}
+        measure={product.measure}
+        activeIngredient={product.activeIngredient}
+        dosageForm={product.dosageForm}
+        applicationArea={product.applicationArea}
+        productType={product.productType}
+        primaryCategory={product.primaryCategory}
+        subCategory={product.subCategory}
+        onChange={handleInputChange}
+      />
+      <CategoryDetails
+        primaryCategory={product.primaryCategory}
+        subCategory={product.subCategory}
+        onCategoryChange={handleCategoryChange}
+        onSubCategoryChange={handleSubCategoryChange}
+        categories={categories}
+        subCategories={subCategories}
+      />
+      <Packaging
+        unitsPerStrip={product.unitsPerStrip}
+        stripsPerBox={product.stripsPerBox}
+        onChange={handleInputChange}
+      />
+      <StockInformation
+        batchNumber={product.batchNumber}
+        quantity={product.quantity}
+        expirationDate={product.expirationDate}
+        aisleLocation={product.aisleLocation}
+        onChange={handleInputChange}
+      />
+
+      <UsageDetails
+        indications={product.indications}
+        dosageDetails={{
+          ageRange: product.ageRange,
+          userGroup: product.userGroup,
+          dosageInstructions: product.dosageInstructions,
+        }}
+        pharmacology={product.pharmacology}
+        onChange={handleInputChange}
+      />
+      <ImageUpload
+        onImageChange={handleImageChange}
+        productImageUrl={product.productImage}
+        leafletImageUrl={product.leafletImage}
+      />
+      <button
+        type="submit"
+        disabled={loadingProduct}
+        className="btn btn-primary mt-4"
       >
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
-          <div className="mb-4">
-            <label className="block mb-1">Product ID</label>
-            <input
-              type="number"
-              name="productId"
-              value={productData.productId}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Product Name</label>
-            <input
-              type="text"
-              name="productName"
-              value={productData.productName}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Measure</label>
-            <input
-              type="text"
-              name="measure"
-              value={productData.measure}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Active Ingredient</label>
-            <input
-              type="text"
-              name="activeIngredient"
-              value={productData.activeIngredient}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Dosage Form</label>
-            <input
-              type="text"
-              name="dosageForm"
-              value={productData.dosageForm}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Application Area</label>
-            <input
-              type="text"
-              name="applicationArea"
-              value={productData.applicationArea}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Primary Category</label>
-            <select
-              name="primaryCategory"
-              value={productData.primaryCategory.id} // Use the ID for the value
-              onChange={handleCategoryChange}
-              className="select select-bordered w-full"
-            >
-              <option value="">Select Category</option>
-              {categories.map((category) => (
-                <option key={category._id} value={category._id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Sub-Category</label>
-
-            <select
-              name="subCategory"
-              value={productData.subCategory.id} // Use the ID for the value
-              onChange={handleSubCategoryChange}
-              className="select select-bordered w-full"
-              disabled={!productData.primaryCategory.id} // Disable if no category is selected
-            >
-              <option value="">Select Sub Category</option>
-              {subCategories.map((subCategory) => (
-                <option key={subCategory._id} value={subCategory._id}>
-                  {subCategory.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Product Type</label>
-            <input
-              type="text"
-              name="productType"
-              value={productData.productType}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Units Per Strip</label>
-            <input
-              type="number"
-              name="unitsPerStrip"
-              value={productData.packaging.unitsPerStrip}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  packaging: {
-                    ...productData.packaging,
-                    unitsPerStrip: +e.target.value,
-                  },
-                })
-              }
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Strips Per Box</label>
-            <input
-              type="number"
-              name="stripsPerBox"
-              value={productData.packaging.stripsPerBox}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  packaging: {
-                    ...productData.packaging,
-                    stripsPerBox: +e.target.value,
-                  },
-                })
-              }
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Price Per Unit</label>
-            <input
-              type="text"
-              name="pricePerUnit"
-              value={productData.pricePerUnit}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Available Stock</label>
-            <input
-              type="number"
-              name="availableStock"
-              value={productData.availableStock}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Manufacturer</label>
-            <input
-              type="text"
-              name="manufacturer"
-              value={productData.manufacturer}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Expiration Date</label>
-            <input
-              type="date"
-              name="expirationDate"
-              value={productData.expirationDate}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Batch Number</label>
-            <input
-              type="text"
-              name="batchNumber"
-              value={productData.batchNumber}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Aisle Location</label>
-            <input
-              type="text"
-              name="aisleLocation"
-              value={productData.aisleLocation}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Requires Prescription</label>
-            <input
-              type="checkbox"
-              name="requiresPrescription"
-              checked={productData.requiresPrescription}
-              onChange={handleChange}
-              className="checkbox checkbox-primary"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Page Category</label>
-            <input
-              type="text"
-              name="pageCategory"
-              value={productData.pageCategory}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Product Image</label>
-            <input
-              type="file"
-              ref={productImageInputRef}
-              className="file-input file-input-bordered w-full"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Leaflet Image</label>
-            <input
-              type="file"
-              ref={leafletImageInputRef}
-              className="file-input file-input-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Indications</label>
-            <input
-              type="text"
-              name="indications"
-              value={productData.usageDetails.indications.mainTitle}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  usageDetails: {
-                    ...productData.usageDetails,
-                    indications: {
-                      ...productData.usageDetails.indications,
-                      mainTitle: e.target.value,
-                    },
-                  },
-                })
-              }
-              className="input input-bordered w-full"
-            />
-            {productData.usageDetails.indications.subtitles.map(
-              (subtitle, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  value={subtitle}
-                  onChange={(e) => {
-                    const newSubtitles = [
-                      ...productData.usageDetails.indications.subtitles,
-                    ];
-                    newSubtitles[index] = e.target.value;
-                    setProductData({
-                      ...productData,
-                      usageDetails: {
-                        ...productData.usageDetails,
-                        indications: {
-                          ...productData.usageDetails.indications,
-                          subtitles: newSubtitles,
-                        },
-                      },
-                    });
-                  }}
-                  className="input input-bordered w-full mt-2"
-                />
-              )
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Dosage Details</label>
-            {productData.usageDetails.dosageDetails.map((detail, index) => (
-              <div key={index} className="mb-4 border p-4 rounded">
-                <input
-                  type="text"
-                  value={detail.ageRange}
-                  onChange={(e) => {
-                    const newDosageDetails = [
-                      ...productData.usageDetails.dosageDetails,
-                    ];
-                    newDosageDetails[index].ageRange = e.target.value;
-                    setProductData({
-                      ...productData,
-                      usageDetails: {
-                        ...productData.usageDetails,
-                        dosageDetails: newDosageDetails,
-                      },
-                    });
-                  }}
-                  placeholder="Age Range"
-                  className="input input-bordered w-full mb-2"
-                />
-                <input
-                  type="text"
-                  value={detail.userGroup}
-                  onChange={(e) => {
-                    const newDosageDetails = [
-                      ...productData.usageDetails.dosageDetails,
-                    ];
-                    newDosageDetails[index].userGroup = e.target.value;
-                    setProductData({
-                      ...productData,
-                      usageDetails: {
-                        ...productData.usageDetails,
-                        dosageDetails: newDosageDetails,
-                      },
-                    });
-                  }}
-                  placeholder="User Group"
-                  className="input input-bordered w-full mb-2"
-                />
-                <input
-                  type="text"
-                  value={detail.dosageInstructions}
-                  onChange={(e) => {
-                    const newDosageDetails = [
-                      ...productData.usageDetails.dosageDetails,
-                    ];
-                    newDosageDetails[index].dosageInstructions = e.target.value;
-                    setProductData({
-                      ...productData,
-                      usageDetails: {
-                        ...productData.usageDetails,
-                        dosageDetails: newDosageDetails,
-                      },
-                    });
-                  }}
-                  placeholder="Dosage Instructions"
-                  className="input input-bordered w-full mb-2"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newDosageDetails = [
-                      ...productData.usageDetails.dosageDetails,
-                    ];
-                    newDosageDetails.splice(index, 1);
-                    setProductData({
-                      ...productData,
-                      usageDetails: {
-                        ...productData.usageDetails,
-                        dosageDetails: newDosageDetails,
-                      },
-                    });
-                  }}
-                  className="btn btn-danger w-full"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() =>
-                setProductData({
-                  ...productData,
-                  usageDetails: {
-                    ...productData.usageDetails,
-                    dosageDetails: [
-                      ...productData.usageDetails.dosageDetails,
-                      { ageRange: "", userGroup: "", dosageInstructions: "" },
-                    ],
-                  },
-                })
-              }
-              className="btn btn-primary w-full"
-            >
-              Add Dosage Detail
-            </button>
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Side Effects</label>
-            <textarea
-              name="sideEffects"
-              value={productData.usageDetails.sideEffects}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  usageDetails: {
-                    ...productData.usageDetails,
-                    sideEffects: e.target.value,
-                  },
-                })
-              }
-              className="textarea textarea-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Precautions</label>
-            <textarea
-              name="precautions"
-              value={productData.usageDetails.precautions}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  usageDetails: {
-                    ...productData.usageDetails,
-                    precautions: e.target.value,
-                  },
-                })
-              }
-              className="textarea textarea-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Interactions</label>
-            <textarea
-              name="interactions"
-              value={productData.usageDetails.interactions}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  usageDetails: {
-                    ...productData.usageDetails,
-                    interactions: e.target.value,
-                  },
-                })
-              }
-              className="textarea textarea-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Storage Instructions</label>
-            <textarea
-              name="storageInstructions"
-              value={productData.storageInstructions}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  storageInstructions: e.target.value,
-                })
-              }
-              className="textarea textarea-bordered w-full"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block mb-1">Additional Information</label>
-            <textarea
-              name="additionalInformation"
-              value={productData.additionalInformation}
-              onChange={(e) =>
-                setProductData({
-                  ...productData,
-                  additionalInformation: e.target.value,
-                })
-              }
-              className="textarea textarea-bordered w-full"
-            />
-          </div>
-        </div>
-        <button type="submit" className="btn btn-primary w-full">
-          Save Changes
-        </button>
-      </form>
-    </div>
+        {loadingProduct ? "Saving Product..." : "Save Product"}
+      </button>
+      {error && <p className="text-red-500">{error}</p>}
+    </form>
   );
 };
 

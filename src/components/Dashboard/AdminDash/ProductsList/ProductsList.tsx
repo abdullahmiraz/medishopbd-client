@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../../../api";
 import Link from "next/link";
-import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
+import { FaCloudUploadAlt, FaEdit, FaEye, FaStackOverflow, FaTrash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { ProductData } from "../AddProducts/products.types";
 
@@ -67,8 +67,8 @@ const ProductsList: React.FC = () => {
               <th>Primary-Cat</th>
               <th>Sub-Cat</th>
               <th>Price/Unit</th>
-              <th>Available Stock</th>
               <th>Manufacturer</th>
+              <th>Available Stock</th>
               <th>Expiration Date</th>
               <th>Batch No</th>
               <th>Aisle</th>
@@ -83,6 +83,12 @@ const ProductsList: React.FC = () => {
                     <button className="bg-blue-500 rounded-md text-white cursor-pointer px-2 py-1 flex items-center">
                       <FaEye />
                       <span className="sr-only">View</span>
+                    </button>
+                  </Link>
+                  <Link href={`/dashboard/editproduct/${product._id}`}>
+                    <button className="bg-green-500 rounded-md text-white cursor-pointer px-2 py-1 flex items-center">
+                      <FaCloudUploadAlt />
+                      <span className="sr-only">Restock</span>
                     </button>
                   </Link>
                   <Link href={`/dashboard/editproduct/${product._id}`}>
@@ -107,8 +113,8 @@ const ProductsList: React.FC = () => {
                 </td>
                 <td>{product?.subCategory?.name || product?.subCategory}</td>
                 <td>{product.pricePerUnit}</td>
-                <td>{product.availableStock}</td>
                 <td>{product.manufacturer}</td>
+                <td>{product.availableStock}</td>
                 <td>
                   {product.expirationDate
                     ? product.expirationDate.slice(0, 10)

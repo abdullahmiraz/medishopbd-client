@@ -18,6 +18,8 @@ import {
   FaUsers,
   FaUtensils,
 } from "react-icons/fa";
+import { TbCategoryPlus } from "react-icons/tb";
+
 import { serverUrl } from "../../../api";
 import { User } from "firebase/auth";
 
@@ -42,7 +44,7 @@ const menuItems = {
     },
     {
       href: "categorylist",
-      icon: FaList,
+      icon: TbCategoryPlus,
       text: "Category List",
     },
     {
@@ -79,7 +81,7 @@ const menuItems = {
     },
     {
       href: "categorylist",
-      icon: FaList,
+      icon: TbCategoryPlus,
       text: "Category List",
     },
     {
