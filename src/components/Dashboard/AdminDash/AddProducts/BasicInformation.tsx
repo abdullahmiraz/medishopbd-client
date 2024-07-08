@@ -1,6 +1,7 @@
 import React from "react";
 
 interface BasicInformationProps {
+  productId: number;
   productName: string;
   measure: string;
   activeIngredient: string;
@@ -13,6 +14,7 @@ interface BasicInformationProps {
 }
 
 const BasicInformation: React.FC<BasicInformationProps> = ({
+  productId,
   productName,
   measure,
   activeIngredient,
@@ -22,6 +24,17 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
   onChange,
 }) => (
   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="mb-4">
+      <label className="block mb-1">Product Id</label>
+      <input
+        type="number"
+        name="productId"
+        value={productId}
+        onChange={onChange}
+        className="input input-bordered w-full"
+        required
+      />
+    </div>
     <div className="mb-4">
       <label className="block mb-1">Product Name</label>
       <input

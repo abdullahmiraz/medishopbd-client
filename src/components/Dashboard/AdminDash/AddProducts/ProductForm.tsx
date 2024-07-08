@@ -10,30 +10,11 @@ import Packaging from "./Packaging";
 import StockInformation from "./StockInformation";
 import UsageDetails from "./UsageDetails";
 
-const ProductForm: React.FC = ({ onSubmit }) => {
-  const [product, setProduct] = useState<{
-    productName: string;
-    measure: string;
-    activeIngredient: string;
-    dosageForm: string;
-    applicationArea: string;
-    productType: string;
-    primaryCategory: string;
-    subCategory: string;
-    unitsPerStrip: number;
-    stripsPerBox: number;
-    batchNumber: string;
-    quantity: number;
-    expirationDate: string;
-    aisleLocation: string;
-    productImage: string;
-    leafletImage: string;
-    indications: string;
-    ageRange: string;
-    userGroup: string;
-    dosageInstructions: string;
-    pharmacology: string;
-  }>({
+const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
+  onSubmit,
+}) => {
+  const [product, setProduct] = useState({
+    productId: 0,
     productName: "",
     measure: "",
     activeIngredient: "",
@@ -42,24 +23,47 @@ const ProductForm: React.FC = ({ onSubmit }) => {
     productType: "",
     primaryCategory: "",
     subCategory: "",
-    unitsPerStrip: 0,
-    stripsPerBox: 0,
-    batchNumber: "",
-    quantity: 0,
-    expirationDate: "",
-    aisleLocation: "",
+    packaging: {
+      unitsPerStrip: 0,
+      stripsPerBox: 0,
+    },
+    pricePerUnit: 0,
+    stockDetails: [
+      {
+        batchNumber: "",
+        quantity: 0,
+        expirationDate: "",
+        aisleLocation: "",
+      },
+    ],
+    manufacturer: "",
+    requiresPrescription: false,
+    pageCategory: "",
     productImage: "",
     leafletImage: "",
-    indications: "",
-    ageRange: "",
-    userGroup: "",
-    dosageInstructions: "",
-    pharmacology: "",
+    usageDetails: {
+      indications: {
+        mainTitle: "",
+        subtitles: [],
+      },
+      dosageDetails: [
+        {
+          ageRange: "",
+          userGroup: "",
+          dosageInstructions: [],
+        },
+      ],
+      pharmacology: "",
+    },
   });
 
-  const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
-    []
-  );
+  const [categories, setCategories] = useState<
+    {
+      _id: string;
+      name: string;
+      subCategories: { _id: string; name: string }[];
+    }[]
+  >([]);
   const [subCategories, setSubCategories] = useState<
     { _id: string; name: string }[]
   >([]);
@@ -83,7 +87,7 @@ const ProductForm: React.FC = ({ onSubmit }) => {
 
         // Initialize subCategories based on the initial product's primaryCategory
         const initialCategory = response.data.find(
-          (cat: any) => cat._id === product.primaryCategory?.id
+          (cat) => cat._id === product.primaryCategory
         );
         setSubCategories(initialCategory ? initialCategory.subCategories : []);
       } catch (err) {
@@ -92,20 +96,24 @@ const ProductForm: React.FC = ({ onSubmit }) => {
     };
 
     loadCategories();
-  }, [product.primaryCategory?.id]);
+  }, [product.primaryCategory]);
 
   useEffect(() => {
     const selectedCategory = categories.find(
-      (category) => category._id === product.primaryCategory?.id
+      (category) => category._id === product.primaryCategory
     );
     setSubCategories(selectedCategory ? selectedCategory.subCategories : []);
-  }, [product.primaryCategory?.id, categories]);
+  }, [product.primaryCategory, categories]);
 
   // Handle category change
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCategoryId = e.target.value;
+    const selectedCategory = categories.find(
+      (cat) => cat._id === selectedCategoryId
+    );
     setProduct((prev) => ({
       ...prev,
-      primaryCategory: e.target.value,
+      primaryCategory: selectedCategoryId,
       subCategory: "",
     }));
   };
@@ -125,9 +133,179 @@ const ProductForm: React.FC = ({ onSubmit }) => {
     >
   ) => {
     const { name, value } = e.target;
+    const numericValue =
+      name === "unitsPerStrip" ||
+      name === "stripsPerBox" ||
+      name === "pricePerUnit"
+        ? parseFloat(value)
+        : value;
+
     setProduct((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: numericValue,
+    }));
+  };
+
+  // Handle changes in packaging details
+  const handlePackagingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      packaging: {
+        ...prev.packaging,
+        [name]: parseFloat(value),
+      },
+    }));
+  };
+
+  // Handle changes in usage details
+  const handleUsageDetailsChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      usageDetails: {
+        ...prev.usageDetails,
+        [name]: value,
+      },
+    }));
+  };
+
+  // Handle changes in indications
+  const handleIndicationsChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      usageDetails: {
+        ...prev.usageDetails,
+        indications: {
+          ...prev.usageDetails.indications,
+          [name]: value,
+        },
+      },
+    }));
+  };
+
+  // Handle changes in dosage details
+  const handleDosageDetailChange = (
+    index: number,
+    field: string,
+    value: any
+  ) => {
+    setProduct((prev) => {
+      const updatedDosageDetails = [...prev.usageDetails.dosageDetails];
+      updatedDosageDetails[index] = {
+        ...updatedDosageDetails[index],
+        [field]: value,
+      };
+      return {
+        ...prev,
+        usageDetails: {
+          ...prev.usageDetails,
+          dosageDetails: updatedDosageDetails,
+        },
+      };
+    });
+  };
+
+  // Add or remove dosage detail
+  const handleAddDosageDetail = () => {
+    setProduct((prev) => ({
+      ...prev,
+      usageDetails: {
+        ...prev.usageDetails,
+        dosageDetails: [
+          ...prev.usageDetails.dosageDetails,
+          {
+            ageRange: "",
+            userGroup: "",
+            dosageInstructions: [],
+          },
+        ],
+      },
+    }));
+  };
+
+  const handleRemoveDosageDetail = (index: number) => {
+    setProduct((prev) => ({
+      ...prev,
+      usageDetails: {
+        ...prev.usageDetails,
+        dosageDetails: prev.usageDetails.dosageDetails.filter(
+          (_, i) => i !== index
+        ),
+      },
+    }));
+  };
+
+  // Handle dosage instruction change
+  const handleDosageInstructionChange = (
+    dosageIndex: number,
+    instructionIndex: number,
+    value: string
+  ) => {
+    setProduct((prev) => {
+      const updatedDosageDetails = [...prev.usageDetails.dosageDetails];
+      updatedDosageDetails[dosageIndex].dosageInstructions[instructionIndex] =
+        value;
+      return {
+        ...prev,
+        usageDetails: {
+          ...prev.usageDetails,
+          dosageDetails: updatedDosageDetails,
+        },
+      };
+    });
+  };
+
+  // Handle indication subtitle change
+  const handleIndicationSubtitleChange = (index: number, value: string) => {
+    setProduct((prev) => {
+      const updatedSubtitles = [...prev.usageDetails.indications.subtitles];
+      updatedSubtitles[index] = value;
+      return {
+        ...prev,
+        usageDetails: {
+          ...prev.usageDetails,
+          indications: {
+            ...prev.usageDetails.indications,
+            subtitles: updatedSubtitles,
+          },
+        },
+      };
+    });
+  };
+
+  // Handle input change for stock details
+  const handleStockChange = (index: number, field: string, value: any) => {
+    setProduct((prev) => {
+      const updatedStockDetails = [...prev.stockDetails];
+      updatedStockDetails[index] = {
+        ...updatedStockDetails[index],
+        [field]: value,
+      };
+      return { ...prev, stockDetails: updatedStockDetails };
+    });
+  };
+
+  // Add or remove stock detail
+  const handleAddStock = () => {
+    setProduct((prev) => ({
+      ...prev,
+      stockDetails: [
+        ...prev.stockDetails,
+        { batchNumber: "", quantity: 0, expirationDate: "", aisleLocation: "" },
+      ],
+    }));
+  };
+
+  const handleRemoveStock = (index: number) => {
+    setProduct((prev) => ({
+      ...prev,
+      stockDetails: prev.stockDetails.filter((_, i) => i !== index),
     }));
   };
 
@@ -140,8 +318,7 @@ const ProductForm: React.FC = ({ onSubmit }) => {
     setSelectedLeafletImage(leafletImage);
   };
 
-  // Upload images and submit the form
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent page reload
 
     setLoadingProduct(true);
@@ -204,7 +381,8 @@ const ProductForm: React.FC = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <p className="text-red-500">{error}</p>}
       <BasicInformation
         productName={product.productName}
         measure={product.measure}
@@ -224,42 +402,37 @@ const ProductForm: React.FC = ({ onSubmit }) => {
         categories={categories}
         subCategories={subCategories}
       />
-      <Packaging
-        unitsPerStrip={product.unitsPerStrip}
-        stripsPerBox={product.stripsPerBox}
-        onChange={handleInputChange}
-      />
-      <StockInformation
-        batchNumber={product.batchNumber}
-        quantity={product.quantity}
-        expirationDate={product.expirationDate}
-        aisleLocation={product.aisleLocation}
-        onChange={handleInputChange}
-      />
-
-      <UsageDetails
-        indications={product.indications}
-        dosageDetails={{
-          ageRange: product.ageRange,
-          userGroup: product.userGroup,
-          dosageInstructions: product.dosageInstructions,
-        }}
-        pharmacology={product.pharmacology}
-        onChange={handleInputChange}
-      />
       <ImageUpload
-        onImageChange={handleImageChange}
         productImageUrl={product.productImage}
         leafletImageUrl={product.leafletImage}
+        onImageChange={handleImageChange}
       />
-      <button
-        type="submit"
-        disabled={loadingProduct}
-        className="btn btn-primary mt-4"
-      >
-        {loadingProduct ? "Saving Product..." : "Save Product"}
+      <Packaging
+        unitsPerStrip={product.packaging.unitsPerStrip}
+        stripsPerBox={product.packaging.stripsPerBox}
+        handlePackagingChange={handlePackagingChange}
+      />
+      <StockInformation
+        stockDetails={product.stockDetails}
+        handleStockChange={handleStockChange}
+        handleAddStock={handleAddStock}
+        handleRemoveStock={handleRemoveStock}
+      />
+      <UsageDetails
+        indications={product.usageDetails.indications}
+        dosageDetails={product.usageDetails.dosageDetails}
+        pharmacology={product.usageDetails.pharmacology}
+        handleUsageDetailsChange={handleUsageDetailsChange}
+        handleIndicationsChange={handleIndicationsChange}
+        handleDosageDetailChange={handleDosageDetailChange}
+        handleDosageInstructionChange={handleDosageInstructionChange}
+        handleAddDosageDetail={handleAddDosageDetail}
+        handleRemoveDosageDetail={handleRemoveDosageDetail}
+        handleIndicationSubtitleChange={handleIndicationSubtitleChange}
+      />
+      <button type="submit" className="btn btn-primary">
+        Submit
       </button>
-      {error && <p className="text-red-500">{error}</p>}
     </form>
   );
 };

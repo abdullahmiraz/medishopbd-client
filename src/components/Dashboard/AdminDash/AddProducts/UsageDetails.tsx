@@ -1,73 +1,127 @@
-import React from "react";
+import React from 'react';
 
 interface UsageDetailsProps {
-  indications: string;
+  indications: {
+    mainTitle: string;
+    subtitles: string[];
+  };
   dosageDetails: {
     ageRange: string;
     userGroup: string;
-    dosageInstructions: string;
-  };
+    dosageInstructions: string[];
+  }[];
   pharmacology: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  handleUsageDetailsChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleIndicationsChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleDosageDetailChange: (index: number, field: string, value: any) => void;
+  handleDosageInstructionChange: (dosageIndex: number, instructionIndex: number, value: string) => void;
+  handleAddDosageDetail: () => void;
+  handleRemoveDosageDetail: (index: number) => void;
+  handleIndicationSubtitleChange: (index: number, value: string) => void;
 }
 
 const UsageDetails: React.FC<UsageDetailsProps> = ({
   indications,
   dosageDetails,
   pharmacology,
-  onChange,
-}) => (
-  <div className="space-y-4">
-    <div className="mb-4">
-      <label className="block mb-1">Indications</label>
-      <textarea
-        name="indications"
-        value={indications}
-        onChange={onChange}
-        className="textarea textarea-bordered w-full"
-        rows={3}
-      />
+  handleUsageDetailsChange,
+  handleIndicationsChange,
+  handleDosageDetailChange,
+  handleDosageInstructionChange,
+  handleAddDosageDetail,
+  handleRemoveDosageDetail,
+  handleIndicationSubtitleChange,
+}) => {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold">Usage Details</h2>
+      <div>
+        <label htmlFor="mainTitle" className="block text-sm font-medium">Main Title</label>
+        <input
+          type="text"
+          id="mainTitle"
+          name="mainTitle"
+          value={indications.mainTitle}
+          onChange={handleIndicationsChange}
+          className="input"
+        />
+      </div>
+      {indications.subtitles.map((subtitle, index) => (
+        <div key={index}>
+          <label className="block text-sm font-medium">Subtitle {index + 1}</label>
+          <input
+            type="text"
+            value={subtitle}
+            onChange={(e) => handleIndicationSubtitleChange(index, e.target.value)}
+            className="input"
+          />
+        </div>
+      ))}
+      <button type="button" onClick={() => handleIndicationSubtitleChange(indications.subtitles.length, "")} className="btn btn-secondary">Add Subtitle</button>
+      <div>
+        <label htmlFor="pharmacology" className="block text-sm font-medium">Pharmacology</label>
+        <textarea
+          id="pharmacology"
+          name="pharmacology"
+          value={pharmacology}
+          onChange={handleUsageDetailsChange}
+          className="textarea"
+        />
+      </div>
+      {dosageDetails.map((detail, index) => (
+        <div key={index} className="border p-4 mb-4">
+          <h3 className="text-lg font-semibold">Dosage Detail {index + 1}</h3>
+          <div>
+            <label htmlFor={`ageRange-${index}`} className="block text-sm font-medium">Age Range</label>
+            <input
+              type="text"
+              id={`ageRange-${index}`}
+              value={detail.ageRange}
+              onChange={(e) => handleDosageDetailChange(index, 'ageRange', e.target.value)}
+              className="input"
+            />
+          </div>
+          <div>
+            <label htmlFor={`userGroup-${index}`} className="block text-sm font-medium">User Group</label>
+            <input
+              type="text"
+              id={`userGroup-${index}`}
+              value={detail.userGroup}
+              onChange={(e) => handleDosageDetailChange(index, 'userGroup', e.target.value)}
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Dosage Instructions</label>
+            {detail.dosageInstructions.map((instruction, i) => (
+              <input
+                key={i}
+                type="text"
+                value={instruction}
+                onChange={(e) => handleDosageInstructionChange(index, i, e.target.value)}
+                className="input"
+              />
+            ))}
+            <button
+              type="button"
+              onClick={() => handleDosageDetailChange(index, 'dosageInstructions', [...detail.dosageInstructions, ''])}
+              className="btn btn-secondary"
+            >
+              Add Instruction
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleRemoveDosageDetail(index)}
+            className="btn btn-danger"
+          >
+            Remove Dosage Detail
+          </button>
+        </div>
+      ))}
+      <button type="button" onClick={handleAddDosageDetail} className="btn btn-secondary">Add Dosage Detail</button>
     </div>
-    <div className="mb-4">
-      <label className="block mb-1">Dosage Details</label>
-      <input
-        type="text"
-        name="ageRange"
-        value={dosageDetails.ageRange}
-        onChange={onChange}
-        className="input input-bordered w-full mb-2"
-        placeholder="Age Range"
-      />
-      <input
-        type="text"
-        name="userGroup"
-        value={dosageDetails.userGroup}
-        onChange={onChange}
-        className="input input-bordered w-full mb-2"
-        placeholder="User Group"
-      />
-      <textarea
-        name="dosageInstructions"
-        value={dosageDetails.dosageInstructions}
-        onChange={onChange}
-        className="textarea textarea-bordered w-full"
-        rows={3}
-        placeholder="Dosage Instructions"
-      />
-    </div>
-    <div className="mb-4">
-      <label className="block mb-1">Pharmacology</label>
-      <textarea
-        name="pharmacology"
-        value={pharmacology}
-        onChange={onChange}
-        className="textarea textarea-bordered w-full"
-        rows={3}
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 export default UsageDetails;

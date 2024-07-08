@@ -1,38 +1,39 @@
-import React from "react";
+import React from 'react';
 
 interface PackagingProps {
   unitsPerStrip: number;
   stripsPerBox: number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePackagingChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Packaging: React.FC<PackagingProps> = ({
-  unitsPerStrip,
-  stripsPerBox,
-  onChange,
-}) => (
-  <div className="grid grid-cols-2 gap-4">
-    <div className="mb-4">
-      <label className="block mb-1">Units Per Strip</label>
-      <input
-        type="number"
-        name="unitsPerStrip"
-        value={unitsPerStrip}
-        onChange={onChange}
-        className="input input-bordered w-full"
-      />
+const Packaging: React.FC<PackagingProps> = ({ unitsPerStrip, stripsPerBox, handlePackagingChange }) => {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold">Packaging</h2>
+      <div>
+        <label htmlFor="unitsPerStrip" className="block text-sm font-medium">Units Per Strip</label>
+        <input
+          type="number"
+          id="unitsPerStrip"
+          name="unitsPerStrip"
+          value={unitsPerStrip}
+          onChange={handlePackagingChange}
+          className="input"
+        />
+      </div>
+      <div>
+        <label htmlFor="stripsPerBox" className="block text-sm font-medium">Strips Per Box</label>
+        <input
+          type="number"
+          id="stripsPerBox"
+          name="stripsPerBox"
+          value={stripsPerBox}
+          onChange={handlePackagingChange}
+          className="input"
+        />
+      </div>
     </div>
-    <div className="mb-4">
-      <label className="block mb-1">Strips Per Box</label>
-      <input
-        type="number"
-        name="stripsPerBox"
-        value={stripsPerBox}
-        onChange={onChange}
-        className="input input-bordered w-full"
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 export default Packaging;
