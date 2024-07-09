@@ -26,14 +26,15 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
   pageCategory,
   dosageForm,
   applicationArea,
+  pricePerUnit,
   productType,
   onChange,
 }) => (
-  <div>
-    <h2 className="text-xl font-bold">Basic Information</h2>
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+  <div className="p-6 bg-base-100 rounded-lg shadow-lg">
+    <h2 className="text-xl font-bold mb-4 border-b-2">Basic Information</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="mb-4">
-        <label className="block mb-1">Product Id</label>
+        <label className="block mb-1 font-medium">Product Id</label>
         <input
           type="number"
           name="productId"
@@ -44,7 +45,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-1">Product Name</label>
+        <label className="block mb-1 font-medium">Product Name</label>
         <input
           type="text"
           name="productName"
@@ -55,7 +56,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-1">Measure</label>
+        <label className="block mb-1 font-medium">Measure</label>
         <input
           type="text"
           name="measure"
@@ -65,7 +66,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-1">Active Ingredient</label>
+        <label className="block mb-1 font-medium">Active Ingredient</label>
         <input
           type="text"
           name="activeIngredient"
@@ -75,7 +76,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-1">Dosage Form</label>
+        <label className="block mb-1 font-medium">Dosage Form</label>
         <input
           type="text"
           name="dosageForm"
@@ -85,7 +86,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-1">Application Area</label>
+        <label className="block mb-1 font-medium">Application Area</label>
         <input
           type="text"
           name="applicationArea"
@@ -95,7 +96,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-1">Product Type</label>
+        <label className="block mb-1 font-medium">Product Type</label>
         <input
           type="text"
           name="productType"
@@ -104,12 +105,18 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
           className="input input-bordered w-full"
         />
       </div>
-
-      {/* manufacturer,
-  requiresPrescription,
-  pageCategory, */}
       <div className="mb-4">
-        <label className="block mb-1">Manufacturer</label>
+        <label className="block mb-1 font-medium">Price Per Unit</label>
+        <input
+          type="number"
+          name="pricePerUnit"
+          value={pricePerUnit}
+          onChange={onChange}
+          className="input input-bordered w-full"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block mb-1 font-medium">Manufacturer</label>
         <input
           type="text"
           name="manufacturer"
@@ -118,12 +125,25 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
           className="input input-bordered w-full"
         />
       </div>
+
       <div className="mb-4">
-        <label className="block mb-1">Prescription Required?</label>
+        <label className="block mb-1 font-medium">Page Category</label>
+        <input
+          type="text"
+          name="pageCategory"
+          value={pageCategory}
+          onChange={onChange}
+          className="input input-bordered w-full"
+        />
+      </div>
+      <div className="mb-4 flex items-center">
+        <label className="block mb-1 font-medium mr-2">
+          Prescription Required?
+        </label>
         <input
           type="checkbox"
           name="requiresPrescription"
-          checked={requiresPrescription == "true"}
+          checked={requiresPrescription === "true"}
           onChange={(e) =>
             onChange({
               target: {
@@ -132,18 +152,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
               },
             } as React.ChangeEvent<HTMLInputElement>)
           }
-          className="checkbox"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Page Category</label>
-        <input
-          type="text"
-          name="pageCategory"
-          value={pageCategory}
-          onChange={onChange}
-          className="input input-bordered w-full"
+          className="checkbox checkbox-primary"
         />
       </div>
     </div>

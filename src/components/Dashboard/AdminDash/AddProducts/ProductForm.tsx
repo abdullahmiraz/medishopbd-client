@@ -9,8 +9,11 @@ import ImageUpload from "./ImageUpload";
 import Packaging from "./Packaging";
 import StockInformation from "./StockInformation";
 import UsageDetails from "./UsageDetails";
+import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import { ProductData } from "./products.types";
 
-const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
+const ProductForm: React.FC<{ onSubmit: (data: ProductData) => void }> = ({
   onSubmit,
 }) => {
   const [product, setProduct] = useState({
@@ -367,15 +370,11 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
         leafletImage: leafletImageUrl,
       };
 
-      // Call the onSubmit prop function with the product data
       onSubmit(productData);
-      // Replace with actual form submission logic
       console.log("Form submitted with data:", productData);
-      // Example: await saveProduct(productData);
-      alert("Product saved successfully!");
     } catch (error) {
       console.error("Failed to save product", error);
-      alert("Failed to save product. Please try again.");
+      toast.error("Failed to save product. Please try again.");
     } finally {
       setLoadingProduct(false);
     }
@@ -383,6 +382,7 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
 
   return (
     <form onSubmit={handleSubmit} className="p-4 rounded-md">
+      <Toaster />
       {error && <p className="text-red-500">{error}</p>}
       <BasicInformation
         productName={product.productName}
@@ -394,6 +394,7 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
         pageCategory={product.pageCategory}
         applicationArea={product.applicationArea}
         productType={product.productType}
+        pricePerUnit={product.pricePerUnit}
         primaryCategory={product.primaryCategory}
         subCategory={product.subCategory}
         onChange={handleInputChange}
@@ -406,16 +407,19 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
         categories={categories}
         subCategories={subCategories}
       />
-      <ImageUpload
-        productImageUrl={product.productImage}
-        leafletImageUrl={product.leafletImage}
-        onImageChange={handleImageChange}
-      />
-      <Packaging
-        unitsPerStrip={product.packaging.unitsPerStrip}
-        stripsPerBox={product.packaging.stripsPerBox}
-        handlePackagingChange={handlePackagingChange}
-      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+        <ImageUpload
+          productImageUrl={product.productImage}
+          leafletImageUrl={product.leafletImage}
+          onImageChange={handleImageChange}
+        />
+        <Packaging
+          unitsPerStrip={product.packaging.unitsPerStrip}
+          stripsPerBox={product.packaging.stripsPerBox}
+          handlePackagingChange={handlePackagingChange}
+        />
+      </div>
       <StockInformation
         stockDetails={product.stockDetails}
         handleStockChange={handleStockChange}
@@ -434,7 +438,7 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
         handleRemoveDosageDetail={handleRemoveDosageDetail}
         handleIndicationSubtitleChange={handleIndicationSubtitleChange}
       />
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className="btn btn-primary my-4 w-full">
         Submit
       </button>
     </form>

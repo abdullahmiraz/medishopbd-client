@@ -1,5 +1,6 @@
 // Define the Category interface
 export interface Category {
+  _id: string; // Added _id field
   name: string;
   description?: string;
   categoryImage?: string;
@@ -8,6 +9,7 @@ export interface Category {
 
 // Define the SubCategory interface
 export interface SubCategory {
+  _id: string; // Added _id field
   name: string;
   description?: string;
   categoryImage?: string;
@@ -37,55 +39,36 @@ export interface Indications {
 export interface UsageDetails {
   indications?: Indications;
   dosageDetails?: DosageDetail[];
+  pharmacology?: string; // Added pharmacology field
+}
+
+// Define the StockDetail interface
+export interface StockDetail {
+  batchNumber: string;
+  quantity: number;
+  expirationDate: string;
+  aisleLocation: string;
 }
 
 // Define the ProductData interface
 export interface ProductData {
+  _id: string; // Added _id field
   productId: number;
   productName: string;
   measure: string;
   activeIngredient: string;
   dosageForm: string;
   applicationArea: string;
-  primaryCategory: {
-    id: string;
-    name: string;
-    description: string;
-    categoryImage: string;
-    categoryCode: string;
-  };
-  subCategory: {
-    id: string;
-    name: string;
-    description: string;
-    categoryImage: string;
-    subCategoryCode: string;
-  };
+  primaryCategory: Category; // Updated to use Category interface
+  subCategory: SubCategory; // Updated to use SubCategory interface
   productType: string;
-  packaging: {
-    unitsPerStrip: number;
-    stripsPerBox: number;
-  };
+  packaging: Packaging;
   pricePerUnit: number;
-  availableStock: number;
+  stockDetails: StockDetail[]; // Updated to use StockDetail interface
   manufacturer: string;
-  expirationDate: string;
-  batchNumber: string;
-  aisleLocation: string;
-  requiresPrescription: boolean;
+  requiresPrescription: boolean; // Changed from string to boolean
   pageCategory: string;
   productImage: string;
   leafletImage: string;
-  usageDetails: {
-    indications: {
-      mainTitle: string;
-      subtitles: string[];
-    };
-    dosageDetails: {
-      ageRange: string;
-      userGroup: string;
-      dosageInstructions: string[];
-    }[];
-  };
-  pharmacology: string;
+  usageDetails: UsageDetails;
 }

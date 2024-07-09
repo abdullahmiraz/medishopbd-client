@@ -70,11 +70,11 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
   }, [primaryCategory, categories]);
 
   return (
-    <div>
-      <h2 className="text-xl font-bold">Category Details</h2>
+    <div className="p-6 bg-base-100 rounded-lg shadow-lg my-4">
+      <h2 className="text-xl font-bold mb-4 border-b-2">Category Details</h2>
       <div className="grid grid-cols-2 gap-4">
         <div className="mb-4">
-          <label className="block mb-1">Primary Category</label>
+          <label className="block mb-1 font-medium">Primary Category</label>
           <select
             name="primaryCategory"
             value={primaryCategory} // Use the ID for the value
@@ -90,7 +90,7 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
           </select>
         </div>
         <div className="mb-4">
-          <label className="block mb-1">Sub-Category</label>
+          <label className="block mb-1 font-medium">Sub-Category</label>
           <select
             name="subCategory"
             value={subCategory} // Use the ID for the value

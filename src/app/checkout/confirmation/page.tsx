@@ -63,9 +63,11 @@ const Confirmation = () => {
   }, [orderDetails, invoiceNumber, userId, checkoutAmount]);
 
   const saveOrderToDatabase = async (orderDetails, userId, checkoutAmount) => {
+    console.log(invoiceNumber);
     try {
       const orderData = {
         userId: userId,
+        orderNumber: invoiceNumber,
         products: orderDetails.cartItems.map((item) => ({
           productId: item.productId,
           quantity: item.stripCount,
