@@ -6,22 +6,25 @@ import { serverUrl } from "../../../../../api";
 interface SubCategory {
   _id: string;
   name: string;
+  code: string;
 }
 
 interface Category {
   _id: string;
   name: string;
+  code: string;
   subCategories: SubCategory[];
 }
 
 interface CategoryDetailsProps {
   primaryCategory: string;
   subCategory: string;
+  code: string;
   onCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSubCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   productData: {
-    primaryCategory: { id: string };
-    subCategory: { id: string };
+    primaryCategory: { code: string };
+    subCategory: { code: string };
   };
 }
 
@@ -43,6 +46,7 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
           `${serverUrl}/api/categories`
         );
         setCategories(response.data);
+        console.log(response.data);
 
         // Set initial subCategories based on the primaryCategory from productData
         const initialCategory = response.data.find(
@@ -60,45 +64,48 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
   // Update subCategories when primaryCategory or categories change
   useEffect(() => {
     const selectedCategory = categories.find(
-      (category) => category._id === primaryCategory
+      (category) => category.code === primaryCategory
     );
     setSubCategories(selectedCategory?.subCategories ?? []);
   }, [primaryCategory, categories]);
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="mb-4">
-        <label className="block mb-1">Primary Category</label>
-        <select
-          name="primaryCategory"
-          value={primaryCategory} // Use the ID for the value
-          onChange={onCategoryChange}
-          className="select select-bordered w-full"
-        >
-          <option value="">Select Category</option>
-          {categories.map((category) => (
-            <option key={category._id} value={category._id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1">Sub-Category</label>
-        <select
-          name="subCategory"
-          value={subCategory} // Use the ID for the value
-          onChange={onSubCategoryChange}
-          className="select select-bordered w-full"
-          disabled={!primaryCategory} // Disable if no primary category is selected
-        >
-          <option value="">Select Sub Category</option>
-          {subCategories.map((sub) => (
-            <option key={sub._id} value={sub._id}>
-              {sub.name}
-            </option>
-          ))}
-        </select>
+    <div>
+      <h2 className="text-xl font-bold">Category Details</h2>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="mb-4">
+          <label className="block mb-1">Primary Category</label>
+          <select
+            name="primaryCategory"
+            value={primaryCategory} // Use the ID for the value
+            onChange={onCategoryChange}
+            className="select select-bordered w-full"
+          >
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category.code}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1">Sub-Category</label>
+          <select
+            name="subCategory"
+            value={subCategory} // Use the ID for the value
+            onChange={onSubCategoryChange}
+            className="select select-bordered w-full"
+            disabled={!primaryCategory} // Disable if no primary category is selected
+          >
+            <option value="">Select Sub Category</option>
+            {subCategories.map((sub) => (
+              <option key={sub._id} value={sub.code}>
+                {sub.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

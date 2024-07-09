@@ -37,7 +37,7 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
       },
     ],
     manufacturer: "",
-    requiresPrescription: false,
+    requiresPrescription: "",
     pageCategory: "",
     productImage: "",
     leafletImage: "",
@@ -108,6 +108,7 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
   // Handle category change
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCategoryId = e.target.value;
+    console.log(selectedCategoryId);
     const selectedCategory = categories.find(
       (cat) => cat._id === selectedCategoryId
     );
@@ -381,13 +382,16 @@ const ProductForm: React.FC<{ onSubmit: (data: any) => void }> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="p-4 rounded-md">
       {error && <p className="text-red-500">{error}</p>}
       <BasicInformation
         productName={product.productName}
         measure={product.measure}
         activeIngredient={product.activeIngredient}
         dosageForm={product.dosageForm}
+        manufacturer={product.manufacturer}
+        requiresPrescription={product.requiresPrescription}
+        pageCategory={product.pageCategory}
         applicationArea={product.applicationArea}
         productType={product.productType}
         primaryCategory={product.primaryCategory}
