@@ -4,13 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../../../api";
 import Link from "next/link";
-import {
-  FaCloudUploadAlt,
-  FaEdit,
-  FaEye,
-  FaStackOverflow,
-  FaTrash,
-} from "react-icons/fa";
+import { FaCloudUploadAlt, FaEdit, FaEye, FaStackOverflow, FaTrash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { ProductData } from "../AddProducts/products.types";
 
@@ -114,34 +108,23 @@ const ProductsList: React.FC = () => {
                 <td>{index + 1}</td>
                 <td>{product.productName}</td>
                 <td>{product.measure}</td>
-                <td>{product.primaryCategory}</td>
-                <td>{product.subCategory}</td>
+                <td>
+                  {product?.primaryCategory?.name || product?.primaryCategory}
+                </td>
+                <td>{product?.subCategory?.name || product?.subCategory}</td>
                 <td>{product.pricePerUnit}</td>
                 <td>{product.manufacturer}</td>
+                <td>{product.availableStock}</td>
                 <td>
-                  {product.stockDetails.length > 0
-                    ? product.stockDetails.reduce(
-                        (total, stock) => total + stock.quantity,
-                        0
-                      )
-                    : "N/A"}
-                </td>
-                <td>
-                  {product.stockDetails.length > 0
-                    ? product.stockDetails[0].expirationDate.slice(0, 10)
+                  {product.expirationDate
+                    ? product.expirationDate.slice(0, 10)
                     : ""}
                 </td>
-                <td>
-                  {product.stockDetails.length > 0
-                    ? product.stockDetails[0].batchNumber
-                    : ""}
-                </td>
-                <td>
-                  {product.stockDetails.length > 0
-                    ? product.stockDetails[0].aisleLocation
-                    : ""}
-                </td>
-                <td>{product.requiresPrescription === "Yes" ? "Yes" : "No"}</td>
+                <td>{product.batchNumber}</td>
+                <td>{product.aisleLocation}</td>{" "}
+                {/* Ensure aisleLocation is displayed */}
+                <td>{product.requiresPrescription ? "Yes" : "No"}</td>{" "}
+                {/* Ensure requiresPrescription is displayed */}
               </tr>
             ))}
           </tbody>

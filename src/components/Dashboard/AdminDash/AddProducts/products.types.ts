@@ -1,20 +1,4 @@
 // Define the Category interface
-export interface Category {
-  _id: string; // Added _id field
-  name: string;
-  description?: string;
-  categoryImage?: string;
-  categoryCode: string;
-}
-
-// Define the SubCategory interface
-export interface SubCategory {
-  _id: string; // Added _id field
-  name: string;
-  description?: string;
-  categoryImage?: string;
-  subCategoryCode: string;
-}
 
 // Define the Packaging interface
 export interface Packaging {
@@ -59,8 +43,8 @@ export interface ProductData {
   activeIngredient: string;
   dosageForm: string;
   applicationArea: string;
-  primaryCategory: Category; // Updated to use Category interface
-  subCategory: SubCategory; // Updated to use SubCategory interface
+  primaryCategory: String;
+  subCategory: String; // Updated to use SubCategory interface
   productType: string;
   packaging: Packaging;
   pricePerUnit: number;

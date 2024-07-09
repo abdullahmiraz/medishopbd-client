@@ -103,9 +103,11 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
             className="border border-gray-300 rounded-md px-3 py-2 text-sm"
           />
           <button
-            onClick={() =>
-              setStartDate("") && setEndDate("") && setFilteredOrders(orders)
-            }
+            onClick={() => {
+              setStartDate("");
+              setEndDate("");
+              setFilteredOrders([]);
+            }}
             className="px-4 py-2 bg-gray-500 text-white rounded text-sm"
           >
             Clear Filter
@@ -124,45 +126,100 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
           </select>
         </div>
       </div>
+
       {filteredOrders.length > 0 ? (
-        filteredOrders.map((order) => (
-          <div key={order._id} className="mb-4 p-4 border rounded">
-            <p>
-              <strong>Order ID: </strong> {order._id}
-            </p>
-            <p>
-              <strong>Date: </strong>
-              {order?.created_at.split("T")[0]}
-            </p>
-            <p>
-              <strong>Subtotal: </strong> Tk. {order.checkoutAmount.subtotal}
-            </p>
-            <p>
-              <strong>Discounted Amount: </strong> Tk.{" "}
-              {order.checkoutAmount.discountedAmount}
-            </p>
-            <p>
-              <strong>Delivery Fee: </strong> Tk.{" "}
-              {order.checkoutAmount.deliveryFee}
-            </p>
-            <p>
-              <strong>Total: </strong> Tk. {order.checkoutAmount.total}
-            </p>
-            <p>
-              <strong>Status: </strong> {order.status}
-            </p>
-            <div>
-              <h4 className="font-semibold">Items:</h4>
-              <ul>
-                {order.products.map((item, index) => (
-                  <li key={index}>
-                    {item.name} - {item.quantity} x Tk. {item.price}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ))
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Order Number
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Date
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Subtotal
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Discounted Amount
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Delivery Fee
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Total
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Status
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Items
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredOrders.map((order) => (
+                <tr key={order._id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {order.orderNumber || order._id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {order.created_at.split("T")[0]}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    Tk. {order.checkoutAmount.subtotal}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    Tk. {order.checkoutAmount.discountedAmount}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    Tk. {order.checkoutAmount.deliveryFee}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    Tk. {order.checkoutAmount.total}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {order.status}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <ul>
+                      {order.products.map((item, index) => (
+                        <li key={index}>
+                          {item.name} - {item.quantity} x Tk. {item.price}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <p>No orders found.</p>
       )}
