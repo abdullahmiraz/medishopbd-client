@@ -64,11 +64,12 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
   // Update subCategories when primaryCategory or categories change
   useEffect(() => {
     const selectedCategory = categories.find(
-      (category) => category.code === primaryCategory
+      (category) => category?.code === primaryCategory
     );
     setSubCategories(selectedCategory?.subCategories ?? []);
   }, [primaryCategory, categories]);
 
+  console.log(subCategories);
   return (
     <div className="p-6 bg-base-100 rounded-lg shadow-lg my-4">
       <h2 className="text-xl font-bold mb-4 border-b-2">Category Details</h2>

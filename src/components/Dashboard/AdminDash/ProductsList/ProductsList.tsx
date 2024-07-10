@@ -4,7 +4,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../../../api";
 import Link from "next/link";
-import { FaCloudUploadAlt, FaEdit, FaEye, FaStackOverflow, FaTrash } from "react-icons/fa";
+import {
+  FaCloudUploadAlt,
+  FaEdit,
+  FaEye,
+  FaStackOverflow,
+  FaTrash,
+} from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import { ProductData } from "../AddProducts/products.types";
 
@@ -114,14 +120,14 @@ const ProductsList: React.FC = () => {
                 <td>{product?.subCategory?.name || product?.subCategory}</td>
                 <td>{product.pricePerUnit}</td>
                 <td>{product.manufacturer}</td>
-                <td>{product.availableStock}</td>
-                <td>
-                  {product.expirationDate
-                    ? product.expirationDate.slice(0, 10)
-                    : ""}
-                </td>
-                <td>{product.batchNumber}</td>
-                <td>{product.aisleLocation}</td>{" "}
+                {product.stockDetails.map((prod) => (
+                  <>
+                    <td>{prod.quantity}</td>
+                    <td>{prod.batchNumber}</td>
+                    <td>{prod.expirationDate}</td>
+                    <td>{prod.aisleLocation}</td>
+                  </>
+                ))}
                 {/* Ensure aisleLocation is displayed */}
                 <td>{product.requiresPrescription ? "Yes" : "No"}</td>{" "}
                 {/* Ensure requiresPrescription is displayed */}
