@@ -5,24 +5,17 @@ import OptionBar from "../../components/Shared/Navbar/OptionBar/OptionBar";
 import SearchBarTop from "../../components/Shared/Navbar/SearchBarTop/SearchBarTop";
 import { UserAuth } from "../../context/AuthContext";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children }: any) => {
   const { user } = UserAuth();
   return (
     <div>
       <SearchBarTop />
       <OptionBar />
-      <div className="flex justify-center">
-        <div className="w-[25%] bg-green-400">
+      <div className="flex ">
+        <div className="w-[20%] bg-green-400">
           <Dashboard />
         </div>
-        <div className="w-[75%]">{children}</div>
-        {/* {user ? (
-        <div className="w-[75%]">{children}</div>
-      ) : (
-        <div className="w-[75%] flex items-center justify-center">
-          <p>Please log in to view this content.</p>
-        </div>
-      )} */}
+        <div className="w-screen ">{children}</div>
       </div>
       <Footer />
     </div>

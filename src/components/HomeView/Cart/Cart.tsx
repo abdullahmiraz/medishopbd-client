@@ -148,7 +148,7 @@ const Cart = () => {
   localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
 
   return (
-    <div className="container mx-auto my-12 px-6">
+    <div className=" my-12 px-6">
       <Toaster />
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">

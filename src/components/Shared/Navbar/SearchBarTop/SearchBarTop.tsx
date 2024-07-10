@@ -35,7 +35,7 @@ const SearchBarTop = () => {
               Track <br /> Order
             </p>
           </div>
-          <Link href={"../cart"}>
+          <Link href={"/cart"}>
             <div className="card-top-nav w-25 flex items-center gap-2 relative">
               <div className="card-icon-top">
                 <FaCartPlus size={40} />

@@ -9,7 +9,11 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      maxWidth: {
+        "screen-3xl": "calc(1536px + 300px)", // Assuming 2xl is 1536px
+      },
+    },
   },
   plugins: [require("daisyui")],
   daisyui: {

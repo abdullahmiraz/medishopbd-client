@@ -44,6 +44,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
       if (uploadResponse.data.success) {
         const imageUrl = uploadResponse.data.data.url;
+        console.log(imageUrl);
         onUploadSuccess(imageUrl);
         setSelectedFile(null);
         if (fileInputRef.current) {
@@ -62,7 +63,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   };
 
   return (
-    <div>
+    <div className="flex items-center gap-2">
       <input
         type="file"
         className="file-input w-full bg-gray-200"
@@ -71,7 +72,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       />
       {showSubmitButton && (
         <button
-          className="btn btn-primary mt-4"
+          className="btn btn-primary "
           onClick={handleImageUpload}
           disabled={isUploading}
         >
@@ -79,7 +80,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         </button>
       )}
       {isUploading && (
-        <p className="text-blue-500 mt-2">Uploading image, please wait...</p>
+        <p className="text-blue-500 ">Uploading image, please wait...</p>
       )}
     </div>
   );

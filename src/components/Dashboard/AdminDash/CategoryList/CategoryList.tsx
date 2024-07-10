@@ -4,25 +4,30 @@ import axios from "axios";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { placeholderImage, serverUrl } from "../../../../../api";
+import ImageUploader from "../../../ImageUploader/ImageUploader";
+import toast from "react-hot-toast";
 
 interface SubCategory {
   _id: string;
   name: string;
   description?: string;
-  categoryImage?: string;
-  subCategoryCode: string;
+  image?: string;
+  code: string;
 }
 
 interface Category {
   _id: string;
   name: string;
   description?: string;
-  categoryImage?: string;
-  categoryCode: string;
+  image?: string;
+  code: string;
   subCategories: SubCategory[];
 }
 
 const CategoryList: React.FC = () => {
+  const [photoURL, setPhotoURL] = useState("");
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +72,7 @@ const CategoryList: React.FC = () => {
       setNewCategory({ ...newCategory, [name]: value });
     }
   };
+  console.log(editingCategory);
 
   const handleSubCategoryInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -78,11 +84,17 @@ const CategoryList: React.FC = () => {
       setNewSubCategory({ ...newSubCategory, [name]: value });
     }
   };
+  console.log(editingSubCategory);
 
   const handleCategorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isImageUploading) {
+      toast.error("Please wait for the image upload to complete.");
+      return;
+    }
     try {
       if (editingCategory) {
+        console.log(editingCategory);
         const response = await axios.put(
           `${serverUrl}/api/categories/${editingCategory._id}`,
           editingCategory
@@ -98,6 +110,7 @@ const CategoryList: React.FC = () => {
           `${serverUrl}/api/categories`,
           newCategory
         );
+        console.log(response);
         setCategories([...categories, response.data]);
       }
       setNewCategory({});
@@ -108,6 +121,10 @@ const CategoryList: React.FC = () => {
 
   const handleSubCategorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isImageUploading) {
+      toast.error("Please wait for the image upload to complete.");
+      return;
+    }
     try {
       if (editingSubCategory) {
         const response = await axios.put(
@@ -198,8 +215,38 @@ const CategoryList: React.FC = () => {
     return <div className="text-center py-10 text-red-500">{error}</div>;
   }
 
+  const handleImageUploadSuccess = (
+    imageUrl: string,
+    isSubCategory: boolean = false
+  ) => {
+    // Set the photoURL state
+    setPhotoURL(imageUrl);
+    console.log(imageUrl);
+
+    // Directly use imageUrl for updating category or subcategory
+    if (isSubCategory) {
+      if (editingSubCategory) {
+        setEditingSubCategory({ ...editingSubCategory, image: imageUrl });
+        console.log(imageUrl);
+      } else {
+        setNewSubCategory({ ...newSubCategory, image: imageUrl });
+        console.log(imageUrl);
+      }
+    } else {
+      if (editingCategory) {
+        setEditingCategory({ ...editingCategory, image: imageUrl });
+        console.log(imageUrl);
+      } else {
+        setNewCategory({ ...newCategory, image: imageUrl });
+        console.log(imageUrl);
+      }
+    }
+
+    toast.success("Image uploaded successfully!");
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className=" px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Manage Categories</h1>
 
       {/* Category Form */}
@@ -223,23 +270,20 @@ const CategoryList: React.FC = () => {
             onChange={handleCategoryInputChange}
             className="border p-2 rounded"
           />
-          <input
-            type="text"
-            name="categoryImage"
-            placeholder="Category Image URL"
-            value={
-              editingCategory?.categoryImage || newCategory.categoryImage || ""
+
+          <ImageUploader
+            onUploadSuccess={(url: string) =>
+              handleImageUploadSuccess(url, false)
             }
-            onChange={handleCategoryInputChange}
-            className="border p-2 rounded"
+            showSubmitButton={true}
           />
+
           <input
+            disabled
             type="text"
             name="categoryCode"
             placeholder="Category Code"
-            value={
-              editingCategory?.categoryCode || newCategory.categoryCode || ""
-            }
+            value={editingCategory?.code || newCategory.code || ""}
             onChange={handleCategoryInputChange}
             className="border p-2 rounded"
             required
@@ -277,27 +321,18 @@ const CategoryList: React.FC = () => {
               onChange={handleSubCategoryInputChange}
               className="border p-2 rounded"
             />
-            <input
-              type="text"
-              name="categoryImage"
-              placeholder="Subcategory Image URL"
-              value={
-                editingSubCategory?.categoryImage ||
-                newSubCategory.categoryImage ||
-                ""
+            <ImageUploader
+              onUploadSuccess={(url: string) =>
+                handleImageUploadSuccess(url, true)
               }
-              onChange={handleSubCategoryInputChange}
-              className="border p-2 rounded"
+              showSubmitButton={true}
             />
             <input
+              disabled
               type="text"
               name="subCategoryCode"
               placeholder="Subcategory Code"
-              value={
-                editingSubCategory?.subCategoryCode ||
-                newSubCategory.subCategoryCode ||
-                ""
-              }
+              value={editingSubCategory?.code || newSubCategory?.code || ""}
               onChange={handleSubCategoryInputChange}
               className="border p-2 rounded"
               required
@@ -320,7 +355,7 @@ const CategoryList: React.FC = () => {
             className="border p-4 rounded-lg shadow-lg relative"
           >
             <Image
-              src={category.categoryImage || placeholderImage}
+              src={category.image || placeholderImage}
               alt={category.name}
               width={400}
               height={200}
@@ -330,43 +365,43 @@ const CategoryList: React.FC = () => {
               {index + 1}. {category.name}
             </h2>
             <p className="text-gray-700">{category.description}</p>
-            <p className="text-gray-700">Code: {category.categoryCode}</p>
-            <h3 className="text-lg font-semibold mt-4  ">
-              Subcategories ---------
-            </h3>
-            <ul className="list-disc list-inside ml-4">
+            <p className="text-gray-700">Code: {category?.code}</p>
+            <h3 className="text-lg font-semibold mt-4  ">Subcategories:</h3>
+            <ul className="list-disc list-inside">
               {category.subCategories.map((subCategory) => (
                 <li
                   key={subCategory._id}
                   className="flex justify-between items-center border p-1 my-2"
                 >
                   <div>
-                    <span>{subCategory.name}</span>
+                    <span className="font-semibold">{subCategory.name}</span>
                     {subCategory.description && (
                       <p className="text-gray-600 text-sm">
                         {subCategory.description}
                       </p>
                     )}
                     <p className="text-gray-600 text-sm">
-                      Code: {subCategory.subCategoryCode}
+                      Code: {subCategory.code}
                     </p>
                   </div>
-                  <button
-                    onClick={() =>
-                      handleEditSubCategory(subCategory, category._id)
-                    }
-                    className="ml-2 px-2 py-1 bg-yellow-500 text-white rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleDeleteSubCategory(category._id, subCategory._id)
-                    }
-                    className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex">
+                    <button
+                      onClick={() =>
+                        handleEditSubCategory(subCategory, category._id)
+                      }
+                      className="ml-2 px-2 py-1 bg-yellow-500 text-white rounded"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDeleteSubCategory(category._id, subCategory._id)
+                      }
+                      className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

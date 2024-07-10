@@ -58,14 +58,14 @@ const MyPrescription = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className=" p-6">
       <div className="bg-white p-8 rounded shadow-md">
         <h2 className="text-2xl font-bold mb-6">Update Prescription</h2>
         <div className="form-group mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Upload Prescription Image
           </label>
-          <ImageUploader onUploadSuccess={handleImageUploadSuccess} />
+          <ImageUploader onUploadSuccess={handleImageUploadSuccess} showSubmitButton={true} />
         </div>
         <div className="divider"></div>
         {currentPrescription && (

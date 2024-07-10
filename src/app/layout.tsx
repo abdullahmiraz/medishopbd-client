@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import { AuthContextProvider } from "../context/AuthContext";
-import Footer from "../components/Shared/Footer/Footer";
-import SearchBarTop from "../components/Shared/Navbar/SearchBarTop/SearchBarTop";
-import OptionBar from "../components/Shared/Navbar/OptionBar/OptionBar";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +18,7 @@ export default function RootLayout({
   return (
     // className="max-w-screen-2xl mx-auto"
     <html lang="en">
-      <body className={`${inter.className}  max-w-screen-2xl mx-auto`}>
+      <body className={`${inter.className}  `}>
         <AuthContextProvider>{children}</AuthContextProvider>
       </body>
     </html>

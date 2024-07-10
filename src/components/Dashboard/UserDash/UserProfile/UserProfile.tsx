@@ -83,7 +83,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className=" p-6">
       <h2 className="text-3xl font-bold mb-6">User Profile</h2>
       <div className="bg-white p-8 rounded shadow-md flex flex-col md:flex-row gap-8">
         <div className="flex flex-col items-center md:w-1/3">
@@ -103,7 +103,10 @@ const UserProfile = () => {
             )}
             {isEditing && (
               <div className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer">
-                <ImageUploader onUploadSuccess={handleImageUploadSuccess} />
+                <ImageUploader
+                  onUploadSuccess={handleImageUploadSuccess}
+                  showSubmitButton={true}
+                />
               </div>
             )}
           </div>
