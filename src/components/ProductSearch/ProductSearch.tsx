@@ -67,12 +67,12 @@ const ProductSearch = () => {
         />
         <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
         {isDropdownOpen && filteredProducts.length > 0 && (
-          <div className="absolute z-10 mt-2 w-full bg-white shadow-lg border border-gray-300 max-h-60 overflow-y-auto">
+          <div className="absolute z-10 mt-2 w-full bg-white shadow-lg border border-gray-300 max-h-60 overflow-y-auto z-20">
             <ul className="divide-y divide-gray-200">
               {filteredProducts.map((product) => (
                 <li key={product.productId} className="p-2 hover:bg-gray-100">
                   <Link
-                    href={`/products/${product.productId}`}
+                    href={`/products/${product._id}`}
                     onClick={handleDropdownClose}
                   >
                     <div className="flex items-center space-x-2">
