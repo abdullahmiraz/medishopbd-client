@@ -357,7 +357,7 @@ const CategoryList: React.FC = () => {
             <Image
               src={category.image || placeholderImage}
               alt={category.name}
-              width={400}
+              width={200}
               height={200}
               className="w-full h-40 object-cover rounded-md mb-4"
             />

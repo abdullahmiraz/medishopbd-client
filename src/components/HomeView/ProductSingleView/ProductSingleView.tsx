@@ -240,8 +240,8 @@ const ProductSingleView = ({ productId }) => {
               </p>
               <div className="flex gap-2">
                 <strong>Stock:</strong>{" "}
-                {product.availableStock > 0 ? (
-                  product.availableStock
+                {product.stockDetails.length > 0 ? (
+                  product.stockDetails[0].expirationDate
                 ) : (
                   <p className="text-red-600">Stock Out !!</p>
                 )}

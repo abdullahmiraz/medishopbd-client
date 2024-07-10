@@ -5,6 +5,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { serverUrl } from "../../../../api";
 import Image from "next/image";
+import Link from "next/link";
 
 interface SubCategory {
   name: string;
@@ -56,11 +57,14 @@ const CategoryList: React.FC = () => {
             className="bg-white rounded-lg shadow-md p-4"
           >
             <div className="flex flex-col   mb-4">
-              <div className="flex gap-4 items-center bg-blue-100 p-3 mb-3 rounded-md">
+              <div className="flex gap-4 items-center justify-between bg-blue-100 p-3 mb-3 rounded-md">
                 <h2 className="text-3xl font-semibold  ">{category.name}</h2>
-                <div className="btn bg-blue-500 text-white    ">
+                <Link
+                  href={`/categories/${category.code}`}
+                  className="btn bg-blue-500 text-white    "
+                >
                   Show Products
-                </div>
+                </Link>
               </div>
               <p className="text-gray-600">{category.description}</p>
             </div>

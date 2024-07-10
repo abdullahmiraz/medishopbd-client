@@ -3,10 +3,12 @@ import Link from "next/link";
 import { placeholderImage } from "../../../../api";
 
 const ProductCard = ({ product }) => {
+  console.log(product);
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
   // console.log(currentDate);
   // console.log(product);
-  return product.expirationDate >= currentDate ? (
+  return product.stockDetails[0].expirationDate >= currentDate ? (
+    // return (
     <Link href={`/products/${product._id}`}>
       <div className="flex flex-col border cursor-pointer rounded-md shadow-md overflow-hidden h-full text-sm md:text-base">
         <figure className="relative" style={{ paddingBottom: "60%" }}>
@@ -34,13 +36,13 @@ const ProductCard = ({ product }) => {
               </p>
               {/* <p>Stock: {product?.availableStock}</p> */}
               <p>Date: {product?.expirationDate}</p>
-
             </div>
           </div>
         </div>
       </div>
     </Link>
-  ) : null;
+  ) : // );
+  null;
 };
 
 export default ProductCard;

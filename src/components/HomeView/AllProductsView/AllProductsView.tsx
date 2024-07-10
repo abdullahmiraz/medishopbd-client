@@ -2,13 +2,13 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { baseUrl, serverUrl } from "../../../../api";
+import { serverUrl } from "../../../../api";
 import ProductCard from "../ProductCard/ProductCard";
 
 const AllProductsView = () => {
   const [products, setProducts] = useState();
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchProducts = async () => {
       try {
         const res = await axios.get(`${serverUrl}/api/products`);
         setProducts(res.data);
@@ -17,7 +17,7 @@ const AllProductsView = () => {
       }
     };
 
-    fetchUsers();
+    fetchProducts();
   }, []);
 
   const uniqueCategories = new Set();

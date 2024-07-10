@@ -53,43 +53,33 @@ const CategoryCard: React.FC = () => {
       <div className="w-full">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6   mt-8 px-6  ">
           {categories.slice(0, 11).map((category) => (
-            <Link href={`/#`} key={category.code}>
-              <div className="bg-base-100 min-h-56 shadow-xl flex flex-col cursor-pointer border">
-                <figure>
-                  <div
-                    className="relative w-full"
-                    style={{ paddingBottom: "75.25%" }}
-                  >
-                    <Image
-                      src={category.image}
-                      alt={category.name}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                  </div>
-                </figure>
-                <div className="card-body text-center p-4 font-semibold ">
+            <Link href={`/categories/${category.code}`} key={category.code}>
+              <div className="bg-base-100   shadow-xl flex flex-col cursor-pointer border">
+                <Image
+                  src={category.image}
+                  alt={category.name}
+                  width={200}
+                  height={200}
+                  className="w-full object-cover h-36"
+                />
+                <div className="card-body text-center p-2 font-semibold ">
                   <h2 className="p-0">{category.name}</h2>
                 </div>
               </div>
             </Link>
           ))}
-          <Link href={`/#`}>
-            <div className="bg-base-100 min-h-56 shadow-xl flex flex-col cursor-pointer border">
+          <Link href={`/categories`}>
+            <div className="bg-base-100 shadow-xl flex flex-col cursor-pointer border">
               <figure>
-                <div
-                  className="relative w-full"
-                  style={{ paddingBottom: "75.25%" }}
-                >
-                  <Image
-                    src={SeeAllCategoriesImage}
-                    alt={"Deafult Category"}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
+                <Image
+                  src={SeeAllCategoriesImage}
+                  alt={"image"}
+                  width={200}
+                  height={200}
+                  className="w-full object-cover h-36"
+                />
               </figure>
-              <div className="card-body text-center p-4 font-semibold ">
+              <div className="card-body text-center p-2 font-semibold ">
                 <h2 className="p-0">{"See All Categories"}</h2>
               </div>
             </div>
