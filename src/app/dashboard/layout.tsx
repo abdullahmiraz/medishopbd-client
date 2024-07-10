@@ -11,11 +11,11 @@ const DashboardLayout = ({ children }: any) => {
     <div>
       <SearchBarTop />
       <OptionBar />
-      <div className="flex ">
+      <div className="flex overflow-hidden ">
         <div className="w-[20%] bg-green-400">
           <Dashboard />
         </div>
-        <div className="w-screen ">{children}</div>
+        <div className="w-full ">{children}</div>
       </div>
       <Footer />
     </div>

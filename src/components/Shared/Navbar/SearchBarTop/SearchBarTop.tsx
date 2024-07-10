@@ -1,11 +1,12 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FaCartPlus, FaSearch, FaTruck } from "react-icons/fa";
 import SignUpComp from "../../../SignUp/SignUpComp";
+import ProductSearch from "../../../ProductSearch/ProductSearch";
 
 const SearchBarTop = () => {
-  // const mongoUserId = sessionStorage.getItem("mongoUserId");
   return (
     <div className="flex items-center justify-between bg-green-100 px-6 py-0 sm:py-2 md:py-4">
       <div className="brand-icon flex items-center gap-2">
@@ -15,18 +16,14 @@ const SearchBarTop = () => {
           height={20}
           alt="Brand"
         />
-        <Link href={"/"} className=" text-sm md:text-2xl font-extrabold">
+        <Link href={"/"} className="text-sm md:text-2xl font-extrabold">
           MediShopBD
         </Link>
       </div>
-      <div className="search-bar  hidden lg:flex">
-        <label className="input input-bordered   items-center gap-2 hidden lg:flex">
-          <input type="text" className="grow" placeholder="Search" />
-          <FaSearch />
-        </label>
-      </div>
+      {/* Integrate ProductSearch component */}
+      <ProductSearch />
       <div className="user-need-section flex items-center gap-6">
-        <div className=" gap-4 items-center  hidden lg:flex border-r-4 pr-4 sm:border-cyan-800 ">
+        <div className="gap-4 items-center hidden lg:flex border-r-4 pr-4 sm:border-cyan-800">
           <div className="track-order flex items-center gap-2">
             <div className="track-icon">
               <FaTruck size={40} />

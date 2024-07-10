@@ -178,7 +178,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen ">
-      {/* dashboard side bar */}
       <div className="min-w-32 w-full h-screen text-[darkblue]  ">
         <ul className="menu p-0">
           {menuItems[dashLocation]?.map((item) => (
@@ -194,7 +193,6 @@ const Dashboard = () => {
           ))}
         </ul>
       </div>
-      {/* dashboard content */}
     </div>
   );
 };

@@ -7,7 +7,7 @@ const ProductCard = ({ product }) => {
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
   // console.log(currentDate);
   // console.log(product);
-  return product.stockDetails[0].expirationDate >= currentDate ? (
+  return product?.stockDetails[0]?.expirationDate >= currentDate ? (
     // return (
     <Link href={`/products/${product._id}`}>
       <div className="flex flex-col border cursor-pointer rounded-md shadow-md overflow-hidden h-full text-sm md:text-base">
