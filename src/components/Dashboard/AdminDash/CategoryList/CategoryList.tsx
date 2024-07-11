@@ -62,28 +62,62 @@ const CategoryList: React.FC = () => {
     fetchCategories();
   }, []);
 
+  const generateCodeFromName = (name: string) => {
+    return name.toLowerCase().replace(/\s+/g, "-");
+  };
+
   const handleCategoryInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    let updatedCategory: Partial<Category>;
+
     if (editingCategory) {
-      setEditingCategory({ ...editingCategory, [name]: value });
+      updatedCategory = { ...editingCategory, [name]: value };
+      setEditingCategory(updatedCategory);
     } else {
-      setNewCategory({ ...newCategory, [name]: value });
+      updatedCategory = { ...newCategory, [name]: value };
+      setNewCategory(updatedCategory);
+    }
+
+    // Automatically generate the category code when the name changes
+    if (name === "name") {
+      const code = generateCodeFromName(value);
+      if (editingCategory) {
+        setEditingCategory({ ...updatedCategory, code });
+      } else {
+        setNewCategory({ ...updatedCategory, code });
+      }
     }
   };
+
   console.log(editingCategory);
 
   const handleSubCategoryInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+    let updatedSubCategory: Partial<SubCategory>;
+
     if (editingSubCategory) {
-      setEditingSubCategory({ ...editingSubCategory, [name]: value });
+      updatedSubCategory = { ...editingSubCategory, [name]: value };
+      setEditingSubCategory(updatedSubCategory);
     } else {
-      setNewSubCategory({ ...newSubCategory, [name]: value });
+      updatedSubCategory = { ...newSubCategory, [name]: value };
+      setNewSubCategory(updatedSubCategory);
+    }
+
+    // Automatically generate the subcategory code when the name changes
+    if (name === "name") {
+      const code = generateCodeFromName(value);
+      if (editingSubCategory) {
+        setEditingSubCategory({ ...updatedSubCategory, code });
+      } else {
+        setNewSubCategory({ ...updatedSubCategory, code });
+      }
     }
   };
+
   console.log(editingSubCategory);
 
   const handleCategorySubmit = async (e: React.FormEvent) => {
@@ -106,6 +140,7 @@ const CategoryList: React.FC = () => {
         );
         setEditingCategory(null);
       } else {
+        console.log(newCategory);
         const response = await axios.post(
           `${serverUrl}/api/categories`,
           newCategory
@@ -176,7 +211,7 @@ const CategoryList: React.FC = () => {
   const handleDeleteCategory = async (id: string) => {
     try {
       await axios.delete(`${serverUrl}/api/categories/${id}`);
-      setCategories(categories.filter((category) => category._id !== id));
+      setCategories(categories.filter((category) => category?._id !== id));
     } catch (err) {
       setError("Failed to delete category");
     }
@@ -192,7 +227,7 @@ const CategoryList: React.FC = () => {
       );
       setCategories(
         categories.map((cat) =>
-          cat._id === categoryId
+          cat?._id === categoryId
             ? {
                 ...cat,
                 subCategories: cat.subCategories.filter(
@@ -256,7 +291,7 @@ const CategoryList: React.FC = () => {
             type="text"
             name="name"
             placeholder="Category Name"
-            value={editingCategory?.name || newCategory.name || ""}
+            value={editingCategory?.name || newCategory?.name || ""}
             onChange={handleCategoryInputChange}
             className="border p-2 rounded"
             required
@@ -265,7 +300,7 @@ const CategoryList: React.FC = () => {
             name="description"
             placeholder="Category Description"
             value={
-              editingCategory?.description || newCategory.description || ""
+              editingCategory?.description || newCategory?.description || ""
             }
             onChange={handleCategoryInputChange}
             className="border p-2 rounded"
@@ -283,7 +318,7 @@ const CategoryList: React.FC = () => {
             type="text"
             name="categoryCode"
             placeholder="Category Code"
-            value={editingCategory?.code || newCategory.code || ""}
+            value={editingCategory?.code || newCategory?.code || ""}
             onChange={handleCategoryInputChange}
             className="border p-2 rounded"
             required
@@ -305,7 +340,7 @@ const CategoryList: React.FC = () => {
               type="text"
               name="name"
               placeholder="Subcategory Name"
-              value={editingSubCategory?.name || newSubCategory.name || ""}
+              value={editingSubCategory?.name || newSubCategory?.name || ""}
               onChange={handleSubCategoryInputChange}
               className="border p-2 rounded"
               required
@@ -315,7 +350,7 @@ const CategoryList: React.FC = () => {
               placeholder="Subcategory Description"
               value={
                 editingSubCategory?.description ||
-                newSubCategory.description ||
+                newSubCategory?.description ||
                 ""
               }
               onChange={handleSubCategoryInputChange}
@@ -355,8 +390,8 @@ const CategoryList: React.FC = () => {
             className="border p-4 rounded-lg shadow-lg relative"
           >
             <Image
-              src={category.image || placeholderImage}
-              alt={category.name}
+              src={category?.image || placeholderImage}
+              alt={category?.name}
               width={200}
               height={200}
               className="w-full h-40 object-cover rounded-md mb-4"
@@ -364,7 +399,7 @@ const CategoryList: React.FC = () => {
             <h2 className="text-xl font-semibold">
               {index + 1}. {category.name}
             </h2>
-            <p className="text-gray-700">{category.description}</p>
+            <p className="text-gray-700">{category?.description}</p>
             <p className="text-gray-700">Code: {category?.code}</p>
             <h3 className="text-lg font-semibold mt-4  ">Subcategories:</h3>
             <ul className="list-disc list-inside">
@@ -374,7 +409,7 @@ const CategoryList: React.FC = () => {
                   className="flex justify-between items-center border p-1 my-2"
                 >
                   <div>
-                    <span className="font-semibold">{subCategory.name}</span>
+                    <span className="font-semibold">{subCategory?.name}</span>
                     {subCategory.description && (
                       <p className="text-gray-600 text-sm">
                         {subCategory.description}
@@ -387,7 +422,7 @@ const CategoryList: React.FC = () => {
                   <div className="flex">
                     <button
                       onClick={() =>
-                        handleEditSubCategory(subCategory, category._id)
+                        handleEditSubCategory(subCategory, category?._id)
                       }
                       className="ml-2 px-2 py-1 bg-yellow-500 text-white rounded"
                     >
@@ -395,7 +430,7 @@ const CategoryList: React.FC = () => {
                     </button>
                     <button
                       onClick={() =>
-                        handleDeleteSubCategory(category._id, subCategory._id)
+                        handleDeleteSubCategory(category?._id, subCategory?._id)
                       }
                       className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
                     >
@@ -413,13 +448,13 @@ const CategoryList: React.FC = () => {
                 Edit
               </button>
               <button
-                onClick={() => handleDeleteCategory(category._id)}
+                onClick={() => handleDeleteCategory(category?._id)}
                 className="px-2 py-1 bg-red-500 text-white rounded"
               >
                 Delete
               </button>
               <button
-                onClick={() => setSelectedCategoryId(category._id)}
+                onClick={() => setSelectedCategoryId(category?._id)}
                 className="px-2 py-1 bg-green-500 text-white rounded"
               >
                 Add Subcategory

@@ -58,9 +58,9 @@ const CategoryList: React.FC = () => {
           >
             <div className="flex flex-col   mb-4">
               <div className="flex gap-4 items-center justify-between bg-blue-100 p-3 mb-3 rounded-md">
-                <h2 className="text-3xl font-semibold  ">{category.name}</h2>
+                <h2 className="text-3xl font-semibold  ">{category?.name}</h2>
                 <Link
-                  href={`/categories/${category.code}`}
+                  href={`/categories/${category?.code}`}
                   className="btn bg-blue-500 text-white    "
                 >
                   Show Products
