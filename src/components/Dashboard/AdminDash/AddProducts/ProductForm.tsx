@@ -13,52 +13,52 @@ import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
 import { ProductData } from "./products.types";
 
-const ProductForm: React.FC<{ onSubmit: (data: ProductData) => void }> = ({
-  onSubmit,
-}) => {
-  const [product, setProduct] = useState({
-    productId: 0,
-    productName: "",
-    measure: "",
-    activeIngredient: "",
-    dosageForm: "",
-    applicationArea: "",
-    productType: "",
-    primaryCategory: "",
-    subCategory: "",
-    packaging: {
-      unitsPerStrip: 0,
-      stripsPerBox: 0,
-    },
-    pricePerUnit: 0,
-    stockDetails: [
-      {
-        batchNumber: "",
-        quantity: 0,
-        expirationDate: "",
-        aisleLocation: "",
+const ProductForm = ({ onSubmit, initialProduct }: any) => {
+  const [product, setProduct] = useState(
+    initialProduct || {
+      productId: 0,
+      productName: "",
+      measure: "",
+      activeIngredient: "",
+      dosageForm: "",
+      applicationArea: "",
+      productType: "",
+      primaryCategory: "",
+      subCategory: "",
+      packaging: {
+        unitsPerStrip: 0,
+        stripsPerBox: 0,
       },
-    ],
-    manufacturer: "",
-    requiresPrescription: "",
-    pageCategory: "",
-    productImage: "",
-    leafletImage: "",
-    usageDetails: {
-      indications: {
-        mainTitle: "",
-        subtitles: [],
-      },
-      dosageDetails: [
+      pricePerUnit: 0,
+      stockDetails: [
         {
-          ageRange: "",
-          userGroup: "",
-          dosageInstructions: [],
+          batchNumber: "",
+          quantity: 0,
+          expirationDate: "",
+          aisleLocation: "",
         },
       ],
-      pharmacology: "",
-    },
-  });
+      manufacturer: "",
+      requiresPrescription: "",
+      pageCategory: "",
+      productImage: "",
+      leafletImage: "",
+      usageDetails: {
+        indications: {
+          mainTitle: "",
+          subtitles: [],
+        },
+        dosageDetails: [
+          {
+            ageRange: "",
+            userGroup: "",
+            dosageInstructions: [],
+          },
+        ],
+        pharmacology: "",
+      },
+    }
+  );
 
   const [categories, setCategories] = useState<
     {
@@ -385,6 +385,7 @@ const ProductForm: React.FC<{ onSubmit: (data: ProductData) => void }> = ({
       <Toaster />
       {error && <p className="text-red-500">{error}</p>}
       <BasicInformation
+        productId={product.productId}
         productName={product.productName}
         measure={product.measure}
         activeIngredient={product.activeIngredient}
@@ -415,8 +416,8 @@ const ProductForm: React.FC<{ onSubmit: (data: ProductData) => void }> = ({
           onImageChange={handleImageChange}
         />
         <Packaging
-          unitsPerStrip={product.packaging.unitsPerStrip}
-          stripsPerBox={product.packaging.stripsPerBox}
+          unitsPerStrip={product?.packaging?.unitsPerStrip}
+          stripsPerBox={product?.packaging?.stripsPerBox}
           handlePackagingChange={handlePackagingChange}
         />
       </div>
@@ -427,9 +428,9 @@ const ProductForm: React.FC<{ onSubmit: (data: ProductData) => void }> = ({
         handleRemoveStock={handleRemoveStock}
       />
       <UsageDetails
-        indications={product.usageDetails.indications}
-        dosageDetails={product.usageDetails.dosageDetails}
-        pharmacology={product.usageDetails.pharmacology}
+        indications={product?.usageDetails?.indications}
+        dosageDetails={product?.usageDetails?.dosageDetails}
+        pharmacology={product?.usageDetails?.pharmacology}
         handleUsageDetailsChange={handleUsageDetailsChange}
         handleIndicationsChange={handleIndicationsChange}
         handleDosageDetailChange={handleDosageDetailChange}

@@ -46,28 +46,30 @@ const Dashboard = ({ content }: any) => {
     : "/error";
 
   return (
-    <div className="flex ">
-      <div className="  bg-green-400  h-screen text-[darkblue]  min-w-60   sticky top-0 left-0">
-        <div>
-          <ul className="menu p-0">
-            {menuItems[dashLocation]?.map((item) => (
-              <li
-                key={item.href}
-                className="border-b-2 border-b-green-300 text-xl p-4"
-              >
-                <Link
-                  href={`/dashboard/${item.href}`}
-                  className="dashboard-link"
+    <div className="flex">
+      <div className="basis-3/12">
+        <div className="  bg-green-400  min-h-screen text-[darkblue]  min-w-60   sticky top-0 left-0">
+          <div>
+            <ul className="menu p-0">
+              {menuItems[dashLocation]?.map((item) => (
+                <li
+                  key={item.href}
+                  className="border-b-2 border-b-green-300 text-xl p-4"
                 >
-                  <item.icon />
-                  {item.text}
-                </Link>
-              </li>
-            ))}
-          </ul>
+                  <Link
+                    href={`/dashboard/${item.href}`}
+                    className="dashboard-link"
+                  >
+                    <item.icon />
+                    {item.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
-      <div className="bg-red-200 w-full">{content}</div>
+      <div className=" basis-8/12 w-full">{content}</div>
     </div>
   );
 };

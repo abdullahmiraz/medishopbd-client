@@ -51,28 +51,28 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className=" p-4 shadow-xl">
+    <div className="p-4 shadow-xl relative">
       <Toaster />
       <h2 className="font-extrabold text-2xl text-center my-4">
         Products List
       </h2>
-      <div className="overflow-x-auto overflow-y-auto">
-        <table className="table table-zebra table-xs table-pin-rows table-pin-cols">
-          <thead>
-            <tr>
-              <th>Actions</th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Measure</th>
-              <th>Primary-Cat</th>
-              <th>Sub-Cat</th>
-              <th>Price/Unit</th>
-              <th>Manufacturer</th>
-              <th>Available Stock</th>
-              <th>Expiration Date</th>
-              <th>Batch No</th>
-              <th>Aisle</th>
-              <th>Prescription?</th>
+      <div className="overflow-x-auto overflow-y-auto ">
+        <table className="table table-zebra table-xs border ">
+          <thead >
+            <tr className="">
+              <th className="max-w-32 border   ">Actions</th>
+              <th className="max-w-32 border">ID</th>
+              <th className="max-w-32 border">Name</th>
+              <th className="max-w-32 border">Measure</th>
+              <th className="max-w-32 border">Primary-Cat</th>
+              <th className="max-w-32 border">Sub-Cat</th>
+              <th className="max-w-32 border">Price/Unit</th>
+              <th className="max-w-32 border">Manufacturer</th>
+              <th className="border ">Available Stock</th>
+              <th className=" border">Expiration Date</th>
+              <th className=" border">Batch No</th>
+              <th className="border">Aisle</th>
+              <th className="max-w-32 border">Prescription?</th>
             </tr>
           </thead>
           <tbody>
@@ -92,6 +92,7 @@ const ProductsList: React.FC = () => {
                       <span className="sr-only">Edit</span>
                     </button>
                   </Link>
+
                   <button
                     className="bg-red-500 rounded-md text-white cursor-pointer px-2 py-1 flex items-center"
                     onClick={() => handleDelete(product._id)}
@@ -100,38 +101,40 @@ const ProductsList: React.FC = () => {
                     <span className="sr-only">Delete</span>
                   </button>
                 </td>
-                <td>{index + 1}</td>
-                <td>{product.productName}</td>
-                <td>{product.measure}</td>
-                <td>
+                <td className="max-w-32 border ">{index + 1}</td>
+                <td className="max-w-32 border">{product.productName}</td>
+                <td className="max-w-32 border">{product.measure}</td>
+                <td className="max-w-32 border">
                   {product?.primaryCategory?.name || product?.primaryCategory}
                 </td>
-                <td>{product?.subCategory?.name || product?.subCategory}</td>
-                <td>{product.pricePerUnit}</td>
-                <td>{product.manufacturer}</td>
-                <td>
+                <td className="max-w-32 border">
+                  {product?.subCategory?.name || product?.subCategory}
+                </td>
+                <td className="max-w-32 border">{product.pricePerUnit}</td>
+                <td className="max-w-32 border">{product.manufacturer}</td>
+                <td className="border ">
                   {product?.stockDetails?.map((item) => (
-                    <li>{item?.quantity}</li>
+                    <li key={item.batchNumber}>{item?.quantity}</li>
                   ))}
                 </td>
-                <td>
+                <td className="border ">
                   {product?.stockDetails?.map((item) => (
-                    <li>{item?.expirationDate}</li>
+                    <li key={item.batchNumber}>{item?.expirationDate}</li>
                   ))}
                 </td>
-                <td>
+                <td className="border ">
                   {product?.stockDetails?.map((item) => (
-                    <li>{item?.batchNumber}</li>
+                    <li key={item.batchNumber}>{item?.batchNumber}</li>
                   ))}
                 </td>
-                <td>
+                <td className="w-32 border">
                   {product?.stockDetails?.map((item) => (
-                    <li>{item?.aisleLocation}</li>
+                    <li key={item.batchNumber}>{item?.aisleLocation}</li>
                   ))}
                 </td>
-                {/* Ensure aisleLocation is displayed */}
-                <td>{product.requiresPrescription ? "Yes" : "No"}</td>{" "}
-                {/* Ensure requiresPrescription is displayed */}
+                <td className="max-w-32 border">
+                  {product.requiresPrescription ? "Yes" : "No"}
+                </td>
               </tr>
             ))}
           </tbody>

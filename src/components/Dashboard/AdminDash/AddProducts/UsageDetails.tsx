@@ -52,13 +52,13 @@ const UsageDetails: React.FC<UsageDetailsProps> = ({
           type="text"
           id="mainTitle"
           name="mainTitle"
-          value={indications.mainTitle}
+          value={indications?.mainTitle}
           onChange={handleIndicationsChange}
           className="input input-bordered w-full"
         />
       </div>
 
-      {indications.subtitles.map((subtitle, index) => (
+      {indications?.subtitles?.map((subtitle, index) => (
         <div key={index} className="mb-4">
           <label className="block text-sm font-medium mb-1">
             Subtitle {index + 1}
@@ -76,7 +76,7 @@ const UsageDetails: React.FC<UsageDetailsProps> = ({
       <button
         type="button"
         onClick={() =>
-          handleIndicationSubtitleChange(indications.subtitles.length, "")
+          handleIndicationSubtitleChange(indications?.subtitles.length, "")
         }
         className="btn btn-primary mb-4"
       >
@@ -99,7 +99,7 @@ const UsageDetails: React.FC<UsageDetailsProps> = ({
         />
       </div>
 
-      {dosageDetails.map((detail, index) => (
+      {dosageDetails?.map((detail, index) => (
         <div key={index} className="border p-4 mb-4 rounded-lg shadow-sm">
           <h3 className="text-lg font-semibold mb-4">
             Dosage Detail {index + 1}
@@ -145,7 +145,7 @@ const UsageDetails: React.FC<UsageDetailsProps> = ({
             <label className="block text-sm font-medium mb-1">
               Dosage Instructions
             </label>
-            {detail.dosageInstructions.map((instruction, i) => (
+            {detail?.dosageInstructions?.map((instruction, i) => (
               <div key={i} className="mb-2">
                 <input
                   type="text"
