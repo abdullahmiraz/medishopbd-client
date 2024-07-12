@@ -12,6 +12,7 @@ import PrescriptionMedicine from "./PrescriptionMedicines/PrescriptionMedicine";
 import ReviewCard from "./ServiceCard/ServiceCard";
 import SkinCareProducts from "./SkinCareProducts/SkinCareProducts";
 import { UserAuth } from "../../context/AuthContext";
+import AllMedicineViewCarousel from "./AllMedicineViewCarousel/AllMedicineViewCarousel";
 
 const HomeView = () => {
   const { user } = UserAuth();
@@ -63,6 +64,7 @@ const HomeView = () => {
       <HeroCarousel />
       <ReviewCard />
       <CategoryCard />
+      <AllMedicineViewCarousel />
       <PrescriptionMedicine />
       <SkinCareProducts />
       <Footer />

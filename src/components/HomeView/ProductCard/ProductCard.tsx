@@ -3,7 +3,7 @@ import Link from "next/link";
 import { placeholderImage } from "../../../../api";
 
 const ProductCard = ({ product }) => {
-  console.log(product);
+  console.log(product?.productCode);
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
   // console.log(currentDate);
   // console.log(product);

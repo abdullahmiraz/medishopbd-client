@@ -40,6 +40,7 @@ export interface ProductData {
   productId: number;
   productName: string;
   measure: string;
+  productCode: string;
   activeIngredient: string;
   dosageForm: string;
   applicationArea: string;

@@ -3,13 +3,10 @@
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
-import Image from "next/image";
-import Link from "next/link";
+import { ProductData } from "../../Dashboard/AdminDash/AddProducts/products.types";
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
-import { placeholderImage } from "../../../../api";
 import ProductCard from "../ProductCard/ProductCard";
-import { ProductData } from "../../Dashboard/AdminDash/AddProducts/products.types";
 
 export default function ProductsViewCarousel({ title, products }: any) {
   // console.log(products);
@@ -38,11 +35,11 @@ export default function ProductsViewCarousel({ title, products }: any) {
         className="mx-6"
       >
         {products?.map((product: ProductData, index) =>
-          product.expirationDate >= currentDate ? (
+          // product.expirationDate >= currentDate ? (
             <SplideSlide key={index}>
               <ProductCard product={product} />
             </SplideSlide>
-          ) : null
+          // ) : null
         )}
       </Splide>
       <BannerWide />

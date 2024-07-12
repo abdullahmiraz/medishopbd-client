@@ -64,6 +64,7 @@ const ProductsList: React.FC = () => {
               <th className="max-w-32 border">ID</th>
               <th className="max-w-32 border">Name</th>
               <th className="max-w-32 border">Measure</th>
+              <th className="max-w-32 border">Code</th>
               <th className="max-w-32 border">Primary-Cat</th>
               <th className="max-w-32 border">Sub-Cat</th>
               <th className="max-w-32 border">Price/Unit</th>
@@ -104,6 +105,7 @@ const ProductsList: React.FC = () => {
                 <td className="max-w-32 border ">{index + 1}</td>
                 <td className="max-w-32 border">{product.productName}</td>
                 <td className="max-w-32 border">{product.measure}</td>
+                <td className="max-w-32 border">{product?.productCode}</td>
                 <td className="max-w-32 border">
                   {product?.primaryCategory?.name || product?.primaryCategory}
                 </td>

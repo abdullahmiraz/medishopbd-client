@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../../api";
 import BasicInformation from "./BasicInformation";
 import CategoryDetails from "./CategoryDetails";
@@ -9,9 +10,6 @@ import ImageUpload from "./ImageUpload";
 import Packaging from "./Packaging";
 import StockInformation from "./StockInformation";
 import UsageDetails from "./UsageDetails";
-import { Toaster } from "react-hot-toast";
-import toast from "react-hot-toast";
-import { ProductData } from "./products.types";
 
 const ProductForm = ({ onSubmit, initialProduct }: any) => {
   const [product, setProduct] = useState(
@@ -19,8 +17,9 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
       productId: 0,
       productName: "",
       measure: "",
-      activeIngredient: "",
       dosageForm: "",
+      // productCode: "",
+      activeIngredient: "",
       applicationArea: "",
       productType: "",
       primaryCategory: "",
@@ -388,8 +387,9 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
         productId={product.productId}
         productName={product.productName}
         measure={product.measure}
-        activeIngredient={product.activeIngredient}
         dosageForm={product.dosageForm}
+        productCode={product.productCode}
+        activeIngredient={product.activeIngredient}
         manufacturer={product.manufacturer}
         requiresPrescription={product.requiresPrescription}
         pageCategory={product.pageCategory}

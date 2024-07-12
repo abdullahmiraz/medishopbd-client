@@ -280,6 +280,8 @@ const CategoryList: React.FC = () => {
     toast.success("Image uploaded successfully!");
   };
 
+  categories.map((category) => console.log(category.name));
+
   return (
     <div className=" px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Manage Categories</h1>
