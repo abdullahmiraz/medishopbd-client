@@ -3,12 +3,16 @@ import Link from "next/link";
 import { placeholderImage } from "../../../../api";
 
 const ProductCard = ({ product }) => {
-  console.log(product?.productCode);
+  console.log(
+    product?.stockDetails[product?.stockDetails.length - 1]?.expirationDate
+  );
+  console.log(product?.stockDetails.length);
+
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
   // console.log(currentDate);
   // console.log(product);
-  return product?.stockDetails[0]?.expirationDate >= currentDate ? (
-    // return (
+  return product?.stockDetails[product?.stockDetails.length - 1]
+    ?.expirationDate >= currentDate ? (
     <Link href={`/products/${product._id}`}>
       <div className="flex flex-col border cursor-pointer rounded-md shadow-md overflow-hidden h-full text-sm md:text-base">
         <figure className="relative" style={{ paddingBottom: "60%" }}>
@@ -27,7 +31,7 @@ const ProductCard = ({ product }) => {
           <div>
             <p className="text-gray-600 mb-2">{product?.productType}</p>
 
-            <div className="flex justify-between mb-2">
+            <div className="flex flex-col justify-between mb-2">
               <p>
                 Price:{" "}
                 <span className="text-green-500 font-medium">
@@ -35,14 +39,19 @@ const ProductCard = ({ product }) => {
                 </span>
               </p>
               {/* <p>Stock: {product?.availableStock}</p> */}
-              <p>Date: {product?.expirationDate}</p>
+              <p>
+                Date:{" "}
+                {
+                  product?.stockDetails[product?.stockDetails.length - 1]
+                    ?.expirationDate
+                }
+              </p>
             </div>
           </div>
         </div>
       </div>
     </Link>
-  ) : // );
-  null;
+  ) : null;
 };
 
 export default ProductCard;

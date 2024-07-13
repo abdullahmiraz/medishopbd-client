@@ -54,35 +54,16 @@ const ProductSingleView = ({ productId }) => {
     }
     handleQuantityChange(1); // reset after you submit the cart
     if (stripCount >= 1) {
-      let productCount = 0;
-
-      // Check if packaging details are available and not null/undefined
-      if (
-        product.packaging &&
-        product.packaging.unitsPerStrip !== null &&
-        product.packaging.stripsPerBox !== null
-      ) {
-        productCount =
-          stripCount *
-          product.packaging.unitsPerStrip *
-          product.packaging.stripsPerBox;
-      } else {
-        productCount = stripCount; // Fallback to stripCount if packaging details are null
-      }
-
       const cartItem = {
         productId: product._id,
         name: product.productName,
         measure: product.measure,
         stripCount: stripCount,
-        productCount: productCount,
+        productCount: stripCount, // Assuming each strip is counted as a unit
         pricePerStrip: product.pricePerUnit,
-        totalPrice: product?.pricePerUnit * productCount,
+        totalPrice: product?.pricePerUnit * stripCount,
         prescription: product?.requiresPrescription,
       };
-
-      console.log(cartItem);
-      console.log(product);
 
       const existingCart =
         JSON.parse(localStorage.getItem("medicine_cart")) || [];
@@ -94,7 +75,7 @@ const ProductSingleView = ({ productId }) => {
       if (existingItemIndex > -1) {
         // Update the existing item's strip count, product count, and total price
         existingCart[existingItemIndex].stripCount += stripCount;
-        existingCart[existingItemIndex].productCount += productCount;
+        existingCart[existingItemIndex].productCount += stripCount;
         existingCart[existingItemIndex].totalPrice += cartItem.totalPrice;
       } else {
         // Add the new item to the cart
@@ -103,9 +84,6 @@ const ProductSingleView = ({ productId }) => {
 
       localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
 
-      console.log(
-        `Added ${productCount} products (strips) of ${product?.productName} to cart`
-      );
       toast.success("Product added successfully!");
     } else {
       toast.error("Enter a valid number quantity");
@@ -113,21 +91,22 @@ const ProductSingleView = ({ productId }) => {
   };
 
   const handleQuantityChange = (newValue) => {
-    if (product?.availableStock < 1) {
+    if (
+      product?.stockDetails.reduce((acc, curr) => acc + curr.quantity, 0) < 1
+    ) {
       setStockOutAlert(true);
     }
-    // Handle direct input or backspace
     const newCount = Number(newValue);
-    if (
-      !isNaN(newCount) &&
-      newCount >= 1 &&
-      newCount <= product.availableStock
-    ) {
+    const availableStock = product?.stockDetails.reduce(
+      (acc, curr) => acc + curr.quantity,
+      0
+    );
+    if (!isNaN(newCount) && newCount >= 1 && newCount <= availableStock) {
       setStripCount(newCount);
     } else if (newValue === "" || newCount === 0) {
       setStripCount(0); // Reset to 0 if input is empty or zero
     } else {
-      setStripCount(product.availableStock); // Maximum strip count is availableStock
+      setStripCount(availableStock); // Maximum strip count is availableStock
     }
   };
 
@@ -241,11 +220,15 @@ const ProductSingleView = ({ productId }) => {
               <div className="flex gap-2">
                 <strong>Stock:</strong>{" "}
                 {product.stockDetails.length > 0 ? (
-                  product.stockDetails[0].expirationDate
+                  product.stockDetails.reduce(
+                    (acc, curr) => acc + curr.quantity,
+                    0
+                  )
                 ) : (
                   <p className="text-red-600">Stock Out !!</p>
                 )}
               </div>
+
               <p>
                 <strong>Generics: </strong>
                 <span className="font-semibold text-cyan-700">
@@ -275,16 +258,16 @@ const ProductSingleView = ({ productId }) => {
                 </p>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 w-full">
                 <label>
                   <strong>Quantity:</strong>
                   {/* (
-                  {product?.primaryCategory === "Medicine"
+                  {product?.primaryCategory == "Medicine"
                     ? "strip"
                     : "Single Unit"}
                   ) */}
                 </label>
-                <div className="flex items-center text-3xl font-bold">
+                <div className="flex items-center text-3xl font-bold ">
                   <button
                     className="px-2 py-1 border bg-red-400"
                     disabled={stockOutAlert}
@@ -294,10 +277,10 @@ const ProductSingleView = ({ productId }) => {
                   </button>
                   <input
                     type="number"
-                    className="border rounded px-2 py-1 text-center mx-2"
+                    className="border rounded px-2 py-1 text-center mx-2 w-32"
                     value={stripCount === 0 ? "" : stripCount}
                     min="1"
-                    max={product.availableStock}
+                    max={product?.availableStock}
                     onChange={(e) => handleQuantityChange(e.target.value)}
                   />
                   <button

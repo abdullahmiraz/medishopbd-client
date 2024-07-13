@@ -50,8 +50,6 @@ const Checkout = () => {
     fetchUser();
   }, []);
 
-
-
   const handleOrder = async () => {
     const orderDetails = {
       cartItems,
@@ -62,25 +60,37 @@ const Checkout = () => {
       checkoutAmount,
     };
 
-    // Fetch each product by its ID and update its available stock
     try {
       for (const item of cartItems) {
-        const productResponse = await axios.get(`${serverUrl}/api/products/${item.productId}`);
+        const productResponse = await axios.get(
+          `${serverUrl}/api/products/${item.productId}`
+        );
         const product = productResponse.data;
 
-        // Calculate the new available stock
-        const newStock = product.availableStock - item.stripCount;
-        if (newStock < 0) {
+        let requiredQuantity = item.stripCount; // Change to item.stripCount to match your cart structure
+        let stockDetails = product.stockDetails;
+
+        for (let i = 0; i < stockDetails.length; i++) {
+          if (requiredQuantity <= 0) break;
+
+          if (stockDetails[i].quantity >= requiredQuantity) {
+            stockDetails[i].quantity -= requiredQuantity;
+            requiredQuantity = 0;
+          } else {
+            requiredQuantity -= stockDetails[i].quantity;
+            stockDetails[i].quantity = 0;
+          }
+        }
+
+        if (requiredQuantity > 0) {
           throw new Error(`Insufficient stock for ${product.productName}`);
         }
 
-        // Update the product's available stock
         await axios.put(`${serverUrl}/api/products/${item.productId}`, {
-          availableStock: newStock,
+          stockDetails: stockDetails,
         });
       }
 
-      // If all stock updates are successful, save the order details
       localStorage.setItem("order_details", JSON.stringify(orderDetails));
       router.push("/checkout/confirmation");
     } catch (error) {
@@ -88,7 +98,6 @@ const Checkout = () => {
       setError(`Error updating stock: ${error.message}`);
     }
   };
-
 
   if (cartItems.length === 0) {
     return <p className="text-center my-12">Your cart is empty.</p>;

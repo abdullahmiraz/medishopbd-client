@@ -27,10 +27,13 @@ const Cart = () => {
   }, []);
 
   useEffect(() => {
-    const prescriptionRequired = cartItems.some((item) => item.prescription);
+    const prescriptionRequired = cartItems.some(
+      (item) => item.prescription == "true"
+    );
     setRequiresPrescription(prescriptionRequired);
   }, [cartItems]);
   localStorage.setItem("prescription", requiresPrescription);
+  console.log(requiresPrescription);
 
   const handleRemoveItem = (index) => {
     const updatedCart = cartItems.filter((item, i) => i !== index);

@@ -35,11 +35,11 @@ export default function ProductsViewCarousel({ title, products }: any) {
         className="mx-6"
       >
         {products?.map((product: ProductData, index) =>
-          // product.expirationDate >= currentDate ? (
+          product?.stockDetails[product?.stockDetails.length - 1]?.expirationDate >= currentDate ? (
             <SplideSlide key={index}>
               <ProductCard product={product} />
             </SplideSlide>
-          // ) : null
+          ) : null
         )}
       </Splide>
       <BannerWide />

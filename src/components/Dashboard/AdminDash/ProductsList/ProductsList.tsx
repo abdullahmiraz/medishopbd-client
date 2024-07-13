@@ -58,7 +58,7 @@ const ProductsList: React.FC = () => {
       </h2>
       <div className="overflow-x-auto overflow-y-auto ">
         <table className="table table-zebra table-xs border ">
-          <thead >
+          <thead>
             <tr className="">
               <th className="max-w-32 border   ">Actions</th>
               <th className="max-w-32 border">ID</th>
@@ -71,8 +71,8 @@ const ProductsList: React.FC = () => {
               <th className="max-w-32 border">Manufacturer</th>
               <th className="border ">Available Stock</th>
               <th className=" border">Expiration Date</th>
-              <th className=" border">Batch No</th>
-              <th className="border">Aisle</th>
+              <th className=" border">Batch Num.</th>
+              <th className="border">Aisle No.</th>
               <th className="max-w-32 border">Prescription?</th>
             </tr>
           </thead>
@@ -135,7 +135,7 @@ const ProductsList: React.FC = () => {
                   ))}
                 </td>
                 <td className="max-w-32 border">
-                  {product.requiresPrescription ? "Yes" : "No"}
+                  {product.requiresPrescription == "true" ? "Yes" : "No"}
                 </td>
               </tr>
             ))}

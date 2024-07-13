@@ -54,20 +54,20 @@ const ProductSearch = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative hidden sm:block">
       {/* Search Bar */}
-      <div className="relative">
+      <div className="relative ">
         <input
           type="text"
-          className="input input-bordered pl-10 pr-4 py-2"
-          placeholder="Search for products"
+          className="input input-bordered mx-4 pl-2 py-2 sm:w-min w-40 "
+          placeholder="Search products"
           value={searchTerm}
           onChange={handleSearchChange}
           onFocus={() => setIsDropdownOpen(true)} // Show dropdown when input is focused
         />
-        <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
+        <FaSearch className="absolute right-12 top-4 text-gray-500" />
         {isDropdownOpen && filteredProducts.length > 0 && (
-          <div className="absolute z-10 mt-2 w-full bg-white shadow-lg border border-gray-300 max-h-60 overflow-y-auto z-20">
+          <div className="absolute mt-2 w-full bg-white shadow-lg border border-gray-300 max-h-60 overflow-y-auto z-20">
             <ul className="divide-y divide-gray-200">
               {filteredProducts.map((product) => (
                 <li key={product.productId} className="p-2 hover:bg-gray-100">
