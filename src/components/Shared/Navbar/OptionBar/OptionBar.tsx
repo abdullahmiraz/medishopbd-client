@@ -79,9 +79,9 @@ const OptionBar = () => {
             </div>
           </Link>
           {category.subCategories.length > 0 && (
-            <ul className="absolute hidden group-hover:block bg-white shadow-lg rounded-md     w-48 max-h-60 overflow-y-auto mt-0 lg:mt-8 ml-44 lg:ml-4">
+            <ul className="absolute hidden group-hover:block bg-white shadow-lg rounded-md min-w-48 max-h-60 overflow-y-auto mt-0 lg:mt-8 ml-36 xl:ml-0  z-30">
               {category.subCategories.map((subCategory) => (
-                <li key={subCategory.code}>
+                <li key={subCategory.code} className="z-50">
                   <Link
                     href={`/categories/${category.code}/${subCategory.code}`}
                   >
@@ -93,11 +93,15 @@ const OptionBar = () => {
           )}
         </li>
       ))}
+
+      <li>
+        <Link href={"/categories"}>More</Link>
+      </li>
     </>
   );
 
   return (
-    <div className="sticky top-0 z-10 overflow-hidden">
+    <div className="sticky top-0 z-10 ">
       <div className="navbar bg-base-100 shadow-md">
         <div className="navbar-start">
           <div className="dropdown lg:hidden">
@@ -106,16 +110,14 @@ const OptionBar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="menu dropdown-content mt-1 z-[1] p-2 shadow bg-base-100 rounded-box w-52 "
+              className="menu dropdown-content mt-1 p-2 shadow bg-base-100 rounded-box w-[320px] max-h-dvh overflow-y-auto  grid grid-cols-1  gap-2"
             >
               {navOptions}
             </ul>
           </div>
         </div>
-        <div className="navbar-center hidden lg:flex   ">
-          <ul className="menu menu-horizontal px-1 space-x-4  ">
-            {navOptions}
-          </ul>
+        <div className="navbar-center hidden lg:flex ">
+          <ul className="menu menu-horizontal px-1 space-x-4 ">{navOptions}</ul>
         </div>
         <div className="navbar-end">
           <div className="flex gap-4 items-center"></div>

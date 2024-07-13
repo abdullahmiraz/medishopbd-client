@@ -144,7 +144,7 @@ const Cart = () => {
   const checkoutAmount = {
     subtotal: calculateSubtotal(),
     discountedAmount: discountedAmount.toFixed(2),
-    deliveryFee: deliveryFee,
+    // deliveryFee: deliveryFee,
     total: totalAmount,
   };
 
@@ -171,7 +171,7 @@ const Cart = () => {
                   </Link>
                   <p>You've Selected: {item?.stripCount} items</p>
                   <p>Price per strip: Tk. {item?.pricePerStrip}</p>
-                  <p>Total Price: Tk. {item?.totalPrice}</p>
+                  <p>Total Price: Tk. {item?.totalPrice.toFixed(2)}</p>
                 </div>
                 <button
                   className="bg-red-500 text-white px-4 py-2 rounded"
@@ -189,12 +189,12 @@ const Cart = () => {
             {/* <h2>{JSON.stringify(currentUser)}</h2> */}
             <div className="flex justify-between mb-2">
               <span>Sub Total</span>
-              <span>৳{checkoutAmount?.subtotal}</span>
+              <span>৳{checkoutAmount?.subtotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between mb-2">
+            {/* <div className="flex justify-between mb-2">
               <span>Delivery Fee</span>
               <span>৳{checkoutAmount?.deliveryFee}</span>
-            </div>
+            </div> */}
             <div className="flex justify-between mb-2">
               <span>Promo Discount</span>
               <span>- ৳{checkoutAmount?.discountedAmount}</span>

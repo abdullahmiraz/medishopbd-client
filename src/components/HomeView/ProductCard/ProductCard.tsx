@@ -3,18 +3,14 @@ import Link from "next/link";
 import { placeholderImage } from "../../../../api";
 
 const ProductCard = ({ product }) => {
-  console.log(
-    product?.stockDetails[product?.stockDetails.length - 1]?.expirationDate
-  );
-  console.log(product?.stockDetails.length);
-
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
-  // console.log(currentDate);
-  // console.log(product);
+
+  const productUrl = `/products/${product?.productCode}/?pid=${product?._id}`;
+
   return product?.stockDetails[product?.stockDetails.length - 1]
     ?.expirationDate >= currentDate ? (
-    <Link href={`/products/${product._id}`}>
-      <div className="flex flex-col border cursor-pointer rounded-md shadow-md overflow-hidden h-full text-sm md:text-base">
+    <Link href={productUrl}>
+      <div className="flex flex-col border cursor-pointer rounded-md shadow-md hover:shadow-2xl hover:scale-95 transition-all duration-200  overflow-hidden h-full text-sm md:text-base">
         <figure className="relative" style={{ paddingBottom: "60%" }}>
           <Image
             src={`${product?.productImage}` || placeholderImage}

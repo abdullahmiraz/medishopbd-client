@@ -20,7 +20,17 @@ const Checkout = () => {
   const router = useRouter();
 
   const mongoUserId = sessionStorage.getItem("mongoUserId");
-  const checkoutAmount = JSON.parse(localStorage.getItem("checkoutAmount"));
+  // Step 1: Retrieve the existing data
+  const checkoutAmount =
+    JSON.parse(localStorage.getItem("checkoutAmount")) || {};
+
+  // Step 2: Add or update the deliveryFee property
+  const deliveryFee = 10; // Set your delivery fee amount here
+  checkoutAmount.deliveryFee = deliveryFee;
+
+  // Step 3: Save the updated object back to localStorage
+  localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
+
   console.log(checkoutAmount);
 
   useEffect(() => {
@@ -112,7 +122,7 @@ const Checkout = () => {
             <h2 className="font-bold text-xl mb-4">Shipping Information</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             <div className="mb-4">
-              <label className="block mb-2">Name</label>
+              <label className="block mb-2 font-semibold">Name:</label>
               <input
                 type="text"
                 className="w-full p-2 border rounded"
@@ -124,7 +134,7 @@ const Checkout = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block mb-2">Phone</label>
+              <label className="block mb-2 font-semibold">Phone:</label>
               <input
                 type="number"
                 className="w-full p-2 border rounded"
@@ -136,7 +146,29 @@ const Checkout = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block mb-2">Address</label>
+              <div className="flex items-center gap-8 mb-3">
+                <label className="block font-semibold " htmlFor="address">
+                  Address:
+                </label>
+                <select
+                  id="address"
+                  name="address"
+                  className="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 bg-orange-100"
+                >
+                  <option value="" disabled selected>
+                    Select a division
+                  </option>
+                  <option value="dhaka">Dhaka</option>
+                  <option value="chattogram">Chattogram</option>
+                  <option value="rajshahi">Rajshahi</option>
+                  <option value="khulna">Khulna</option>
+                  <option value="barishal">Barishal</option>
+                  <option value="sylhet">Sylhet</option>
+                  <option value="rangpur">Rangpur</option>
+                  <option value="mymensingh">Mymensingh</option>
+                </select>
+              </div>
+
               <div className="mb-2">
                 <label>
                   <input
@@ -242,7 +274,7 @@ const Checkout = () => {
                       {item?.name} {item?.measure}
                     </h3>
                     <p>Price per strip: Tk. {item?.pricePerStrip}</p>
-                    <p>Total Price: Tk. {item?.totalPrice}</p>
+                    <p>Total Price: Tk. {item?.totalPrice.toFixed(2)}</p>
                     <p>Quantity: {item?.stripCount}</p>
                   </div>
                 </li>
