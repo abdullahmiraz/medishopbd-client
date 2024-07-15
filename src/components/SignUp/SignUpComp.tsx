@@ -45,10 +45,13 @@ const SignUpComp = () => {
   const handleSignOut = () => {
     setIsLoggedIn(false);
 
-    router.push("../../../../");
+    router.push("/");
     sessionStorage.clear();
     localStorage.clear();
-    window.location.reload();
+    setTimeout(function () {
+      window.location.reload();
+    }, 800);
+    // window.location.reload();
   };
 
   useEffect(() => {
