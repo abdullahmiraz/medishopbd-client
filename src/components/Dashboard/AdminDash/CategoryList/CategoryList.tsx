@@ -42,6 +42,7 @@ const CategoryList: React.FC = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null
   );
+  const [editingSubCategoryParent, setEditingSubCategoryParent] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -149,6 +150,7 @@ const CategoryList: React.FC = () => {
         setCategories([...categories, response.data]);
       }
       setNewCategory({});
+      window.location.reload();
     } catch (err) {
       setError("Failed to save category");
     }
@@ -190,12 +192,14 @@ const CategoryList: React.FC = () => {
       }
       setNewSubCategory({});
       setSelectedCategoryId(null); // Close the subcategory form after submit
+      window.location.reload();
     } catch (err) {
       setError("Failed to save subcategory");
     }
   };
 
   const handleEditCategory = (category: Category) => {
+    window.scroll(0, 0);
     setEditingCategory(category);
     setSelectedCategoryId(null);
   };
@@ -204,16 +208,19 @@ const CategoryList: React.FC = () => {
     subCategory: SubCategory,
     categoryId: string
   ) => {
+    window.scroll(0, 0);
     setEditingSubCategory(subCategory);
     setSelectedCategoryId(categoryId);
   };
 
   const handleDeleteCategory = async (id: string) => {
-    try {
-      await axios.delete(`${serverUrl}/api/categories/${id}`);
-      setCategories(categories.filter((category) => category?._id !== id));
-    } catch (err) {
-      setError("Failed to delete category");
+    if (window.confirm("Are you sure you want to delete ? ")) {
+      try {
+        await axios.delete(`${serverUrl}/api/categories/${id}`);
+        setCategories(categories.filter((category) => category?._id !== id));
+      } catch (err) {
+        setError("Failed to delete category");
+      }
     }
   };
 
@@ -221,24 +228,26 @@ const CategoryList: React.FC = () => {
     categoryId: string,
     subCategoryId: string
   ) => {
-    try {
-      await axios.delete(
-        `${serverUrl}/api/categories/${categoryId}/subcategories/${subCategoryId}`
-      );
-      setCategories(
-        categories.map((cat) =>
-          cat?._id === categoryId
-            ? {
-                ...cat,
-                subCategories: cat.subCategories.filter(
-                  (subCat) => subCat._id !== subCategoryId
-                ),
-              }
-            : cat
-        )
-      );
-    } catch (err) {
-      setError("Failed to delete subcategory");
+    if (window.confirm("Are you sure you want to delete ? ")) {
+      try {
+        await axios.delete(
+          `${serverUrl}/api/categories/${categoryId}/subcategories/${subCategoryId}`
+        );
+        setCategories(
+          categories.map((cat) =>
+            cat?._id === categoryId
+              ? {
+                  ...cat,
+                  subCategories: cat.subCategories.filter(
+                    (subCat) => subCat._id !== subCategoryId
+                  ),
+                }
+              : cat
+          )
+        );
+      } catch (err) {
+        setError("Failed to delete subcategory");
+      }
     }
   };
 
@@ -285,9 +294,8 @@ const CategoryList: React.FC = () => {
   return (
     <div className=" px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Manage Categories</h1>
-
       {/* Category Form */}
-      <form onSubmit={handleCategorySubmit} className="mb-8">
+      <form onSubmit={handleCategorySubmit} className={`mb-8 `}>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           <input
             type="text"
@@ -316,7 +324,6 @@ const CategoryList: React.FC = () => {
           />
 
           <input
-            disabled
             type="text"
             name="categoryCode"
             placeholder="Category Code"
@@ -337,6 +344,9 @@ const CategoryList: React.FC = () => {
       {/* Subcategory Form */}
       {selectedCategoryId && (
         <form onSubmit={handleSubCategorySubmit} className="mb-8">
+          <h1 className="text-2xl font-bold mb-6">
+            Manage Sub Categories: {editingSubCategoryParent}
+          </h1>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <input
               type="text"
@@ -345,7 +355,6 @@ const CategoryList: React.FC = () => {
               value={editingSubCategory?.name || newSubCategory?.name || ""}
               onChange={handleSubCategoryInputChange}
               className="border p-2 rounded"
-              required
             />
             <input
               name="description"
@@ -372,7 +381,6 @@ const CategoryList: React.FC = () => {
               value={editingSubCategory?.code || newSubCategory?.code || ""}
               onChange={handleSubCategoryInputChange}
               className="border p-2 rounded"
-              required
             />
           </div>
           <button
@@ -423,9 +431,10 @@ const CategoryList: React.FC = () => {
                   </div>
                   <div className="flex">
                     <button
-                      onClick={() =>
-                        handleEditSubCategory(subCategory, category?._id)
-                      }
+                      onClick={() => {
+                        handleEditSubCategory(subCategory, category?._id);
+                        setEditingSubCategoryParent(category.name);
+                      }}
                       className="ml-2 px-2 py-1 bg-yellow-500 text-white rounded"
                     >
                       Edit
@@ -456,7 +465,10 @@ const CategoryList: React.FC = () => {
                 Delete
               </button>
               <button
-                onClick={() => setSelectedCategoryId(category?._id)}
+                onClick={() => {
+                  setSelectedCategoryId(category?._id);
+                  window.scroll(0, 0);
+                }}
                 className="px-2 py-1 bg-green-500 text-white rounded"
               >
                 Add Subcategory
