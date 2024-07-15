@@ -72,7 +72,7 @@ const ProductSearch = () => {
               {filteredProducts.map((product) => (
                 <li key={product.productId} className="p-2 hover:bg-gray-100">
                   <Link
-                    href={`/products/${product._id}`}
+                    href={`/products/${product.productCode}/?pid=${product._id}`}
                     onClick={handleDropdownClose}
                   >
                     <div className="flex items-center space-x-2">

@@ -102,7 +102,7 @@ const OptionBar = () => {
 
   return (
     <div className="sticky top-0 z-10 ">
-      <div className="navbar bg-base-100 shadow-md">
+      <div className="navbar bg-base-100 shadow-md ">
         <div className="navbar-start">
           <div className="dropdown lg:hidden">
             <label tabIndex={0} className="btn btn-ghost">
@@ -117,7 +117,7 @@ const OptionBar = () => {
           </div>
         </div>
         <div className="navbar-center hidden lg:flex ">
-          <ul className="menu menu-horizontal px-1 space-x-4 ">{navOptions}</ul>
+          <ul className="menu menu-horizontal px-1 space-x-4">{navOptions}</ul>
         </div>
         <div className="navbar-end">
           <div className="flex gap-4 items-center"></div>
