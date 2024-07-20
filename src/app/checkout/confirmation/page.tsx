@@ -53,6 +53,7 @@ const Confirmation = () => {
     }
   }, []);
 
+
   useEffect(() => {
     if (orderDetails && invoiceNumber && userId && checkoutAmount) {
       saveOrderToDatabase(orderDetails, userId, checkoutAmount);

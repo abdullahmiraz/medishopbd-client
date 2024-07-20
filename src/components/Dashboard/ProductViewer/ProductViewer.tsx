@@ -155,6 +155,14 @@ const ProductViewer: React.FC<{ productId: string }> = ({ productId }) => {
                     Price Per Unit
                   </th>
                   <td className="px-4 py-2">
+                    ${product?.buyingPricePerUnit.toFixed(2)}
+                  </td>
+                </tr>
+                <tr>
+                  <th className="text-left px-4 py-2 font-semibold">
+                    Buying Price Per Unit
+                  </th>
+                  <td className="px-4 py-2">
                     ${product.pricePerUnit.toFixed(2)}
                   </td>
                 </tr>

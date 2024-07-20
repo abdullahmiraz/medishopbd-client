@@ -210,7 +210,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                     <ul>
                       {order.products.map((item, index) => (
                         <li key={index}>
-                          {item.name} - {item.quantity} x Tk. {item.price}
+                          {item?.productId?.productName} - {item.quantity} x Tk.{" "}
+                          {item.price}
                         </li>
                       ))}
                     </ul>

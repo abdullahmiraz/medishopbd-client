@@ -58,7 +58,7 @@ const ProductsList: React.FC = () => {
       <h2 className="font-extrabold text-2xl text-center my-4">
         Products List
       </h2>
-      <div className="overflow-x-auto overflow-y-auto ">
+      <div className="">
         <table className="table table-zebra table-xs border ">
           <thead>
             <tr className="">
@@ -69,6 +69,7 @@ const ProductsList: React.FC = () => {
               <th className="max-w-32 border">Code</th>
               <th className="max-w-32 border">Primary-Cat</th>
               <th className="max-w-32 border">Sub-Cat</th>
+              <th className="max-w-32 border">Buy Price</th>
               <th className="max-w-32 border">Price/Unit</th>
               <th className="max-w-32 border">Manufacturer</th>
               <th className="border ">Available Stock</th>
@@ -114,6 +115,7 @@ const ProductsList: React.FC = () => {
                 <td className="max-w-32 border">
                   {product?.subCategory?.name || product?.subCategory}
                 </td>
+                <td className="max-w-32 border">{product.buyingPricePerUnit}</td>
                 <td className="max-w-32 border">{product.pricePerUnit}</td>
                 <td className="max-w-32 border">{product.manufacturer}</td>
                 {/* stock details  */}

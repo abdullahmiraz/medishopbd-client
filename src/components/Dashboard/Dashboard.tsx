@@ -46,9 +46,9 @@ const Dashboard = ({ content }: any) => {
     : "/error";
 
   return (
-    <div className="flex">
-      <div className="basis-3/12">
-        <div className="  bg-green-400  min-h-screen text-[darkblue]  min-w-60   sticky top-0 left-0">
+    <div className="w-full flex justify-start">
+      <div className="">
+        <div className="  bg-green-400  min-h-screen text-[darkblue]  min-w-max   sticky top-0 left-0">
           <div>
             <ul className="menu p-0">
               {menuItems[dashLocation]?.map((item) => (
@@ -61,7 +61,7 @@ const Dashboard = ({ content }: any) => {
                     className="dashboard-link"
                   >
                     <item.icon />
-                    {item.text}
+                    <span className="hidden md:block">{item.text}</span>
                   </Link>
                 </li>
               ))}
@@ -69,7 +69,7 @@ const Dashboard = ({ content }: any) => {
           </div>
         </div>
       </div>
-      <div className=" basis-8/12 w-full">{content}</div>
+      <div className="w-full">{content}</div>
     </div>
   );
 };

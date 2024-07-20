@@ -263,7 +263,7 @@ const Checkout = () => {
             </div>
           </div>
         </div>
-        <div className="col-span-12 md:col-span-4">
+        <div className="col-span-12 md:col-span-4 mb-4">
           <div className="border p-4 rounded-md">
             <h2 className="font-bold text-xl mb-4">Order Summary</h2>
             <ul className="space-y-4 mb-4">

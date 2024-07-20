@@ -28,6 +28,7 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
         unitsPerStrip: 0,
         stripsPerBox: 0,
       },
+      buyingPricePerUnit: 0,
       pricePerUnit: 0,
       stockDetails: [
         {
@@ -139,7 +140,8 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
     const numericValue =
       name === "unitsPerStrip" ||
       name === "stripsPerBox" ||
-      name === "pricePerUnit"
+      name === "pricePerUnit" ||
+      name === "buyingPricePerUnit"
         ? parseFloat(value)
         : value;
 
@@ -395,6 +397,7 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
         pageCategory={product.pageCategory}
         applicationArea={product.applicationArea}
         productType={product.productType}
+        buyingPricePerUnit={product.buyingPricePerUnit}
         pricePerUnit={product.pricePerUnit}
         primaryCategory={product.primaryCategory}
         subCategory={product.subCategory}

@@ -56,7 +56,7 @@ const OptionBar = () => {
         <li key={category.code} className="relative group">
           <Link
             href={`/categories/${category.code}`}
-            className="flex items-center justify-between"
+            className="flex items-center justify-between hover:text-orange-500 hover:bg-white "
           >
             <div>{category.name}</div>
             <div>
@@ -79,9 +79,9 @@ const OptionBar = () => {
             </div>
           </Link>
           {category.subCategories.length > 0 && (
-            <ul className="absolute hidden group-hover:block bg-white shadow-lg rounded-md min-w-48 max-h-60 overflow-y-auto mt-0 lg:mt-8 ml-36 xl:ml-0  z-30">
+            <ul className="absolute z-[9999] hidden group-hover:block bg-white shadow-lg rounded-md min-w-48 max-h-60 overflow-y-auto mt-0 lg:mt-8 ml-36 lg:ml-0 py-1 productSubcat ">
               {category.subCategories.map((subCategory) => (
-                <li key={subCategory.code} className="z-50">
+                <li key={subCategory.code} className=" ">
                   <Link
                     href={`/categories/${category.code}/${subCategory.code}`}
                   >
@@ -110,14 +110,14 @@ const OptionBar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="menu dropdown-content mt-1 p-2 shadow bg-base-100 rounded-box w-[320px] max-h-dvh overflow-y-auto  grid grid-cols-1  gap-2"
+              className="menu dropdown-content mt-1 p-2 shadow bg-base-100 rounded-box w-[320px] max-h-dvh overflow-y-auto  grid grid-cols-1  gap-2 z-10"
             >
               {navOptions}
             </ul>
           </div>
         </div>
         <div className="navbar-center hidden lg:flex ">
-          <ul className="menu menu-horizontal px-1 space-x-4">{navOptions}</ul>
+          <ul className="menu menu-horizontal px-1 space-x-1">{navOptions}</ul>
         </div>
         <div className="navbar-end">
           <div className="flex gap-4 items-center"></div>

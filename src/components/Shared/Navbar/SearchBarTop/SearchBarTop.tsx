@@ -8,7 +8,7 @@ import ProductSearch from "../../../ProductSearch/ProductSearch";
 
 const SearchBarTop = () => {
   return (
-    <div className="flex items-center justify-between bg-green-100 px-6 py-0 sm:py-2 md:py-4">
+    <div className="flex items-center justify-between bg-green-100 px-6 py-0 sm:py-2 md:py-4 w-full">
       <div className="brand-icon flex items-center gap-2">
         <Image
           src={`https://cdn-icons-png.flaticon.com/512/4599/4599153.png`}

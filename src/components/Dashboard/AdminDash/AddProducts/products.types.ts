@@ -48,6 +48,7 @@ export interface ProductData {
   subCategory: String; // Updated to use SubCategory interface
   productType: string;
   packaging: Packaging;
+  buyingPricePerUnit: number;
   pricePerUnit: number;
   stockDetails: StockDetail[]; // Updated to use StockDetail interface
   manufacturer: string;

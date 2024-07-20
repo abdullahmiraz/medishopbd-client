@@ -29,6 +29,7 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
   pageCategory,
   dosageForm,
   applicationArea,
+  buyingPricePerUnit,
   pricePerUnit,
   productType,
   onChange,
@@ -128,6 +129,18 @@ const BasicInformation: React.FC<BasicInformationProps> = ({
             type="text"
             name="productType"
             value={productType}
+            onChange={onChange}
+            className="input input-bordered w-full"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1 font-medium">
+            Buying Price Per Unit
+          </label>
+          <input
+            type="number"
+            name="buyingPricePerUnit"
+            value={buyingPricePerUnit}
             onChange={onChange}
             className="input input-bordered w-full"
           />

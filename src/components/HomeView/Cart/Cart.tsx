@@ -123,12 +123,14 @@ const Cart = () => {
         duration: 5000,
         position: "bottom-center",
       });
-    } else if (requiresPrescription && !currentUser?.prescription) {
-      toast.error("Upload Your Prescription to checkout", {
-        duration: 5000,
-      });
-      router?.push(`../dashboard/profile/${currentUser?._id}`);
-    } else {
+    }
+    // else if (requiresPrescription && !currentUser?.prescription) {
+    //   toast.error("Upload Your Prescription to checkout", {
+    //     duration: 5000,
+    //   });
+    //   router?.push(`../dashboard/profile/${currentUser?._id}`);
+    // }
+    else {
       if (validateCheckout) {
         router?.push("/checkout");
       } else {
