@@ -13,6 +13,7 @@ import ReviewCard from "./ServiceCard/ServiceCard";
 import SkinCareProducts from "./SkinCareProducts/SkinCareProducts";
 import { UserAuth } from "../../context/AuthContext";
 import AllMedicineViewCarousel from "./AllMedicineViewCarousel/AllMedicineViewCarousel";
+import SatisfiedCustomers from "./SatisfiedCustomers/SatisfiedCustomers";
 
 const HomeView = () => {
   const { user } = UserAuth();
@@ -67,6 +68,7 @@ const HomeView = () => {
       <AllMedicineViewCarousel />
       <PrescriptionMedicine />
       <SkinCareProducts />
+      <SatisfiedCustomers />
       <Footer />
     </div>
   );

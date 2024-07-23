@@ -15,6 +15,7 @@ const Checkout = () => {
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cashOnDelivery");
   const [error, setError] = useState("");
+  const [currentDeliveryFee, setCurrentDeliveryFee] = useState(150);
   // const [isFormValid, setIsFormValid] = useState(false);
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const router = useRouter();
@@ -26,8 +27,8 @@ const Checkout = () => {
 
   // Step 2: Add or update the deliveryFee property
   const deliveryFee = 10; // Set your delivery fee amount here
-  checkoutAmount.deliveryFee = deliveryFee;
-
+  checkoutAmount.deliveryFee = currentDeliveryFee;
+  console.log(currentDeliveryFee);
   // Step 3: Save the updated object back to localStorage
   localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
 
@@ -58,7 +59,7 @@ const Checkout = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [mongoUserId]);
 
   const handleOrder = async () => {
     const orderDetails = {
@@ -154,18 +155,19 @@ const Checkout = () => {
                   id="address"
                   name="address"
                   className="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 bg-orange-100"
+                  onChange={(e) => setCurrentDeliveryFee(e.target.value)}
                 >
                   <option value="" disabled selected>
                     Select a division
                   </option>
-                  <option value="dhaka">Dhaka</option>
-                  <option value="chattogram">Chattogram</option>
-                  <option value="rajshahi">Rajshahi</option>
-                  <option value="khulna">Khulna</option>
-                  <option value="barishal">Barishal</option>
-                  <option value="sylhet">Sylhet</option>
-                  <option value="rangpur">Rangpur</option>
-                  <option value="mymensingh">Mymensingh</option>
+                  <option value={60}>Dhaka</option>
+                  <option value={70}>Chattogram</option>
+                  <option value={80}>Rajshahi</option>
+                  <option value={90}>Khulna</option>
+                  <option value={100}>Barishal</option>
+                  <option value={110}>Sylhet</option>
+                  <option value={120}>Rangpur</option>
+                  <option value={100}>Mymensingh</option>
                 </select>
               </div>
 
@@ -286,7 +288,7 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between mb-2">
               <span>Delivery Fee</span>
-              <span>Tk. 60.00</span>
+              <span>Tk. {checkoutAmount.deliveryFee}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span>Discount</span>

@@ -48,7 +48,7 @@ const StockInformation: React.FC<StockInformationProps> = ({
               Quantity
             </label>
             <input
-              min={1}
+              min={0}
               type="number"
               id={`quantity-${index}`}
               value={stock.quantity}

@@ -130,53 +130,59 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
       {filteredOrders.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 font-bold">
               <tr>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Order Number
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Date
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
+                >
+                  Profit
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Subtotal
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Discounted Amount
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Delivery Fee
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Total
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Status
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
                 >
                   Items
                 </th>
@@ -190,6 +196,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {order.created_at.split("T")[0]}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    Tk. {order.checkoutAmount?.totalProfit}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     Tk. {order.checkoutAmount.subtotal}

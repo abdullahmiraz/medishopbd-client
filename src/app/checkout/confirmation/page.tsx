@@ -53,7 +53,6 @@ const Confirmation = () => {
     }
   }, []);
 
-
   useEffect(() => {
     if (orderDetails && invoiceNumber && userId && checkoutAmount) {
       saveOrderToDatabase(orderDetails, userId, checkoutAmount);
@@ -66,6 +65,9 @@ const Confirmation = () => {
   const saveOrderToDatabase = async (orderDetails, userId, checkoutAmount) => {
     console.log(invoiceNumber);
     try {
+      const total =
+        Number(checkoutAmount?.total) + Number(checkoutAmount?.deliveryFee);
+
       const orderData = {
         userId: userId,
         orderNumber: invoiceNumber,
@@ -78,7 +80,8 @@ const Confirmation = () => {
           subtotal: checkoutAmount.subtotal,
           discountedAmount: checkoutAmount.discountedAmount,
           deliveryFee: checkoutAmount.deliveryFee,
-          total: checkoutAmount.total,
+          total: total,
+          totalProfit: checkoutAmount.totalProfit,
         },
         status: "Pending",
       };

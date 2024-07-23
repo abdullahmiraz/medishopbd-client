@@ -47,6 +47,10 @@ const ProductSingleView = ({ productId }) => {
     }
     handleQuantityChange(1); // reset after you submit the cart
     if (stripCount >= 1) {
+      const totalProfit =
+        product?.pricePerUnit * stripCount -
+        product?.buyingPricePerUnit * stripCount;
+
       const cartItem = {
         productId: product._id,
         name: product.productName,
@@ -55,6 +59,7 @@ const ProductSingleView = ({ productId }) => {
         productCount: stripCount, // Assuming each strip is counted as a unit
         pricePerStrip: product.pricePerUnit,
         totalPrice: product?.pricePerUnit * stripCount,
+        totalProfit: totalProfit,
         prescription: product?.requiresPrescription,
       };
 
@@ -70,6 +75,7 @@ const ProductSingleView = ({ productId }) => {
         existingCart[existingItemIndex].stripCount += stripCount;
         existingCart[existingItemIndex].productCount += stripCount;
         existingCart[existingItemIndex].totalPrice += cartItem.totalPrice;
+        existingCart[existingItemIndex].totalProfit += cartItem.totalProfit;
       } else {
         // Add the new item to the cart
         existingCart.push(cartItem);

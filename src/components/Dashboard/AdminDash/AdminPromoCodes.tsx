@@ -104,7 +104,7 @@ const AdminPromoCodes: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto my-12 px-6">
+    <div className="container  my-12 px-6">
       <h1 className="text-2xl font-bold mb-4">Admin Promo Code Management</h1>
 
       {/* Form to create new promo code */}

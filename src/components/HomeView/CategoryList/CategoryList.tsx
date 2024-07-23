@@ -70,7 +70,8 @@ const CategoryList: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {category.subCategories.map((subCategory) => (
-                <div
+                <Link
+                  href={`/categories/${category?.code}/${subCategory?.code}`}
                   key={subCategory.code}
                   className="bg-gray-100 rounded-lg shadow p-4 flex flex-col items-center text-center"
                 >
@@ -87,7 +88,7 @@ const CategoryList: React.FC = () => {
                   <p className="text-gray-500 text-sm">
                     {subCategory.description}
                   </p>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

@@ -12,7 +12,7 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountedAmount, setDiscountedAmount] = useState(0);
-  const [deliveryFee, setDeliveryFee] = useState(60);
+
   const [message, setMessage] = useState("");
   const [validateCheckout, setValidateCheckout] = useState(false);
   const [requiresPrescription, setRequiresPrescription] = useState(false);
@@ -42,7 +42,10 @@ const Cart = () => {
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
+    return cartItems.reduce((acc, item) => acc + item?.totalPrice, 0);
+  };
+  const calculateProfit = () => {
+    return cartItems.reduce((acc, item) => acc + item?.totalProfit, 0);
   };
 
   const applyPromoCode = async () => {
@@ -141,12 +144,12 @@ const Cart = () => {
 
   const totalAmount =
     calculateSubtotal() >= discountedAmount
-      ? calculateSubtotal() - discountedAmount + deliveryFee
+      ? calculateSubtotal() - discountedAmount
       : 0;
   const checkoutAmount = {
     subtotal: calculateSubtotal(),
     discountedAmount: discountedAmount.toFixed(2),
-    // deliveryFee: deliveryFee,
+    profit: calculateProfit,
     total: totalAmount,
   };
 

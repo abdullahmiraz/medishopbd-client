@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../../api";
 import { useRouter } from "next/navigation";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -24,12 +25,13 @@ const Login = () => {
         phone,
         password,
       });
-      console.log("Login successfdul:", response.data);
+      console.log("Login successful:", response.data);
       localStorage.setItem("loginData", JSON.stringify(response.data));
       sessionStorage.setItem("mongoUserId", response.data.userId);
       // handle successful login, e.g., redirect to another page, store token, etc.
       router.push("/");
     } catch (error) {
+      toast.error("Enter correct login/password");
       console.error("Error logging in:", error.response?.data || error.message);
       // handle error, e.g., show error message to user
     }
@@ -37,6 +39,7 @@ const Login = () => {
 
   return (
     <div className="hero min-h-screen bg-base-200">
+      <Toaster />
       <div className="hero-content flex-col">
         <h1 className="text-3xl font-bold">Login now!</h1>
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
