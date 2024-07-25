@@ -88,6 +88,14 @@ const Confirmation = () => {
 
       console.log(orderData);
       const response = await axios.post(`${serverUrl}/api/orders`, orderData);
+      const paymentProcess = await axios.post(
+        `${serverUrl}/api/payments/create`,
+        orderData
+      );
+      if (paymentProcess?.data) {
+        window.location.replace(paymentProcess?.data?.url);
+      }
+      console.log(paymentProcess.data);
       console.log("Order saved:", response.data);
     } catch (error) {
       console.error("Error saving order:", error);
@@ -141,9 +149,9 @@ const Confirmation = () => {
   };
 
   const clearLocalStorage = () => {
-    localStorage.removeItem("order_details");
-    localStorage.removeItem("invoice_number");
-    localStorage.removeItem("medicine_cart");
+    // localStorage.removeItem("order_details");
+    // localStorage.removeItem("invoice_number");
+    // localStorage.removeItem("medicine_cart");
   };
 
   return (
