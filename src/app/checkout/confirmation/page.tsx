@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { v4 as uuidv4 } from "uuid";
-import { useRouter } from "next/navigation"; // Correct import
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -57,7 +57,6 @@ const Confirmation = () => {
     if (orderDetails && invoiceNumber && userId && checkoutAmount) {
       saveOrderToDatabase(orderDetails, userId, checkoutAmount);
       generatePDF(orderDetails, invoiceNumber, checkoutAmount);
-      // reduce the amount of stock of medicine here
       clearLocalStorage();
     }
   }, [orderDetails, invoiceNumber, userId, checkoutAmount]);
@@ -87,16 +86,21 @@ const Confirmation = () => {
       };
 
       console.log(orderData);
-      const response = await axios.post(`${serverUrl}/api/orders`, orderData);
       const paymentProcess = await axios.post(
-        `${serverUrl}/api/payments/create`,
+        `${serverUrl}/api/payments/initiate`,
         orderData
       );
-      if (paymentProcess?.data) {
-        window.location.replace(paymentProcess?.data?.url);
+      console.log(paymentProcess?.data);
+      if (paymentProcess?.data?.url) {
+        window.location.replace(paymentProcess.data.url);
+      } else {
+        throw new Error("Payment URL not found.");
       }
       console.log(paymentProcess.data);
+
+      const response = await axios.post(`${serverUrl}/api/orders`, orderData);
       console.log("Order saved:", response.data);
+
     } catch (error) {
       console.error("Error saving order:", error);
       toast.error("Failed to save order details.");
