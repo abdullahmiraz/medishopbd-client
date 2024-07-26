@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { serverUrl } from "../../../api";
 import { User } from "../../components/Dashboard/UserDash/UserProfile/UserProfile";
 
@@ -16,20 +16,18 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("cashOnDelivery");
   const [error, setError] = useState("");
   const [currentDeliveryFee, setCurrentDeliveryFee] = useState(150);
-  // const [isFormValid, setIsFormValid] = useState(false);
+
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const router = useRouter();
 
   const mongoUserId = sessionStorage.getItem("mongoUserId");
-  // Step 1: Retrieve the existing data
+
   const checkoutAmount =
     JSON.parse(localStorage.getItem("checkoutAmount")) || {};
 
-  // Step 2: Add or update the deliveryFee property
-  const deliveryFee = 10; // Set your delivery fee amount here
   checkoutAmount.deliveryFee = currentDeliveryFee;
   console.log(currentDeliveryFee);
-  // Step 3: Save the updated object back to localStorage
+
   localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
 
   console.log(checkoutAmount);
@@ -103,7 +101,7 @@ const Checkout = () => {
       }
 
       localStorage.setItem("order_details", JSON.stringify(orderDetails));
-      router.push("/checkout/confirmation");
+      router.push("/checkout/payment");
     } catch (error) {
       console.error("Error updating stock:", error);
       setError(`Error updating stock: ${error.message}`);
@@ -288,7 +286,7 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between mb-2">
               <span>Delivery Fee</span>
-              <span>Tk. {checkoutAmount.deliveryFee}</span>
+              <span>Tk. {checkoutAmount?.deliveryFee}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span>Discount</span>
@@ -304,15 +302,15 @@ const Checkout = () => {
                   Back to Cart
                 </button>
               </Link>
-              <Link href={`../checkout/confirmation`}>
-                <button
-                  className="px-4 py-2 bg-green-500 text-white rounded"
-                  onClick={handleOrder}
-                  disabled={address?.length < 0}
-                >
-                  Place Order
-                </button>
-              </Link>
+              {/* <Link href={`../checkout/confirmation`}> */}
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded"
+                onClick={handleOrder}
+                disabled={address?.length < 0}
+              >
+                Place Order
+              </button>
+              {/* </Link> */}
             </div>
           </div>
         </div>
