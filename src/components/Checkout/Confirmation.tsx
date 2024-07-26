@@ -2,18 +2,26 @@
 
 import Link from "next/link";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Confirmation = () => {
-  let i = 1;
-  if (i > 2) {
-    ++i;
-    window.location.reload();
+  const [confirmationDetails, setConfirmationDetails] = useState(null);
+
+  useEffect(() => {
+    const details = sessionStorage.getItem("confirmationDetails");
+    if (details) {
+      setConfirmationDetails(JSON.parse(details));
+    }
+  }, []);
+
+  if (!confirmationDetails) {
+    return (
+      <div className="container mx-auto my-12 px-6">
+        <h1 className="text-2xl font-bold mb-4">Order Confirmation</h1>
+        <p>Loading confirmation details...</p>
+      </div>
+    );
   }
-  const confirmationDetails = JSON.parse(
-    sessionStorage.getItem("confirmationDetails")
-  );
-  console.log(confirmationDetails);
 
   const { orderDetails, invoiceNumber, checkoutAmount } = confirmationDetails;
 
