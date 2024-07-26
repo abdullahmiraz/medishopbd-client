@@ -1,9 +1,9 @@
 import jsPDF from "jspdf";
-import React, { useEffect } from "react";
+import "jspdf-autotable";
 
-const InvoicePrint = ({ invoicePrintDetails }) => {
-  const { orderDetails, invoiceNumber, checkoutAmount } = invoicePrintDetails;
-  console.log(invoicePrintDetails);
+const InvoicePrint = ({ confirmationDetails }) => {
+  const { orderDetails, invoiceNumber, checkoutAmount } = confirmationDetails;
+  console.log(confirmationDetails);
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -23,7 +23,7 @@ const InvoicePrint = ({ invoicePrintDetails }) => {
     });
 
     const headers = [["Item", "Price per strip", "Quantity", "Total Price"]];
-    const data = orderDetails.cartItems.map((item) => [
+    const data = orderDetails?.cartItems.map((item) => [
       `${item.name} (${item.measure})`,
       `Tk. ${item.pricePerStrip}`,
       `${item.stripCount}`,
@@ -38,18 +38,18 @@ const InvoicePrint = ({ invoicePrintDetails }) => {
 
     const startY = doc.autoTable.previous.finalY + 10;
     doc.setFontSize(10);
-    doc.text(`Sub Total: Tk. ${checkoutAmount.subtotal}`, 10, startY);
+    doc.text(`Sub Total: Tk. ${checkoutAmount?.subtotal}`, 10, startY);
     doc.text(
-      `Delivery Fee: Tk. ${checkoutAmount.deliveryFee}`,
+      `Delivery Fee: Tk. ${checkoutAmount?.deliveryFee}`,
       10,
       startY + 10
     );
     doc.text(
-      `Discount: - Tk. ${checkoutAmount.discountedAmount}`,
+      `Discount: - Tk. ${checkoutAmount?.discountedAmount}`,
       10,
       startY + 20
     );
-    doc.text(`Total: Tk. ${checkoutAmount.total}`, 10, startY + 30);
+    doc.text(`Total: Tk. ${checkoutAmount?.total}`, 10, startY + 30);
 
     doc.save(`${invoiceNumber}.pdf`);
   };

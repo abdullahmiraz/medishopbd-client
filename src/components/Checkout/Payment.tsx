@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { v4 as uuidv4 } from "uuid";
-import Confirmation from "./Confirmation";
 
 const Payment = () => {
   const userId = sessionStorage.getItem("mongoUserId");
@@ -58,6 +57,8 @@ const Payment = () => {
     }
   }, [orderDetails, invoiceNumber, userId, checkoutAmount]);
 
+  console.log(orderDetails);
+
   const saveOrderToDatabase = async (orderDetails, userId, checkoutAmount) => {
     try {
       const total =
@@ -66,6 +67,9 @@ const Payment = () => {
       const orderData = {
         userId: userId,
         orderNumber: invoiceNumber,
+        name: orderDetails?.name,
+        phone: orderDetails?.phone,
+        address: orderDetails?.address,
         products: orderDetails?.cartItems.map((item) => ({
           productId: item.productId,
           quantity: item.stripCount,
@@ -83,8 +87,14 @@ const Payment = () => {
 
       const paymentProcess = await axios.post(
         `${serverUrl}/api/payments/initiate`,
-        orderData
+        {
+          ...orderData,
+          name: orderDetails.name,
+          phone: orderDetails.phone,
+          address: orderDetails.address,
+        }
       );
+
       if (paymentProcess?.data?.url) {
         window.location.replace(paymentProcess.data.url);
       } else {
@@ -95,9 +105,9 @@ const Payment = () => {
       console.log("Order saved:", response.data);
 
       const confirmationDetails = {
-       
+        orderDetails,
         invoiceNumber,
-        invoicePrintDetails,
+        checkoutAmount,
       };
 
       sessionStorage.setItem(
@@ -111,9 +121,9 @@ const Payment = () => {
   };
 
   const clearLocalStorage = () => {
-    // localStorage.removeItem("order_details");
-    // localStorage.removeItem("invoice_number");
-    // localStorage.removeItem("medicine_cart");
+    localStorage.removeItem("order_details");
+    localStorage.removeItem("invoice_number");
+    localStorage.removeItem("medicine_cart");
   };
 
   return (
