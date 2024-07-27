@@ -48,6 +48,7 @@ const Cart = () => {
     return cartItems.reduce((acc, item) => acc + item?.totalProfit, 0);
   };
 
+  console.log(calculateProfit());
   const applyPromoCode = async () => {
     try {
       const response = await axios.post(
@@ -149,7 +150,7 @@ const Cart = () => {
   const checkoutAmount = {
     subtotal: calculateSubtotal(),
     discountedAmount: discountedAmount.toFixed(2),
-    profit: calculateProfit,
+    totalProfit: calculateProfit() || 0,
     total: totalAmount,
   };
 

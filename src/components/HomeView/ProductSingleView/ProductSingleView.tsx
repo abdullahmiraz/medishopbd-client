@@ -46,19 +46,33 @@ const ProductSingleView = ({ productId }) => {
       return;
     }
     handleQuantityChange(0); // reset after you submit the cart
+
     if (stripCount >= 1) {
-      const totalProfit =
-        product?.pricePerUnit * stripCount -
-        product?.buyingPricePerUnit * stripCount;
+      let totalProfit;
+      let totalPrice;
+
+      if (product?.packaging?.unitsPerStrip) {
+        // Product sold in strips
+        totalProfit =
+          product?.pricePerUnit * stripCount -
+          product?.buyingPricePerUnit * stripCount;
+        totalPrice = product?.pricePerUnit * stripCount;
+      } else {
+        // Product sold individually
+        totalProfit =
+          product?.pricePerUnit * stripCount -
+          product?.buyingPricePerUnit * stripCount;
+        totalPrice = product?.pricePerUnit * stripCount;
+      }
 
       const cartItem = {
-        productId: product._id,
-        name: product.productName,
-        measure: product.measure,
+        productId: product?._id,
+        name: product?.productName,
+        measure: product?.measure,
         stripCount: stripCount,
         productCount: stripCount, // Assuming each strip is counted as a unit
-        pricePerStrip: product.pricePerUnit,
-        totalPrice: product?.pricePerUnit * stripCount,
+        pricePerStrip: product?.pricePerUnit,
+        totalPrice: totalPrice,
         totalProfit: totalProfit,
         prescription: product?.requiresPrescription,
       };
@@ -67,7 +81,7 @@ const ProductSingleView = ({ productId }) => {
         JSON.parse(localStorage.getItem("medicine_cart")) || [];
 
       const existingItemIndex = existingCart.findIndex(
-        (item) => item.productId === product._id
+        (item) => item.productId === product?._id
       );
 
       if (existingItemIndex > -1) {
@@ -137,7 +151,7 @@ const ProductSingleView = ({ productId }) => {
           >
             <Image
               src={`${product?.productImage}` || placeholderImage}
-              alt={product.productName}
+              alt={product?.productName}
               layout="fill"
               objectFit="cover"
               className="rounded-t-md border"
@@ -146,18 +160,18 @@ const ProductSingleView = ({ productId }) => {
           <div className="info-table grid grid-cols-1 md:grid-cols-1 xl:grid-cols-10 md:col-span-1 xl:col-span-2 gap-4">
             <div className="xl:col-span-7">
               <h2 className="font-bold text-2xl mb-4">
-                {product.productName} {product.measure}
+                {product?.productName} {product?.measure}
               </h2>
               <p>
-                <strong>Type:</strong> {product.productType}
+                <strong>Type:</strong> {product?.productType}
               </p>
               <p>
-                <strong>Manufacturer:</strong> {product.manufacturer}
+                <strong>Manufacturer:</strong> {product?.manufacturer}
               </p>
               <div className="flex gap-2">
                 <strong>Stock:</strong>{" "}
-                {product.stockDetails.length > 0 ? (
-                  product.stockDetails.reduce(
+                {product?.stockDetails.length > 0 ? (
+                  product?.stockDetails.reduce(
                     (acc, curr) => acc + curr.quantity,
                     0
                   )
@@ -169,17 +183,18 @@ const ProductSingleView = ({ productId }) => {
               <p>
                 <strong>Generics: </strong>
                 <span className="font-semibold text-cyan-700">
-                  {product.activeIngredient}
+                  {product?.activeIngredient}
                 </span>
               </p>
               <div className="pack-details">
-                {product.packaging?.unitsPerStrip ? (
+                {product?.packaging?.unitsPerStrip ? (
                   <>
                     <strong>Pack Details:</strong>
                     <p>
-                      Per Strip: {`${product.packaging?.unitsPerStrip} Tablets`}
+                      Per Strip:{" "}
+                      {`${product?.packaging?.unitsPerStrip} Tablets`}
                     </p>
-                    <p>Strips: {product.packaging?.stripsPerBox}</p>
+                    <p>Strips: {product?.packaging?.stripsPerBox}</p>
                   </>
                 ) : (
                   ""
@@ -241,7 +256,7 @@ const ProductSingleView = ({ productId }) => {
               <h3 className="font-bold text-lg underline mb-4  ">
                 Extra Information
               </h3>
-              {product.requiresPrescription ? (
+              {product?.requiresPrescription ? (
                 <p className="text-red-500 font-bold mb-4">
                   Prescription required
                 </p>
@@ -266,14 +281,14 @@ const ProductSingleView = ({ productId }) => {
           Usage Indications of {product?.productName}
         </h3>
         <ul>
-          <div>{product.usageDetails?.indications?.mainTitle}</div>
+          <div>{product?.usageDetails?.indications?.mainTitle}</div>
           <li>
-            {product.usageDetails?.indications?.subtitles?.map(
+            {product?.usageDetails?.indications?.subtitles?.map(
               (subtitle, index) => (
                 <span key={index} className="flex">
                   {index + 1}. {subtitle}
                   {index !==
-                    product.usageDetails?.indications?.subtitles?.length - 1 &&
+                    product?.usageDetails?.indications?.subtitles?.length - 1 &&
                     ", "}
                 </span>
               )
@@ -285,7 +300,7 @@ const ProductSingleView = ({ productId }) => {
         <h3 className="font-bold text-lg  p-2 bg-slate-100 rounded-md">
           Dosage & Administration of {product?.productName}
         </h3>
-        {product.usageDetails?.dosageDetails?.map((detail, index) => (
+        {product?.usageDetails?.dosageDetails?.map((detail, index) => (
           <div key={index} className="mt-2">
             <h4 className="font-semibold">{detail.ageRange}</h4>
             <p>{detail.userGroup}</p>

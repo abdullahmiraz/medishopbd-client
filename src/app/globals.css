@@ -22,20 +22,15 @@
 }
 
 @media print {
-  .container {
-    padding: 0;
-    margin: 0;
+  body {
+    margin: 40px;
   }
-
-  .print-container {
-    padding: .5in;
-    width: 8.27in; /* A4 width in inches */
-    height: 11.69in; /* A4 height in inches */
-    box-shadow: none;
-    border: none;
-  }
-
-  button {
-    display: none;
+  .hide-column {
+    display: none !important;
   }
 }
+
+/* .order-history-table th,
+.order-history-table td {
+  max-width: min-content;
+} */

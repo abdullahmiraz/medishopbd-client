@@ -80,7 +80,7 @@ const Payment = () => {
           discountedAmount: checkoutAmount.discountedAmount,
           deliveryFee: checkoutAmount.deliveryFee,
           total: total,
-          totalProfit: checkoutAmount.totalProfit,
+          totalProfit: checkoutAmount?.totalProfit || 0,
         },
         status: "Pending",
       };
@@ -96,7 +96,7 @@ const Payment = () => {
       );
 
       if (paymentProcess?.data?.url) {
-        window.location.replace(paymentProcess.data.url);
+        window.location.replace(paymentProcess?.data?.url);
       } else {
         throw new Error("Payment URL not found.");
       }
@@ -127,7 +127,7 @@ const Payment = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen text-5xl text-orange-400 shadow-md">
+    <div className="flex justify-center items-center min-h-screen text-5xl text-orange-600 shadow-md">
       Payment
     </div>
   );

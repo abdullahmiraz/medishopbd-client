@@ -76,7 +76,7 @@ const Checkout = () => {
         );
         const product = productResponse.data;
 
-        let requiredQuantity = product.stripCount; // Change to item.stripCount to match your cart structure
+        let requiredQuantity = item.stripCount; // Change to item.stripCount to match your cart structure
         let stockDetails = product.stockDetails;
 
         for (let i = 0; i < stockDetails.length; i++) {

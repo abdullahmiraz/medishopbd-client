@@ -1,21 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { serverUrl } from "../../../../../api";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { FaTrash } from "react-icons/fa"; // Import icons
+import ReactToPrint from "react-to-print";
+import { serverUrl } from "../../../../../api";
 
 type OrderItem = {
-  productId: string;
-  name: string;
+  productId: { productName: string }; // Assuming the product has a name property
   quantity: number;
   price: number;
 };
 
 type Order = {
   _id: string;
+  orderNumber?: string;
   products: OrderItem[];
-  total: number;
+  checkoutAmount: {
+    subtotal: number;
+    discountedAmount: number;
+    deliveryFee: number;
+    total: number;
+    totalProfit?: number;
+  };
   status: string;
   created_at: string;
 };
@@ -36,10 +44,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
       try {
         let response;
         if (userId) {
-          // fetching specific users order history
+          // Fetching specific user's order history
           response = await axios.get(`${serverUrl}/api/users/orders/${userId}`);
         } else {
-          // fetching all orders history
+          // Fetching all orders history
           response = await axios.get(`${serverUrl}/api/orders`);
         }
         setOrders(response?.data);
@@ -51,7 +59,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
     };
 
     fetchOrders();
-  }, [userId]); // Added userId as a dependency
+  }, [userId]);
 
   useEffect(() => {
     const applyFilters = () => {
@@ -83,6 +91,32 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
 
     applyFilters();
   }, [startDate, endDate, sortOrder, orders]);
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure to delete ? ")) {
+      try {
+        await axios.delete(`${serverUrl}/api/orders/${id}`);
+        toast.success("Order deleted");
+        setOrders(orders.filter((o) => o._id !== id)); // Update state
+      } catch (error) {
+        toast.error("Error deleting order");
+      }
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      await axios.put(`${serverUrl}/api/orders/${id}`, { status: newStatus });
+      toast.success("Order status updated");
+      setOrders(
+        orders.map((o) => (o._id === id ? { ...o, status: newStatus } : o))
+      ); // Update state
+    } catch (error) {
+      toast.error("Error updating order status");
+    }
+  };
+
+  const orderRef = useRef();
 
   return (
     <div className="m-4">
@@ -125,66 +159,51 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
             <option value="asc">Sort by Date (Ascending)</option>
           </select>
         </div>
+
+        <ReactToPrint
+          trigger={() => (
+            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+              Print Invoice
+            </button>
+          )}
+          content={() => orderRef.current}
+        />
       </div>
 
       {filteredOrders.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <div ref={orderRef} className="overflow-auto ">
+          <table className=" divide-y divide-gray-200 order-history-table min-w-full">
             <thead className="bg-gray-50 font-bold">
               <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase">
                   Order Number
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase">
                   Date
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase">
                   Profit
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase">
                   Subtotal
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase">
                   Discounted Amount
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase">
                   Delivery Fee
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase">
                   Total
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase hide-column">
                   Status
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs  text-gray-500 uppercase tracking-wider"
-                >
+                <th className=" text-xs text-gray-500 uppercase hide-column">
                   Items
+                </th>
+                <th className=" text-xs text-gray-500 uppercase  hide-column">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -212,10 +231,21 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     Tk. {order.checkoutAmount.total}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {order.status}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hide-column">
+                    <select
+                      value={order.status}
+                      onChange={(e) =>
+                        handleStatusChange(order._id, e.target.value)
+                      }
+                      className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hide-column">
                     <ul>
                       {order.products.map((item, index) => (
                         <li key={index}>
@@ -224,6 +254,15 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                         </li>
                       ))}
                     </ul>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hide-column">
+                    <button
+                      onClick={() => handleDelete(order._id)}
+                      className="text-red-600 hover:text-red-800 mr-2"
+                    >
+                      <FaTrash />
+                    </button>
+                    {/* You can add an edit icon or button here if needed */}
                   </td>
                 </tr>
               ))}

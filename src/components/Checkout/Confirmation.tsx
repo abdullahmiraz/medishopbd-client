@@ -39,9 +39,7 @@ const Confirmation = () => {
           Our customer care agents will call you shortly to confirm your order.
         </p>
         <div className="flex gap-4 my-4">
-          <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded">
-            Return to Homepage
-          </Link>
+
           <InvoicePrint confirmationDetails={confirmationDetails} />
         </div>
       </div>
