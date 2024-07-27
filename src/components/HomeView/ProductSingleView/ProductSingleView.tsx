@@ -10,7 +10,7 @@ import ReviewSection from "./ReviewSection";
 
 const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
-  const [stripCount, setStripCount] = useState(1);
+  const [stripCount, setStripCount] = useState(0);
   const [stockOutAlert, setStockOutAlert] = useState(false);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const ProductSingleView = ({ productId }) => {
     if (!product) {
       return;
     }
-    handleQuantityChange(1); // reset after you submit the cart
+    handleQuantityChange(0); // reset after you submit the cart
     if (stripCount >= 1) {
       const totalProfit =
         product?.pricePerUnit * stripCount -
@@ -216,7 +216,7 @@ const ProductSingleView = ({ productId }) => {
                     type="number"
                     className="border rounded px-2 py-1 text-center mx-2 w-32"
                     value={stripCount === 0 ? "" : stripCount}
-                    min="1"
+                    min="0"
                     max={product?.availableStock}
                     onChange={(e) => handleQuantityChange(e.target.value)}
                   />
@@ -231,7 +231,7 @@ const ProductSingleView = ({ productId }) => {
               </div>
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                disabled={product?.availableStock < 1}
+                disabled={stockOutAlert}
                 onClick={handleAddToCart}
               >
                 Add to Cart

@@ -21,3 +21,21 @@
   align-items: center;
 }
 
+@media print {
+  .container {
+    padding: 0;
+    margin: 0;
+  }
+
+  .print-container {
+    padding: .5in;
+    width: 8.27in; /* A4 width in inches */
+    height: 11.69in; /* A4 height in inches */
+    box-shadow: none;
+    border: none;
+  }
+
+  button {
+    display: none;
+  }
+}
