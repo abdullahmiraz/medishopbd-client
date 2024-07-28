@@ -79,46 +79,47 @@ const UsersList = (): JSX.Element => {
   };
 
   return (
-    <>
-      <div className="w-48 mx-auto">
-        <h2 className="font-extrabold text-2xl text-center mx-auto my-4 border-b-4 border-b-green-400">
-          Users List
-        </h2>
-      </div>
-      <div className="overflow-x-auto m-4 border">
-        <table className="table table-zebra table-xs">
+    <div className="container mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">Users List</h2>
+      <div className="overflow-x-auto">
+        <table className="table-auto w-full text-left border-collapse border border-gray-300">
           <thead>
-            <tr>
-              <th>Actions</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Phone</th>
-              <th>Address</th>
-              <th>Prescription?</th>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2">Actions</th>
+              <th className="border border-gray-300 px-4 py-2">Name</th>
+              <th className="border border-gray-300 px-4 py-2">Email</th>
+              <th className="border border-gray-300 px-4 py-2">Role</th>
+              <th className="border border-gray-300 px-4 py-2">Phone</th>
+              <th className="border border-gray-300 px-4 py-2">Address</th>
+              <th className="border border-gray-300 px-4 py-2">
+                Prescription?
+              </th>
             </tr>
           </thead>
           <tbody>
             {users?.map((user) => (
-              <tr key={user._id}>
-                <td>
+              <tr
+                key={user._id}
+                className="border-b border-gray-200 hover:bg-gray-100"
+              >
+                <td className="border border-gray-300 px-4 py-2">
                   {editingUserId === user._id ? (
                     <>
                       <button
-                        className="btn btn-primary btn-sm"
+                        className="bg-blue-500 text-white px-3 py-1 rounded-md mr-2"
                         onClick={() => handleSaveClick(user._id)}
                       >
                         Save
                       </button>
                       <button
-                        className="btn btn-secondary btn-sm ml-2"
+                        className="bg-gray-300 text-gray-700 px-3 py-1 rounded-md"
                         onClick={() => setEditingUserId(null)}
                       >
                         Cancel
                       </button>
                     </>
                   ) : (
-                    <div className="flex gap-2">
+                    <div className="flex item-center gap-4">
                       <button
                         className="text-blue-500"
                         onClick={() => handleEditClick(user)}
@@ -126,7 +127,7 @@ const UsersList = (): JSX.Element => {
                         <FaEdit />
                       </button>
                       <button
-                        className=" text-red-500"
+                        className="text-red-500"
                         onClick={() => handleDeleteClick(user._id)}
                       >
                         <FaTrash />
@@ -134,15 +135,19 @@ const UsersList = (): JSX.Element => {
                     </div>
                   )}
                 </td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.name}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.email}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
                   {editingUserId === user._id ? (
                     <select
                       name="role"
                       value={editedRole}
                       onChange={handleChange}
-                      className="select select-sm select-bordered"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                     >
                       <option value="Admin">Admin</option>
                       <option value="Manager">Manager</option>
@@ -152,15 +157,21 @@ const UsersList = (): JSX.Element => {
                     user.role
                   )}
                 </td>
-                <td>{user.phone}</td>
-                <td>{user.address}</td>
-                <td>{user.prescription ? "true" : "false"}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.phone}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.address}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {user.prescription ? "true" : "false"}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </>
+    </div>
   );
 };
 

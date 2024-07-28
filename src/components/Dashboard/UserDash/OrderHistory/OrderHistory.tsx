@@ -172,66 +172,46 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
 
       {filteredOrders.length > 0 ? (
         <div ref={orderRef} className="overflow-auto ">
-          <table className=" divide-y divide-gray-200 order-history-table min-w-full">
-            <thead className="bg-gray-50 font-bold">
+          <table className=" divide-y divide-gray-200 order-history-table min-w-full table-xs table-zebra border">
+            <thead className="bg-gray-200 font-bold text-left">
               <tr>
-                <th className=" text-xs text-gray-500 uppercase">
-                  Order Number
-                </th>
-                <th className=" text-xs text-gray-500 uppercase">
-                  Date
-                </th>
-                <th className=" text-xs text-gray-500 uppercase">
-                  Profit
-                </th>
-                <th className=" text-xs text-gray-500 uppercase">
-                  Subtotal
-                </th>
-                <th className=" text-xs text-gray-500 uppercase">
-                  Discounted Amount
-                </th>
-                <th className=" text-xs text-gray-500 uppercase">
-                  Delivery Fee
-                </th>
-                <th className=" text-xs text-gray-500 uppercase">
-                  Total
-                </th>
-                <th className=" text-xs text-gray-500 uppercase hide-column">
-                  Status
-                </th>
-                <th className=" text-xs text-gray-500 uppercase hide-column">
-                  Items
-                </th>
-                <th className=" text-xs text-gray-500 uppercase  hide-column">
-                  Actions
-                </th>
+                <th className=" text-xs border ">Order Number</th>
+                <th className=" text-xs  border">Date</th>
+                <th className=" text-xs border ">Profit</th>
+                <th className=" text-xs border ">Subtotal</th>
+                <th className=" text-xs border ">Discnt</th>
+                <th className=" text-xs border ">Del.Fee</th>
+                <th className=" text-xs border ">Total</th>
+                <th className=" text-xs border  hide-column">Status</th>
+                <th className=" text-xs  hide-column">Items</th>
+                <th className=" text-xs   hide-column">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredOrders.map((order) => (
                 <tr key={order._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="py-2 border whitespace-nowrap text-sm font-medium text-gray-900">
                     {order.orderNumber || order._id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="py-2 border whitespace-nowrap text-sm ">
                     {order.created_at.split("T")[0]}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount?.totalProfit}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount.subtotal}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount.discountedAmount}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount.deliveryFee}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount.total}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hide-column">
+                  <td className="py-2 border whitespace-nowrap text-sm  hide-column">
                     <select
                       value={order.status}
                       onChange={(e) =>
@@ -245,7 +225,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                       <option value="Delivered">Delivered</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hide-column">
+                  <td className="py-2 border whitespace-nowrap text-sm  hide-column">
                     <ul>
                       {order.products.map((item, index) => (
                         <li key={index}>
@@ -255,7 +235,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                       ))}
                     </ul>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hide-column">
+                  <td className="py-2 border whitespace-nowrap text-sm  hide-column">
                     <button
                       onClick={() => handleDelete(order._id)}
                       className="text-red-600 hover:text-red-800 mr-2"

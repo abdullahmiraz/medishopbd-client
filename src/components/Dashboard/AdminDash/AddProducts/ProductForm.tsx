@@ -442,7 +442,7 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
         handleRemoveDosageDetail={handleRemoveDosageDetail}
         handleIndicationSubtitleChange={handleIndicationSubtitleChange}
       />
-      <button type="submit" className="btn btn-primary my-4 w-full">
+      <button type="submit" className="btn btn-warning my-4 w-full">
         Submit
       </button>
     </form>

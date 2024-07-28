@@ -27,7 +27,8 @@ const AddProducts: React.FC = () => {
     <div className="p-6 bg-gray-100 ">
       <Toaster />
       <div className=" bg-white rounded-md">
-        <h2 className="text-2xl font-bold text-center pt-6">Add New Product</h2>
+        <h2 className="text-2xl font-bold p-4">Add/Update Products</h2>
+
         <ProductForm onSubmit={handleAddProduct} />
       </div>
     </div>
