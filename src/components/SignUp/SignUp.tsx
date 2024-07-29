@@ -1,56 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import axios from "axios";
-import { serverUrl } from "../../../api";
-import { useRouter } from "next/navigation"; // Import useRouter from next/router
+import React from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import { signUpUser } from "../../redux/features/user/userSlice";
 
 const SignUp: React.FC = () => {
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter(); // Initialize the router
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+  const [phone, setPhone] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // Sign up the user
-      const signupResponse = await axios.post(`${serverUrl}/api/users/signup`, {
-        phone,
-        password,
-      });
-      console.log("Sign up successful:", signupResponse.data);
-
-      // Log in the user immediately after sign up
-      const loginResponse = await axios.post(`${serverUrl}/api/users/login`, {
-        phone,
-        password,
-      });
-      console.log("Login successful:", loginResponse.data);
-
-      // Store login data in localStorage and sessionStorage
-      localStorage.setItem("loginData", JSON.stringify(loginResponse.data));
-      sessionStorage.setItem("mongoUserId", loginResponse.data.userId);
-
-      // Redirect to the homepage or any other page
+      await dispatch(signUpUser({ phone, password })).unwrap();
       router.push("/");
     } catch (error: any) {
-      toast.error(error.response?.data.message || error.message);
-
-      console.error(
-        "Error signing up or logging in:",
-        error.response?.data || error.message
-      );
-      // Handle error, e.g., show error message to user
+      toast.error(error.message || "Sign Up failed");
     }
   };
 
@@ -70,7 +39,7 @@ const SignUp: React.FC = () => {
                 placeholder="phone number"
                 className="input input-bordered"
                 value={phone}
-                onChange={handlePhoneChange}
+                onChange={(e) => setPhone(e.target.value)}
                 required
               />
             </div>
@@ -83,7 +52,7 @@ const SignUp: React.FC = () => {
                 placeholder="password"
                 className="input input-bordered"
                 value={password}
-                onChange={handlePasswordChange}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
@@ -91,7 +60,7 @@ const SignUp: React.FC = () => {
               <a href="#" className="label-text-alt link link-hover">
                 Forgot password?
               </a>
-              <a href="../login" className="label-text-alt link link-hover">
+              <a href="/login" className="label-text-alt link link-hover">
                 Login
               </a>
             </div>

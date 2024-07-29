@@ -4,8 +4,6 @@ import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
-import { UserAuth } from "../../../../context/AuthContext";
-import SignUpComp from "../../../SignUp/SignUpComp";
 import { serverUrl } from "../../../../../api";
 
 interface SubCategory {
@@ -24,7 +22,6 @@ interface Category {
 }
 
 const OptionBar = () => {
-  const { user } = UserAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

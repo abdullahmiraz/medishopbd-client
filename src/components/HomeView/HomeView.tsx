@@ -1,62 +1,55 @@
 "use client";
-import axios from "axios";
-import { User } from "firebase/auth";
-import { useEffect, useState } from "react";
-import { serverUrl } from "../../../api";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUserById,
+  selectStatus,
+  selectUser,
+} from "../../redux/features/user/userSlice";
+import { StatusCode } from "../../utils/statusCode";
 import Footer from "../Shared/Footer/Footer";
 import OptionBar from "../Shared/Navbar/OptionBar/OptionBar";
 import SearchBarTop from "../Shared/Navbar/SearchBarTop/SearchBarTop";
+import Spinner from "../Shared/Spinner/Spinner";
+import AllMedicineViewCarousel from "./AllMedicineViewCarousel/AllMedicineViewCarousel";
 import CategoryCard from "./CategoryCard/CategoryCard";
 import HeroCarousel from "./HeroCarousel/HeroCarousel";
 import PrescriptionMedicine from "./PrescriptionMedicines/PrescriptionMedicine";
+import SatisfiedCustomers from "./SatisfiedCustomers/SatisfiedCustomers";
 import ReviewCard from "./ServiceCard/ServiceCard";
 import SkinCareProducts from "./SkinCareProducts/SkinCareProducts";
-import { UserAuth } from "../../context/AuthContext";
-import AllMedicineViewCarousel from "./AllMedicineViewCarousel/AllMedicineViewCarousel";
-import SatisfiedCustomers from "./SatisfiedCustomers/SatisfiedCustomers";
 
 const HomeView = () => {
-  const { user } = UserAuth();
-  // console.log(user || "");
-
-  // const [user, setUser] = useState<User | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [phoneError, setPhoneError] = useState<string | null>(null); // State for phone validation error
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const user = useSelector(selectUser);
+  const status = useSelector(selectStatus);
 
   useEffect(() => {
-    const fetchUserIdByUid = async () => {
-      try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/uid/${user?.uid}`
-        );
-        const userMongoId = response?.data?.id;
-        if (userMongoId) {
-          fetchUser(userMongoId);
-          sessionStorage.setItem("mongoUserId", userMongoId);
-        }
-      } catch (error) {
-        console.error("Error fetching user id:", error);
-      }
-    };
+    // Fetch user data from localStorage or cookies
+    const userId = localStorage.getItem("userId");
 
-    const fetchUser = async (id: string) => {
-      try {
-        const response = await axios.get(`${serverUrl}/api/users/${id}`);
-        const userData = response.data;
-        // sessionStorage.setItem("mongoUserRole", userData.role || "");
-        // // sessionStorage.setItem("mongoUserRole", JSON.stringify(userData));
-        // setUser(userData);
-        setPhone(userData.phone);
-        setAddress(userData.address);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
+    if (userId) {
+      dispatch(fetchUserById(userId));
+    } else {
+      // Redirect to login if no userId is found
+      router.push("/");
+    }
+  }, [dispatch, router]);
 
-    fetchUserIdByUid();
-  }, [user]);
+  if (status === StatusCode.LOADING) {
+    return <Spinner />;
+  }
+
+  // if (status === StatusCode.ERROR) {
+  //   return (
+  //     <div className="text-center my-20 text-red-500">
+  //       Error fetching user data.
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>

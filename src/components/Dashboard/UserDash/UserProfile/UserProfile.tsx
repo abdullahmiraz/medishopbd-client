@@ -1,96 +1,59 @@
 "use client";
 
-import axios from "axios";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { serverUrl } from "../../../../../api";
-import OrderHistory from "../OrderHistory/OrderHistory";
-import Link from "next/link";
-import { FaArrowRight, FaImage } from "react-icons/fa";
 import Image from "next/image";
-import ImageUploader from "../../../ImageUploader/ImageUploader";
-
-export type User = {
-  _id: string;
-  uid: string;
-  name: string;
-  email: string;
-  photoURL: string;
-  phone: string;
-  address: string;
-  prescription?: string;
-};
+import { useEffect } from "react";
+import { FaArrowRight, FaImage } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUserById,
+  selectError,
+  selectStatus,
+  selectUser,
+} from "../../../../redux/features/user/userSlice";
+import { useRouter } from "next/navigation";
+import Spinner from "../../../Shared/Spinner/Spinner";
+import OrderHistory from "../OrderHistory/OrderHistory";
+import { StatusCode } from "../../../../utils/statusCode";
 
 const UserProfile = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [photoURL, setPhotoURL] = useState("");
-  const mongoUserId = sessionStorage.getItem("mongoUserId");
-  const userId = mongoUserId;
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const user = useSelector(selectUser);
+  const status = useSelector(selectStatus);
+  const error = useSelector(selectError);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
-        const userData = response.data;
-        console.log(userData);
-        setUser(userData);
-        setName(userData.name);
-        setEmail(userData.email);
-        setPhone(userData.phone);
-        setAddress(userData.address);
-        setPhotoURL(userData.photoURL);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
+    const userId = localStorage.getItem('userId');
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
 
-    fetchUser();
-  }, [userId]);
-
-  const handleUpdateUserDetails = async () => {
-    try {
-      const response = await axios.patch(
-        `${serverUrl}/api/users/${user?._id}`,
-        {
-          name,
-          email,
-          phone,
-          address,
-          photoURL,
-        }
-      );
-      setUser(response.data);
-      setIsEditing(false);
-      toast.success("User updated successfully!");
-    } catch (error) {
-      console.error("Error updating user:", error);
-      toast.error("Error updating user.");
+    if (userId && isAuthenticated === 'true') {
+      dispatch(fetchUserById(userId));
+    } else {
+      router.push("/login");
     }
-  };
+  }, [dispatch, router]);
 
-  const handleImageUploadSuccess = async (imageUrl: string) => {
-    setPhotoURL(imageUrl);
-    toast.success("Profile picture updated successfully!");
-  };
+  if (status === StatusCode.LOADING) {
+    return <Spinner />;
+  }
+
+  if (status === StatusCode.ERROR) {
+    return <div className="text-center my-20 text-red-500">{error}</div>;
+  }
 
   if (!user) {
-    return <div className="text-center my-20">Loading...</div>;
+    return <div className="text-center my-20">No user data found.</div>;
   }
 
   return (
-    <div className=" p-6">
+    <div className="p-6">
       <h2 className="text-3xl font-bold mb-6">User Profile</h2>
       <div className="bg-white p-8 rounded shadow-md flex flex-col md:flex-row gap-8">
         <div className="flex flex-col items-center md:w-1/3">
           <div className="relative w-40 h-40 mb-4">
-            {photoURL ? (
+            {user.photoURL ? (
               <Image
-                src={photoURL}
+                src={user.photoURL}
                 alt="Profile Picture"
                 layout="fill"
                 objectFit="cover"
@@ -101,120 +64,53 @@ const UserProfile = () => {
                 <FaImage size={50} />
               </div>
             )}
-            {isEditing && (
-              <div className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer">
-                <ImageUploader
-                  onUploadSuccess={handleImageUploadSuccess}
-                  showSubmitButton={true}
-                />
-              </div>
-            )}
           </div>
         </div>
         <div className="flex-1">
           <div className="flex justify-between">
             <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
-            {isEditing ? (
-              <button
-                onClick={handleUpdateUserDetails}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Save Profile Editing
-              </button>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Edit Profile
-              </button>
-            )}
+            {/* Add Save Profile Editing functionality */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 font-bold mb-1">
-                Name:
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                />
-              ) : (
-                <p className="border rounded px-3 py-2">{user.name}</p>
-              )}
+              <label className="block text-gray-700 font-bold mb-1">Name:</label>
+              <p className="border rounded px-3 py-2">{user.name || 'N/A'}</p>
             </div>
             <div>
-              <label className="block text-gray-700 font-bold mb-1">
-                Email:
-              </label>
-              {isEditing ? (
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                />
-              ) : (
-                <p className="border rounded px-3 py-2">{user.email}</p>
-              )}
+              <label className="block text-gray-700 font-bold mb-1">Email:</label>
+              <p className="border rounded px-3 py-2">{user.email || 'N/A'}</p>
             </div>
             <div>
-              <label className="block text-gray-700 font-bold mb-1">
-                Phone:
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                />
-              ) : (
-                <p className="border rounded px-3 py-2">{user.phone}</p>
-              )}
+              <label className="block text-gray-700 font-bold mb-1">Phone:</label>
+              <p className="border rounded px-3 py-2">{user.phone || 'N/A'}</p>
             </div>
             <div>
-              <label className="block text-gray-700 font-bold mb-1">
-                Address:
-              </label>
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                />
-              ) : (
-                <p className="border rounded px-3 py-2">{user.address}</p>
-              )}
+              <label className="block text-gray-700 font-bold mb-1">Address:</label>
+              <p className="border rounded px-3 py-2">{user.address || 'N/A'}</p>
             </div>
           </div>
           {user.prescription && (
             <div className="mt-4">
-              <label className="block text-gray-700 font-bold mb-1">
-                Prescription:
-              </label>
-              <Link
+              <label className="block text-gray-700 font-bold mb-1">Prescription:</label>
+              <a
                 href={user.prescription}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2 bg-blue-500 px-4 py-2 text-white rounded-md"
               >
                 View <FaArrowRight />
-              </Link>
+              </a>
             </div>
           )}
         </div>
       </div>
       <div tabIndex={0} className="collapse border rounded-md mt-6">
         <div className="collapse-title text-md">
-          Order History : Click to Open
+          Order History: Click to Open
         </div>
         <div className="collapse-content">
-          <OrderHistory userId={userId} />
+          <OrderHistory userId={user._id} />
         </div>
       </div>
     </div>

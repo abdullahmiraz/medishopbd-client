@@ -1,99 +1,57 @@
-"use  client";
+"use client";
 
-// SignUpComp.tsx
-
-import axios from "axios";
-import { User } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { serverUrl } from "../../../api";
-import { UserAuth } from "../../context/AuthContext";
+import { FaCartPlus, FaTruck } from "react-icons/fa";
 import Spinner from "../Shared/Spinner/Spinner";
+import {
+  logout,
+  selectUser,
+  selectStatus,
+} from "../../redux/features/user/userSlice";
 
 const SignUpComp = () => {
-  const { mongoUser, setMongoUser } = UserAuth();
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const dispatch = useDispatch();
   const router = useRouter();
-  const mongoUserId = sessionStorage.getItem("mongoUserId");
+  const user = useSelector(selectUser);
+  const status = useSelector(selectStatus);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/${mongoUserId}`
-        );
-        const userData = response.data;
-        // console.log(userData);
-        setMongoUser(true);
-        setUser(userData);
-        setIsLoggedIn(true);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [mongoUserId]);
-
-  const handleSignOut = () => {
-    setIsLoggedIn(false);
-
+  // Handle logout
+  const handleLogout = () => {
+    dispatch(logout());
     router.push("/");
-    sessionStorage.clear();
-    localStorage.clear();
-    setTimeout(function () {
-      window.location.reload();
-    }, 800);
-    // window.location.reload();
   };
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const cartItemsJson = localStorage?.getItem("medicine_cart");
-      const cartItems = cartItemsJson ? JSON.parse(cartItemsJson) : [];
-      setCartItems(cartItems);
-    }
-  }, []);
-
-  if (loading) {
+  // Show spinner when loading
+  if (status === "loading") {
     return <Spinner />;
   }
 
   return (
     <div className="flex items-center gap-6">
-      {mongoUser ? (
+      {user ? (
         <div className="flex items-center gap-2 p-4 sm:p-0 h-full">
-          <Link
-            href={`/dashboard/profile/${mongoUserId}`}
-            className="gap-2 hidden sm:flex"
-          >
-            <div className="relative  h-10 w-10">
+          <Link href={`/dashboard/profile`} className="gap-2 hidden sm:flex">
+            <div className="relative h-10 w-10">
               <Image
                 className="rounded-full"
                 src={
-                  user?.photoURL ||
+                  user.photoURL ||
                   "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg"
                 }
                 objectFit="cover"
                 layout="fill"
-                alt={user?.displayName || "User"}
+                alt={user.displayName || "User"}
               />
             </div>
-            {user && (
-              <div className="flex items-center">
-                Hi, {user?.name ? user?.name.split(" ")[0] : ""}
-              </div>
-            )}
+            <div className="flex items-center">
+              Hi, {user.name ? user.name.split(" ")[0] : ""}
+            </div>
           </Link>
           <p
-            onClick={handleSignOut}
+            onClick={handleLogout}
             className="bg-orange-500 rounded text-white sm:px-4 sm:py-2 px-1 py-1 cursor-pointer"
           >
             Sign Out
@@ -102,13 +60,13 @@ const SignUpComp = () => {
       ) : (
         <ul className="flex gap-2">
           <li
-            onClick={() => router.push("../../login")}
+            onClick={() => router.push("/login")}
             className="bg-blue-500 rounded text-white px-4 py-2 cursor-pointer"
           >
             Login
           </li>
           <li
-            onClick={() => router.push("../signup")}
+            onClick={() => router.push("/signup")}
             className="bg-orange-500 rounded text-white px-4 py-2 cursor-pointer"
           >
             Sign Up

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { AuthContextProvider } from "../context/AuthContext";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchUserById } from "../redux/features/user/userSlice";
+import ReduxProvider from "../context/ReduxProvider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,11 +18,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
-    // className="max-w-screen-2xl mx-auto"
     <html lang="en">
-      <body className={`${inter.className}  `}>
-        <AuthContextProvider>{children}</AuthContextProvider>
+      <body className={`${inter.className}`}>
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

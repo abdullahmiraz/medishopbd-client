@@ -1,54 +1,37 @@
 "use client";
 
-import axios from "axios";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-import { User } from "firebase/auth";
-import { serverUrl } from "../../../api";
+import { useEffect } from "react" ;
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserById, selectUser } from "../../redux/features/user/userSlice";
 import { menuItems } from "./menuItems";
-
-const mongoUserId = sessionStorage.getItem("mongoUserId");
+import { useRouter } from "next/navigation";
 
 const Dashboard = ({ content }: any) => {
-  const [user, setUser] = useState<User | null>(null);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const user = useSelector((state) => selectUser(state));
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/${mongoUserId}`
-        );
-        const userData = response.data;
-        // console.log(userData);
-        setUser(userData); // Assuming userData contains a 'role' property
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-    fetchUser();
-  }, []);
+    const mongoUserId = localStorage.getItem("userId");
 
-  // if (!user) {
-  //   return <div>You are not allowed to see this</div>;
-  // }
+    if (mongoUserId) {
+      dispatch(fetchUserById(mongoUserId));
+    } else {
+      router.push("/login");
+    }
+  }, [dispatch, router]);
 
-  const isAdmin: boolean = user?.role === "Admin" || false;
-  const isManager: boolean = user?.role === "Manager" || false;
-  const isUser: boolean = user?.role === "Customer" || false;
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
-  const dashLocation = isAdmin
-    ? "admin"
-    : isManager
-    ? "manager"
-    : isUser
-    ? "user"
-    : "/error";
+  const dashLocation = "admin"; // Simplified to always use "user" dashboard
 
   return (
     <div className="w-full flex justify-start">
       <div className="">
-        <div className="  bg-green-400  min-h-screen text-[darkblue]  min-w-max   sticky top-0 left-0">
+        <div className="bg-green-400 min-h-screen text-[darkblue] min-w-max sticky top-0 left-0">
           <div>
             <ul className="menu p-0">
               {menuItems[dashLocation]?.map((item) => (

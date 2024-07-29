@@ -1,41 +1,34 @@
 "use client";
-import React, { useState } from "react";
-import axios from "axios";
-import { serverUrl } from "../../../api";
+
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../redux/features/user/userSlice";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import { StatusCode } from "../../utils/statusCode";
 
-const Login = () => {
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
+const Login: React.FC = () => {
+  const [phone, setPhone] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  const handlePhoneChange = (e) => {
-    setPhone(e.target.value);
-  };
+  const { status, error, isAuthenticated } = useSelector((state) => state.user);
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${serverUrl}/api/users/login`, {
-        phone,
-        password,
-      });
-      console.log("Login successful:", response.data);
-      localStorage.setItem("loginData", JSON.stringify(response.data));
-      sessionStorage.setItem("mongoUserId", response.data.userId);
-      // handle successful login, e.g., redirect to another page, store token, etc.
-      router.push("/");
+      await dispatch(loginUser({ phone, password })).unwrap();
     } catch (error) {
-      toast.error("Enter correct login/password");
-      console.error("Error logging in:", error.response?.data || error.message);
-      // handle error, e.g., show error message to user
+      toast.error(error.message || "Login failed");
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -53,7 +46,7 @@ const Login = () => {
                 placeholder="phone number"
                 className="input input-bordered"
                 value={phone}
-                onChange={handlePhoneChange}
+                onChange={(e) => setPhone(e.target.value)}
                 required
               />
             </div>
@@ -66,23 +59,30 @@ const Login = () => {
                 placeholder="password"
                 className="input input-bordered"
                 value={password}
-                onChange={handlePasswordChange}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <div className="label">
                 <a href="#" className="label-text-alt link link-hover">
                   Forgot password?
                 </a>
-                <a href="../signup" className="label-text-alt link link-hover">
-                  Create Account ?
+                <a href="/signup" className="label-text-alt link link-hover">
+                  Create Account?
                 </a>
               </div>
             </div>
             <div className="form-control gap-4 mt-6">
-              <button className="btn btn-primary" type="submit">
-                Login
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={status === StatusCode.LOADING}
+              >
+                {status === StatusCode.LOADING ? "Logging in..." : "Login"}
               </button>
             </div>
+            {status === StatusCode.ERROR && (
+              <div className="text-red-500">{error}</div>
+            )}
           </form>
         </div>
       </div>
