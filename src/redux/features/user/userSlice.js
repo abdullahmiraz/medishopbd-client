@@ -28,9 +28,10 @@ export const loginUser = createAsyncThunk(
         password,
       });
       // Save userId and authentication state to localStorage
+      console.log(response.data);
       localStorage.setItem("userId", response.data.userId);
-      console.log(response.data.userId);
       localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("role", response.data.role);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -67,6 +68,7 @@ const userSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem("userId");
       localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("role");
     },
   },
   extraReducers: (builder) => {
@@ -78,6 +80,8 @@ const userSlice = createSlice({
         state.status = StatusCode.SUCCEEDED;
         state.user = action.payload;
         state.isAuthenticated = true;
+        localStorage.setItem("userId", action.payload._id);
+        localStorage.setItem("role", action.payload.role);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = StatusCode.ERROR;
@@ -110,9 +114,10 @@ const userSlice = createSlice({
 });
 
 export const selectUser = (state) => state.user.user;
-console.log(selectUser);
 export const selectStatus = (state) => state.user.status;
 export const selectError = (state) => state.user.error;
+
+console.log(selectUser);
 
 export const { logout } = userSlice.actions;
 export default userSlice.reducer;

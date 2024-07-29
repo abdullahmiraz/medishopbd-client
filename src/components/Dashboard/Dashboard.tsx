@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react" ;
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserById, selectUser } from "../../redux/features/user/userSlice";
-import { menuItems } from "./menuItems";
 import { useRouter } from "next/navigation";
+import { menuItems } from "../../utils/menuItems";
 
 const Dashboard = ({ content }: any) => {
   const dispatch = useDispatch();
