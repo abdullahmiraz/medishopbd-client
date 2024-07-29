@@ -8,6 +8,7 @@ import { serverUrl } from "../../../api";
 import { User } from "../../components/Dashboard/UserDash/UserProfile/UserProfile";
 
 const Checkout = () => {
+  const [redirectPage, setRedirectPage] = useState();
   const [user, setUser] = useState<User | null>(null);
   const [cartItems, setCartItems] = useState([]);
   const [name, setName] = useState("");
@@ -101,7 +102,12 @@ const Checkout = () => {
       }
 
       localStorage.setItem("order_details", JSON.stringify(orderDetails));
-      router.push("/checkout/payment");
+
+      if (paymentMethod === "payonline") {
+        router.push("/checkout/payment");
+      } else {
+        router.push("/checkout/confirmation");
+      }
     } catch (error) {
       console.error("Error updating stock:", error);
       setError(`Error updating stock: ${error.message}`);
@@ -152,7 +158,7 @@ const Checkout = () => {
                 <select
                   id="address"
                   name="address"
-                  className="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 bg-orange-100"
+                  className="w-full bg-slate-300 "
                   onChange={(e) => setCurrentDeliveryFee(e.target.value)}
                 >
                   <option value="" disabled selected>
@@ -227,38 +233,12 @@ const Checkout = () => {
                 <input
                   type="radio"
                   name="paymentMethod"
-                  value="bkash"
-                  checked={paymentMethod === "bkash"}
+                  value="payonline"
+                  checked={paymentMethod === "payonline"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   className="mr-2"
                 />
-                bKash
-              </label>
-            </div>
-            <div className="mb-2">
-              <label>
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="nagad"
-                  checked={paymentMethod === "nagad"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="mr-2"
-                />
-                Nagad
-              </label>
-            </div>
-            <div className="mb-2">
-              <label>
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="card"
-                  checked={paymentMethod === "card"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="mr-2"
-                />
-                Credit/Debit Card
+                Pay Online (SSL Commerz)
               </label>
             </div>
           </div>
