@@ -14,7 +14,8 @@ const AddProducts: React.FC = () => {
   const handleAddProduct = async (product: ProductData) => {
     try {
       const response = await axios.post(`${serverUrl}/api/products`, product);
-      console.log(response.data);
+      console
+      .log(response.data);
       toast.success("Product added successfully!");
       // Reset form or show success message
     } catch (error) {
