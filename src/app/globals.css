@@ -21,7 +21,14 @@
   align-items: center;
 }
 
+.print-only {
+  display: none;
+}
+
 @media print {
+  .print-only {
+    display: block;
+  }
   body {
     margin: 40px;
   }

@@ -172,6 +172,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
 
       {filteredOrders.length > 0 ? (
         <div ref={orderRef} className="overflow-auto ">
+          <h2 className="print-only">Invoice</h2> {/* Title to be printed */}
           <table className=" divide-y divide-gray-200 order-history-table min-w-full table-xs table-zebra border">
             <thead className="bg-gray-200 font-bold text-left">
               <tr>
