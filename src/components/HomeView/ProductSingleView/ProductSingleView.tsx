@@ -1,3 +1,5 @@
+// src/app/product/ProductSingleView.tsx
+
 "use client";
 
 import axios from "axios";
@@ -5,6 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/features/cart/cartSlice"; // import the addToCart action
 import { placeholderImage, serverUrl } from "../../../../api";
 import ReviewSection from "./ReviewSection";
 
@@ -12,6 +16,8 @@ const ProductSingleView = ({ productId }) => {
   const [product, setProduct] = useState(null);
   const [stripCount, setStripCount] = useState(0);
   const [stockOutAlert, setStockOutAlert] = useState(false);
+
+  const dispatch = useDispatch(); // get the dispatch function
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -77,25 +83,8 @@ const ProductSingleView = ({ productId }) => {
         prescription: product?.requiresPrescription,
       };
 
-      const existingCart =
-        JSON.parse(localStorage.getItem("medicine_cart")) || [];
-
-      const existingItemIndex = existingCart.findIndex(
-        (item) => item.productId === product?._id
-      );
-
-      if (existingItemIndex > -1) {
-        // Update the existing item's strip count, product count, and total price
-        existingCart[existingItemIndex].stripCount += stripCount;
-        existingCart[existingItemIndex].productCount += stripCount;
-        existingCart[existingItemIndex].totalPrice += cartItem.totalPrice;
-        existingCart[existingItemIndex].totalProfit += cartItem.totalProfit;
-      } else {
-        // Add the new item to the cart
-        existingCart.push(cartItem);
-      }
-
-      localStorage.setItem("medicine_cart", JSON.stringify(existingCart));
+      // Dispatch the addToCart action
+      dispatch(addToCart(cartItem));
 
       toast.success("Product added successfully!");
     } else {
@@ -122,20 +111,6 @@ const ProductSingleView = ({ productId }) => {
       setStripCount(availableStock); // Maximum strip count is availableStock
     }
   };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
-        const userData = response.data;
-        setName(userData.name);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   if (!product) {
     return <div className="text-center my-20">Loading...</div>;

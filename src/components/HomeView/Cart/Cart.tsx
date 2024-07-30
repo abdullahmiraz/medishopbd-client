@@ -6,25 +6,28 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { serverUrl } from "../../../../api";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser } from "../../../redux/features/user/userSlice";
+import {
+  removeFromCart,
+  setCart,
+} from "../../../redux/features/cart/cartSlice";
+import { setOrderDetails } from "../../../redux/features/payment/paymentSlice";
 
 const Cart = () => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
   const [promoCode, setPromoCode] = useState("");
   const [discountedAmount, setDiscountedAmount] = useState(0);
-
   const [message, setMessage] = useState("");
   const [validateCheckout, setValidateCheckout] = useState(false);
   const [requiresPrescription, setRequiresPrescription] = useState(false);
-
-  const mongoUserId = sessionStorage.getItem("mongoUserId");
   const router = useRouter();
 
-  useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("medicine_cart")) || [];
-    console.log(savedCart);
-    setCartItems(savedCart);
-  }, []);
+  const userId = localStorage.getItem("userId");
+  const cartItems = useSelector((state) => state.cart.items);
+  const currentUser = useSelector(selectUser);
+  const dispatch = useDispatch();
+
+  console.log(cartItems);
 
   useEffect(() => {
     const prescriptionRequired = cartItems.some(
@@ -32,23 +35,35 @@ const Cart = () => {
     );
     setRequiresPrescription(prescriptionRequired);
   }, [cartItems]);
-  localStorage.setItem("prescription", requiresPrescription);
-  console.log(requiresPrescription);
 
-  const handleRemoveItem = (index) => {
-    const updatedCart = cartItems.filter((item, i) => i !== index);
-    setCartItems(updatedCart);
-    localStorage.setItem("medicine_cart", JSON.stringify(updatedCart));
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/api/cart/${userId}`);
+        const cartData = response.data;
+        dispatch(setCart(cartData));
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+
+    if (userId) {
+      fetchCartItems();
+    }
+  }, [userId, dispatch]);
+
+  const handleRemoveItem = (productId) => {
+    dispatch(removeFromCart(productId));
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item?.totalPrice, 0);
-  };
-  const calculateProfit = () => {
-    return cartItems.reduce((acc, item) => acc + item?.totalProfit, 0);
+    return cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
   };
 
-  console.log(calculateProfit());
+  const calculateProfit = () => {
+    return cartItems.reduce((acc, item) => acc + item.totalProfit, 0);
+  };
+
   const applyPromoCode = async () => {
     try {
       const response = await axios.post(
@@ -83,33 +98,24 @@ const Cart = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/${mongoUserId}`
-        );
-        setCurrentUser(response.data);
+        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
         const userData = response.data;
-        console.log("Fetched User Data:", userData);
 
         const { phone, address, name } = userData;
         if (phone !== "" && address !== "" && name !== "") {
           setValidateCheckout(true);
         } else {
-          setValidateCheckout(false); // Ensure it's explicitly set to false if any field is empty
+          setValidateCheckout(false);
         }
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
 
-    if (mongoUserId) {
+    if (userId) {
       fetchUser();
     }
-  }, [validateCheckout]);
-
-  // Use this useEffect to log validateCheckout after it has been updated
-  useEffect(() => {
-    console.log("validateCheckout:", validateCheckout);
-  }, [validateCheckout]);
+  }, [userId]);
 
   const handlePromoCodeChange = (event) => {
     setPromoCode(event.target.value);
@@ -119,23 +125,28 @@ const Cart = () => {
     applyPromoCode();
   };
 
-  console.log(currentUser);
-
   const handleCheckout = () => {
-    if (!mongoUserId) {
+    if (!userId) {
       toast.error("Login/Signup First", {
         duration: 5000,
         position: "bottom-center",
       });
-    }
-    // else if (requiresPrescription && !currentUser?.prescription) {
-    //   toast.error("Upload Your Prescription to checkout", {
-    //     duration: 5000,
-    //   });
-    //   router?.push(`../dashboard/profile/${currentUser?._id}`);
-    // }
-    else {
+    } else {
       if (validateCheckout) {
+        const checkoutAmount = {
+          subtotal: calculateSubtotal(),
+          discountedAmount: discountedAmount.toFixed(2),
+          totalProfit: calculateProfit() || 0,
+          total: totalAmount,
+        };
+
+        const orderDetails = {
+          cartItems,
+          checkoutAmount,
+        };
+
+        dispatch(setOrderDetails(orderDetails));
+
         router?.push("/checkout");
       } else {
         toast.error("Enter your name and address properly in profile page ");
@@ -147,17 +158,9 @@ const Cart = () => {
     calculateSubtotal() >= discountedAmount
       ? calculateSubtotal() - discountedAmount
       : 0;
-  const checkoutAmount = {
-    subtotal: calculateSubtotal(),
-    discountedAmount: discountedAmount.toFixed(2),
-    totalProfit: calculateProfit() || 0,
-    total: totalAmount,
-  };
-
-  localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
 
   return (
-    <div className=" my-12 px-6">
+    <div className="my-12 px-6">
       <Toaster />
       <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -181,7 +184,7 @@ const Cart = () => {
                 </div>
                 <button
                   className="bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleRemoveItem(index)}
+                  onClick={() => handleRemoveItem(item.productId)}
                 >
                   Remove
                 </button>
@@ -192,22 +195,17 @@ const Cart = () => {
         <div className="lg:col-span-4">
           <div className="border p-4 rounded-md">
             <h2 className="font-bold text-xl mb-4">Cart Summary</h2>
-            {/* <h2>{JSON.stringify(currentUser)}</h2> */}
             <div className="flex justify-between mb-2">
               <span>Sub Total</span>
-              <span>৳{checkoutAmount?.subtotal.toFixed(2)}</span>
+              <span>৳{calculateSubtotal().toFixed(2)}</span>
             </div>
-            {/* <div className="flex justify-between mb-2">
-              <span>Delivery Fee</span>
-              <span>৳{checkoutAmount?.deliveryFee}</span>
-            </div> */}
             <div className="flex justify-between mb-2">
               <span>Promo Discount</span>
-              <span>- ৳{checkoutAmount?.discountedAmount}</span>
+              <span>- ৳{discountedAmount.toFixed(2)}</span>
             </div>
             <div className="border-t pt-2 mt-2 flex justify-between">
               <span>Total</span>
-              <span className="font-bold">৳{checkoutAmount?.total}</span>
+              <span className="font-bold">৳{totalAmount.toFixed(2)}</span>
             </div>
             <div className="mt-4 flex gap-4">
               <input

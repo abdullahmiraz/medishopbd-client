@@ -3,8 +3,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { serverUrl } from "../../../../api";
-import { mongoUserId } from "../../Dashboard/menuItems";
 import EditProductPage from "../../../app/dashboard/editproduct/[id]/page";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../redux/features/user/userSlice";
 
 interface Review {
   _id: string;
@@ -28,7 +29,9 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
   const [editedComment, setEditedComment] = useState("");
   const [reviewEligibility, setReviewEligibility] = useState(false);
   const [userReviewCount, setUserReviewCount] = useState(0);
-  const userId = sessionStorage.getItem("mongoUserId");
+  const user = useSelector(selectUser);
+  const userId = localStorage.getItem("userId");
+  console.log(userId);
 
   const handleSubmitReview = async (event) => {
     event.preventDefault();
@@ -134,9 +137,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/${mongoUserId}`
-        );
+        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
         setName(response.data.name);
       } catch (error) {
         console.error("Error fetching user:", error);

@@ -1,20 +1,21 @@
 "use client";
-
-import Link from "next/link";
-import InvoicePrint from "../GenerateReport/InvoicePrint";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import {
+  selectOrderDetails,
+  selectInvoiceNumber,
+  selectCheckoutAmount,
+} from "../../redux/features/payment/paymentSlice";
+import InvoicePrint from "../GenerateReport/InvoicePrint";
 
 const Confirmation = () => {
-  const [confirmationDetails, setConfirmationDetails] = useState(null);
+  const orderDetails = useSelector(selectOrderDetails);
+  const invoiceNumber = useSelector(selectInvoiceNumber);
+  const checkoutAmount = useSelector(selectCheckoutAmount);
 
-  useEffect(() => {
-    const details = sessionStorage.getItem("confirmationDetails");
-    if (details) {
-      setConfirmationDetails(JSON.parse(details));
-    }
-  }, []);
+  console.log(orderDetails);
 
-  if (!confirmationDetails) {
+  if (!orderDetails) {
     return (
       <div className="container mx-auto my-12 px-6">
         <h1 className="text-2xl font-bold mb-4">Order Confirmation</h1>
@@ -23,12 +24,9 @@ const Confirmation = () => {
     );
   }
 
-  const { orderDetails, invoiceNumber, checkoutAmount } = confirmationDetails;
-
   return (
     <div className="container mx-auto my-12 px-6">
       <h1 className="text-2xl font-bold mb-4">Order Confirmation</h1>
-
       <div>
         <p>Thank you for your order!</p>
         <p>
@@ -39,8 +37,13 @@ const Confirmation = () => {
           Our customer care agents will call you shortly to confirm your order.
         </p>
         <div className="flex gap-4 my-4">
-
-          <InvoicePrint confirmationDetails={confirmationDetails} />
+          <InvoicePrint
+            confirmationDetails={{
+              orderDetails,
+              invoiceNumber,
+              checkoutAmount,
+            }}
+          />
         </div>
       </div>
     </div>

@@ -4,68 +4,45 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { serverUrl } from "../../../api";
-import { User } from "../../components/Dashboard/UserDash/UserProfile/UserProfile";
+import {
+  selectCartItems,
+  selectCheckoutAmount,
+  updateCheckoutAmount,
+} from "../../redux/features/cart/cartSlice";
+import { selectUser } from "../../redux/features/user/userSlice";
+import { setOrderDetails } from "../../redux/features/payment/paymentSlice";
 
 const Checkout = () => {
-  const [redirectPage, setRedirectPage] = useState();
-  const [user, setUser] = useState<User | null>(null);
-  const [cartItems, setCartItems] = useState([]);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cashOnDelivery");
   const [error, setError] = useState("");
   const [currentDeliveryFee, setCurrentDeliveryFee] = useState(150);
-
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
+
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const mongoUserId = sessionStorage.getItem("mongoUserId");
-
-  const checkoutAmount =
-    JSON.parse(localStorage.getItem("checkoutAmount")) || {};
-
-  checkoutAmount.deliveryFee = currentDeliveryFee;
-  console.log(currentDeliveryFee);
-
-  localStorage.setItem("checkoutAmount", JSON.stringify(checkoutAmount));
-
-  console.log(checkoutAmount);
+  const cartItems = useSelector(selectCartItems);
+  const user = useSelector(selectUser);
+  console.log(user);
+  const checkoutAmount = useSelector(selectCheckoutAmount);
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("medicine_cart")) || [];
-    setCartItems(savedCart);
-
-    console.log(address);
-  }, []);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/${mongoUserId}`
-        );
-        const userData = response.data;
-        console.log(userData);
-        setUser(userData);
-        setName(userData.name);
-        setPhone(userData.phone);
-        setAddress(userData.address);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    fetchUser();
-  }, [mongoUserId]);
+    dispatch(
+      updateCheckoutAmount({
+        ...checkoutAmount,
+        deliveryFee: currentDeliveryFee,
+      })
+    );
+  }, [currentDeliveryFee]);
 
   const handleOrder = async () => {
     const orderDetails = {
       cartItems,
-      name,
-      phone,
-      address,
+      name: user.name,
+      phone: user.phone,
+      address: user.address,
       paymentMethod,
       checkoutAmount,
     };
@@ -94,7 +71,7 @@ const Checkout = () => {
 
         if (requiredQuantity > 0) {
           throw new Error(`Insufficient stock for ${product.productName}`);
-        }
+        } 
 
         await axios.put(`${serverUrl}/api/products/${item.productId}`, {
           stockDetails: stockDetails,
@@ -102,6 +79,8 @@ const Checkout = () => {
       }
 
       localStorage.setItem("order_details", JSON.stringify(orderDetails));
+      console.log(orderDetails);
+      dispatch(setOrderDetails(orderDetails));
 
       if (paymentMethod === "payonline") {
         router.push("/checkout/payment");
@@ -131,11 +110,8 @@ const Checkout = () => {
               <input
                 type="text"
                 className="w-full p-2 border rounded"
-                value={name}
-                defaultValue={name}
+                value={user?.name}
                 disabled
-                onChange={(e) => setName(e.target.value)}
-                required
               />
             </div>
             <div className="mb-4">
@@ -143,11 +119,8 @@ const Checkout = () => {
               <input
                 type="number"
                 className="w-full p-2 border rounded"
-                value={phone}
-                defaultValue={phone}
+                value={user.phone}
                 disabled
-                onChange={(e) => setPhone(e.target.value)}
-                required
               />
             </div>
             <div className="mb-4">
@@ -205,8 +178,7 @@ const Checkout = () => {
             <div className="mb-4">
               <textarea
                 className="w-full p-2 border rounded"
-                value={address}
-                defaultValue={address}
+                value={user.address}
                 disabled={useDefaultAddress}
                 onChange={(e) => setAddress(e.target.value)}
                 required
@@ -282,15 +254,13 @@ const Checkout = () => {
                   Back to Cart
                 </button>
               </Link>
-              {/* <Link href={`../checkout/confirmation`}> */}
               <button
                 className="px-4 py-2 bg-green-500 text-white rounded"
                 onClick={handleOrder}
-                disabled={address?.length < 0}
+                disabled={user.address?.length === 0}
               >
                 Place Order
               </button>
-              {/* </Link> */}
             </div>
           </div>
         </div>

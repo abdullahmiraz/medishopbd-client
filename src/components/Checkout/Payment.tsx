@@ -1,71 +1,44 @@
 "use client";
 import axios from "axios";
-import { useEffect } from "react";
-import { serverUrl } from "../../../api";
-
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { serverUrl } from "../../../api";
+import {
+  clearPaymentData,
+  selectCheckoutAmount,
+  selectInvoiceNumber,
+  selectOrderDetails,
+} from "../../redux/features/payment/paymentSlice";
 
 const Payment = () => {
-  const userId = sessionStorage.getItem("mongoUserId");
-  const [orderDetails, setOrderDetails] = useState(null);
-  const [invoiceNumber, setInvoiceNumber] = useState("");
-  const [checkoutAmount, setCheckoutAmount] = useState(null);
+  const dispatch = useDispatch();
+  const orderDetails = useSelector(selectOrderDetails);
+  console.log(orderDetails);
+  const invoiceNumber = useSelector(selectInvoiceNumber);
+  const checkoutAmount = useSelector(selectCheckoutAmount);
   const router = useRouter();
 
-  const generateInvoiceNumber = () => {
-    const date = new Date();
-    const formattedDate = `${date.getFullYear()}${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}`;
-    const randomDigits = uuidv4().slice(0, 6).toUpperCase();
-    return `INV-${formattedDate}-${randomDigits}`;
-  };
-
   useEffect(() => {
-    const savedOrderDetails = JSON.parse(localStorage.getItem("order_details"));
-    const savedInvoiceNumber = localStorage.getItem("invoice_number");
-    const savedCheckoutAmount = JSON.parse(
-      localStorage.getItem("checkoutAmount")
-    );
-
-    if (savedOrderDetails) {
-      setOrderDetails(savedOrderDetails);
-      if (savedInvoiceNumber) {
-        setInvoiceNumber(savedInvoiceNumber);
-      } else {
-        const newInvoiceNumber = generateInvoiceNumber();
-        setInvoiceNumber(newInvoiceNumber);
-        localStorage.setItem("invoice_number", newInvoiceNumber);
-      }
-      if (savedCheckoutAmount) {
-        setCheckoutAmount(savedCheckoutAmount);
-      } else {
-        setCheckoutAmount(savedOrderDetails.checkoutAmount);
-      }
+    if (orderDetails && invoiceNumber && checkoutAmount) {
+      saveOrderToDatabase(orderDetails, invoiceNumber, checkoutAmount);
     } else {
       router.push("/");
     }
-  }, [router]);
+  }, [orderDetails, invoiceNumber, checkoutAmount, router]);
 
-  useEffect(() => {
-    if (orderDetails && invoiceNumber && userId && checkoutAmount) {
-      saveOrderToDatabase(orderDetails, userId, checkoutAmount);
-      clearLocalStorage();
-    }
-  }, [orderDetails, invoiceNumber, userId, checkoutAmount]);
-
-  console.log(orderDetails);
-
-  const saveOrderToDatabase = async (orderDetails, userId, checkoutAmount) => {
+  const saveOrderToDatabase = async (
+    orderDetails,
+    invoiceNumber,
+    checkoutAmount
+  ) => {
     try {
       const total =
         Number(checkoutAmount?.total) + Number(checkoutAmount?.deliveryFee);
 
       const orderData = {
-        userId: userId,
+        userId: sessionStorage.getItem("mongoUserId"),
         orderNumber: invoiceNumber,
         name: orderDetails?.name,
         phone: orderDetails?.phone,
@@ -114,16 +87,11 @@ const Payment = () => {
         "confirmationDetails",
         JSON.stringify(confirmationDetails)
       );
+      dispatch(clearPaymentData());
     } catch (error) {
       console.error("Error saving order:", error);
       toast.error("Failed to save order details.");
     }
-  };
-
-  const clearLocalStorage = () => {
-    localStorage.removeItem("order_details");
-    localStorage.removeItem("invoice_number");
-    localStorage.removeItem("medicine_cart");
   };
 
   return (

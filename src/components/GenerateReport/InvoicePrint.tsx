@@ -133,7 +133,7 @@ const InvoicePrint = ({ confirmationDetails }) => {
             </tr>
           </thead>
           <tbody className="text-lg">
-            {orderDetails.cartItems.map((item, index) => (
+            {orderDetails?.cartItems?.map((item, index) => (
               <tr key={index} className="border-b border-gray-200">
                 <td className="p-2">{`${item.name} (${item.measure})`}</td>
                 <td className="p-2">{`Tk. ${item.pricePerStrip}`}</td>
