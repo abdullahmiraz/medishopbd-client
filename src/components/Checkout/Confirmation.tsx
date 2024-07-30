@@ -1,17 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  selectOrderDetails,
   selectInvoiceNumber,
-  selectOrderCheckoutAmount,
-} from "../../redux/features/order/orderSlice";
+  selectCheckoutAmount,
+  selectOrderDetails,
+} from "../../redux/features/payment/paymentSlice";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
 
 const Confirmation = () => {
   const orderDetails = useSelector(selectOrderDetails);
   const invoiceNumber = useSelector(selectInvoiceNumber);
-  const checkoutAmount = useSelector(selectOrderCheckoutAmount);
+  const checkoutAmount = useSelector(selectCheckoutAmount);
 
   console.log(orderDetails);
 

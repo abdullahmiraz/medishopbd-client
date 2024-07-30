@@ -28,7 +28,7 @@ const Checkout = () => {
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("payonline");
   const user = useSelector(selectUser);
-
+  console.log(user);
   console.log(checkoutAmount);
 
   useEffect(() => {
@@ -38,6 +38,7 @@ const Checkout = () => {
     // Set order details
     const orderDetails = {
       items: cartItems,
+      phone: user?.phone,
       address: useDefaultAddress ? user?.address : address,
       paymentMethod,
     };
@@ -53,6 +54,7 @@ const Checkout = () => {
     useDefaultAddress,
     address,
     paymentMethod,
+    user?.phone,
     user?.address,
   ]);
 

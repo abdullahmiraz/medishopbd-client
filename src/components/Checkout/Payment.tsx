@@ -33,16 +33,10 @@ const Payment = () => {
   }, [orderDetails, invoiceNumber, checkoutAmount, userId, router]);
 
   const saveOrderToDatabase = async (
-    orderDetails: { name: any; phone: any; address: any; cartItems: any[] },
-    invoiceNumber: any,
-    checkoutAmount: {
-      subtotal: any;
-      discountedAmount: any;
-      deliveryFee: any;
-      total: any;
-      totalProfit: any;
-    },
-    userId: string
+    orderDetails,
+    invoiceNumber,
+    checkoutAmount,
+    userId
   ) => {
     try {
       const orderData = {
@@ -51,7 +45,7 @@ const Payment = () => {
         name: orderDetails.name,
         phone: orderDetails.phone,
         address: orderDetails.address,
-        products: orderDetails.cartItems.map(
+        products: orderDetails.items.map(
           (item: { productId: any; stripCount: any; pricePerStrip: any }) => ({
             productId: item.productId,
             quantity: item.stripCount,
@@ -75,7 +69,7 @@ const Payment = () => {
         `${serverUrl}/api/payments/initiate`,
         orderData
       );
-      console.log(paymentProcess);
+      console.log(paymentProcess.data);
       if (paymentProcess?.data?.url) {
         // Redirect to SSL Commerz payment page
         window.location.replace(paymentProcess?.data?.url);
