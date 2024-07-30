@@ -14,6 +14,7 @@ const initialState = {
 export const fetchUserById = createAsyncThunk(
   "user/fetchUserById",
   async (userId) => {
+    console.log(userId);
     const response = await axios.get(`${serverUrl}/api/users/${userId}`);
     return response.data;
   }
@@ -27,11 +28,6 @@ export const loginUser = createAsyncThunk(
         phone,
         password,
       });
-      // Save userId and authentication state to localStorage
-      console.log(response.data);
-      localStorage.setItem("userId", response.data.userId);
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("role", response.data.role);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -80,8 +76,12 @@ const userSlice = createSlice({
         state.status = StatusCode.SUCCEEDED;
         state.user = action.payload;
         state.isAuthenticated = true;
-        localStorage.setItem("userId", action.payload._id);
-        localStorage.setItem("role", action.payload.role);
+        const { userId, role } = action.payload;
+        console.log(action.payload);
+
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("role", role);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = StatusCode.ERROR;

@@ -91,7 +91,7 @@ import {
     ],
     user: [
       {
-        href: `profile/${mongoUserId}`,
+        href: `profile`,
         icon: FaUser,
         text: "Profile",
       },
