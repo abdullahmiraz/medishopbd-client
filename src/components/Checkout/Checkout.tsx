@@ -1,101 +1,84 @@
+// src/pages/checkout.tsx
 "use client";
 
-import axios from "axios";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { serverUrl } from "../../../api";
+import { useRouter } from "next/navigation";
+import {
+  setOrderDetails,
+  setInvoiceNumber,
+  setCheckoutAmount,
+} from "../../redux/features/order/orderSlice";
 import {
   selectCartItems,
   selectCheckoutAmount,
-  updateCheckoutAmount,
+  clearCart,
 } from "../../redux/features/cart/cartSlice";
+import error from "next/error";
+import Link from "next/link";
 import { selectUser } from "../../redux/features/user/userSlice";
-import { setOrderDetails } from "../../redux/features/payment/paymentSlice";
 
 const Checkout = () => {
-  const [paymentMethod, setPaymentMethod] = useState("cashOnDelivery");
-  const [error, setError] = useState("");
-  const [currentDeliveryFee, setCurrentDeliveryFee] = useState(150);
-  const [useDefaultAddress, setUseDefaultAddress] = useState(true);
-
-  const router = useRouter();
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const cartItems = useSelector(selectCartItems);
-  const user = useSelector(selectUser);
-  console.log(user);
   const checkoutAmount = useSelector(selectCheckoutAmount);
+  const [currentDeliveryFee, setCurrentDeliveryFee] = useState(0);
+  const [useDefaultAddress, setUseDefaultAddress] = useState(true);
+  const [address, setAddress] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("payonline");
+  const user = useSelector(selectUser);
+
+  console.log(checkoutAmount);
 
   useEffect(() => {
-    dispatch(
-      updateCheckoutAmount({
-        ...checkoutAmount,
-        deliveryFee: currentDeliveryFee,
-      })
-    );
-  }, [currentDeliveryFee]);
+    // Generate a unique invoice number
+    const invoiceNumber = `INV-${Date.now()}`;
 
-  const handleOrder = async () => {
+    // Set order details
     const orderDetails = {
-      cartItems,
-      name: user.name,
-      phone: user.phone,
-      address: user.address,
+      items: cartItems,
+      address: useDefaultAddress ? user?.address : address,
       paymentMethod,
-      checkoutAmount,
     };
 
-    try {
-      for (const item of cartItems) {
-        const productResponse = await axios.get(
-          `${serverUrl}/api/products/${item.productId}`
-        );
-        const product = productResponse.data;
+    dispatch(setOrderDetails(orderDetails));
+    dispatch(setInvoiceNumber(invoiceNumber));
+    dispatch(setCheckoutAmount(checkoutAmount));
+    console.log(orderDetails, invoiceNumber, checkoutAmount);
+  }, [
+    dispatch,
+    cartItems,
+    checkoutAmount,
+    useDefaultAddress,
+    address,
+    paymentMethod,
+    user?.address,
+  ]);
 
-        let requiredQuantity = item.stripCount; // Change to item.stripCount to match your cart structure
-        let stockDetails = product.stockDetails;
+  const handleOrder = () => {
+    // Save order details to Redux
+    const orderDetails = {
+      items: cartItems,
+      address: useDefaultAddress ? user?.address : address,
+      paymentMethod,
+      deliveryFee: currentDeliveryFee,
+      totalAmount: checkoutAmount.total,
+    };
 
-        for (let i = 0; i < stockDetails.length; i++) {
-          if (requiredQuantity <= 0) break;
+    dispatch(setOrderDetails(orderDetails));
 
-          if (stockDetails[i].quantity >= requiredQuantity) {
-            stockDetails[i].quantity -= requiredQuantity;
-            requiredQuantity = 0;
-          } else {
-            requiredQuantity -= stockDetails[i].quantity;
-            stockDetails[i].quantity = 0;
-          }
-        }
+    if (paymentMethod === "payonline") {
+      // Redirect to the Payment page for SSL Commerz
+      router.push("/checkout/payment");
+    } else {
+      // Clear the cart after placing the order
+      // dispatch(clearCart());
 
-        if (requiredQuantity > 0) {
-          throw new Error(`Insufficient stock for ${product.productName}`);
-        } 
-
-        await axios.put(`${serverUrl}/api/products/${item.productId}`, {
-          stockDetails: stockDetails,
-        });
-      }
-
-      localStorage.setItem("order_details", JSON.stringify(orderDetails));
-      console.log(orderDetails);
-      dispatch(setOrderDetails(orderDetails));
-
-      if (paymentMethod === "payonline") {
-        router.push("/checkout/payment");
-      } else {
-        router.push("/checkout/confirmation");
-      }
-    } catch (error) {
-      console.error("Error updating stock:", error);
-      setError(`Error updating stock: ${error.message}`);
+      // Navigate to the confirmation page for other payment methods
+      router.push("/checkout/confirmation");
     }
   };
-
-  if (cartItems.length === 0) {
-    return <p className="text-center my-12">Your cart is empty.</p>;
-  }
 
   return (
     <div className="container mx-auto my-12 px-6">
@@ -119,7 +102,7 @@ const Checkout = () => {
               <input
                 type="number"
                 className="w-full p-2 border rounded"
-                value={user.phone}
+                value={user?.phone}
                 disabled
               />
             </div>
@@ -132,7 +115,9 @@ const Checkout = () => {
                   id="address"
                   name="address"
                   className="w-full bg-slate-300 "
-                  onChange={(e) => setCurrentDeliveryFee(e.target.value)}
+                  onChange={(e) =>
+                    setCurrentDeliveryFee(Number(e.target.value))
+                  }
                 >
                   <option value="" disabled selected>
                     Select a division
@@ -178,10 +163,10 @@ const Checkout = () => {
             <div className="mb-4">
               <textarea
                 className="w-full p-2 border rounded"
-                value={user.address}
+                value={address}
                 disabled={useDefaultAddress}
                 onChange={(e) => setAddress(e.target.value)}
-                required
+                required={!useDefaultAddress}
               ></textarea>
             </div>
           </div>
@@ -238,15 +223,20 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between mb-2">
               <span>Delivery Fee</span>
-              <span>Tk. {checkoutAmount?.deliveryFee}</span>
+              <span>Tk. {currentDeliveryFee}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span>Discount</span>
-              <span>- {checkoutAmount?.discountedAmount}</span>
+              <span>- Tk. {checkoutAmount?.discountedAmount}</span>
             </div>
             <div className="border-t pt-2 mt-2 flex justify-between">
               <span>Total</span>
-              <span className="font-bold">{checkoutAmount?.total}</span>
+              <span className="font-bold">
+                Tk.{" "}
+                {checkoutAmount?.subtotal +
+                  currentDeliveryFee -
+                  checkoutAmount?.discountedAmount}
+              </span>
             </div>
             <div className="flex justify-between mt-4">
               <Link href={"/cart"}>
@@ -257,7 +247,7 @@ const Checkout = () => {
               <button
                 className="px-4 py-2 bg-green-500 text-white rounded"
                 onClick={handleOrder}
-                disabled={user.address?.length === 0}
+                disabled={useDefaultAddress ? !user?.address : !address}
               >
                 Place Order
               </button>

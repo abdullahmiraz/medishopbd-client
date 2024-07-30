@@ -4,18 +4,18 @@ import { useSelector } from "react-redux";
 import {
   selectOrderDetails,
   selectInvoiceNumber,
-  selectCheckoutAmount,
-} from "../../redux/features/payment/paymentSlice";
+  selectOrderCheckoutAmount,
+} from "../../redux/features/order/orderSlice";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
 
 const Confirmation = () => {
   const orderDetails = useSelector(selectOrderDetails);
   const invoiceNumber = useSelector(selectInvoiceNumber);
-  const checkoutAmount = useSelector(selectCheckoutAmount);
+  const checkoutAmount = useSelector(selectOrderCheckoutAmount);
 
   console.log(orderDetails);
 
-  if (!orderDetails) {
+  if (!orderDetails || !invoiceNumber || !checkoutAmount) {
     return (
       <div className="container mx-auto my-12 px-6">
         <h1 className="text-2xl font-bold mb-4">Order Confirmation</h1>

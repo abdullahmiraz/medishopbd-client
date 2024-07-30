@@ -6,97 +6,97 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { serverUrl } from "../../../api";
 import {
-  clearPaymentData,
-  selectCheckoutAmount,
   selectInvoiceNumber,
   selectOrderDetails,
-} from "../../redux/features/payment/paymentSlice";
+  selectOrderCheckoutAmount,
+} from "../../redux/features/order/orderSlice";
+import { selectUser } from "../../redux/features/user/userSlice";
+import { clearPaymentData } from "../../redux/features/payment/paymentSlice";
 
 const Payment = () => {
   const dispatch = useDispatch();
-  const orderDetails = useSelector(selectOrderDetails);
-  console.log(orderDetails);
-  const invoiceNumber = useSelector(selectInvoiceNumber);
-  const checkoutAmount = useSelector(selectCheckoutAmount);
   const router = useRouter();
+  const orderDetails = useSelector(selectOrderDetails);
+  const invoiceNumber = useSelector(selectInvoiceNumber);
+  const checkoutAmount = useSelector(selectOrderCheckoutAmount);
+  const user = useSelector(selectUser);
+  // const { userId } = user;
+  const userId = localStorage.getItem("userId");
+  console.log(userId, orderDetails, invoiceNumber, checkoutAmount);
 
   useEffect(() => {
-    if (orderDetails && invoiceNumber && checkoutAmount) {
-      saveOrderToDatabase(orderDetails, invoiceNumber, checkoutAmount);
+    if (orderDetails && invoiceNumber && checkoutAmount && userId) {
+      saveOrderToDatabase(orderDetails, invoiceNumber, checkoutAmount, userId);
     } else {
       router.push("/");
     }
-  }, [orderDetails, invoiceNumber, checkoutAmount, router]);
+  }, [orderDetails, invoiceNumber, checkoutAmount, userId, router]);
 
   const saveOrderToDatabase = async (
-    orderDetails,
-    invoiceNumber,
-    checkoutAmount
+    orderDetails: { name: any; phone: any; address: any; cartItems: any[] },
+    invoiceNumber: any,
+    checkoutAmount: {
+      subtotal: any;
+      discountedAmount: any;
+      deliveryFee: any;
+      total: any;
+      totalProfit: any;
+    },
+    userId: string
   ) => {
     try {
-      const total =
-        Number(checkoutAmount?.total) + Number(checkoutAmount?.deliveryFee);
-
       const orderData = {
-        userId: sessionStorage.getItem("mongoUserId"),
+        userId: userId,
         orderNumber: invoiceNumber,
-        name: orderDetails?.name,
-        phone: orderDetails?.phone,
-        address: orderDetails?.address,
-        products: orderDetails?.cartItems.map((item) => ({
-          productId: item.productId,
-          quantity: item.stripCount,
-          price: item.pricePerStrip,
-        })),
+        name: orderDetails.name,
+        phone: orderDetails.phone,
+        address: orderDetails.address,
+        products: orderDetails.cartItems.map(
+          (item: { productId: any; stripCount: any; pricePerStrip: any }) => ({
+            productId: item.productId,
+            quantity: item.stripCount,
+            price: item.pricePerStrip,
+          })
+        ),
         checkoutAmount: {
           subtotal: checkoutAmount.subtotal,
           discountedAmount: checkoutAmount.discountedAmount,
           deliveryFee: checkoutAmount.deliveryFee,
-          total: total,
-          totalProfit: checkoutAmount?.totalProfit || 0,
+          total: checkoutAmount.total,
+          totalProfit: checkoutAmount.totalProfit || 0,
         },
         status: "Pending",
       };
 
+      console.log(orderData);
+
+      // Initiate payment
       const paymentProcess = await axios.post(
         `${serverUrl}/api/payments/initiate`,
-        {
-          ...orderData,
-          name: orderDetails.name,
-          phone: orderDetails.phone,
-          address: orderDetails.address,
-        }
+        orderData
       );
-
+      console.log(paymentProcess);
       if (paymentProcess?.data?.url) {
+        // Redirect to SSL Commerz payment page
         window.location.replace(paymentProcess?.data?.url);
+
+        // Save order data to the backend
+        await axios.post(`${serverUrl}/api/orders`, orderData);
+
+        // Clear payment data in Redux
+        // dispatch(clearPaymentData());
       } else {
         throw new Error("Payment URL not found.");
       }
-
-      const response = await axios.post(`${serverUrl}/api/orders`, orderData);
-      console.log("Order saved:", response.data);
-
-      const confirmationDetails = {
-        orderDetails,
-        invoiceNumber,
-        checkoutAmount,
-      };
-
-      sessionStorage.setItem(
-        "confirmationDetails",
-        JSON.stringify(confirmationDetails)
-      );
-      dispatch(clearPaymentData());
     } catch (error) {
-      console.error("Error saving order:", error);
-      toast.error("Failed to save order details.");
+      console.error("Error processing payment:", error);
+      toast.error("Failed to process payment.");
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen text-5xl text-orange-600 shadow-md">
-      Payment
+      Processing Payment...
     </div>
   );
 };

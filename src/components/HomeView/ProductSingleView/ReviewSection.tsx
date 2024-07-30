@@ -149,7 +149,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
 
   // console.log(orders);
   const userFilteredOrders = orders?.filter(
-    (order) => order?.userId._id === userId
+    (order) => order?.userId === userId
   );
   // console.log(userFilteredOrders);
 
@@ -165,7 +165,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
 
   useEffect(() => {
     reviews?.map((review) =>
-      review?.userId._id === userId
+      review?.userId === userId
         ? setUserReviewCount(userReviewCount + 1)
         : ""
     );
