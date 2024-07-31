@@ -12,7 +12,7 @@ import {
   removeFromCart,
   setCart,
 } from "../../../redux/features/cart/cartSlice";
-import { setOrderDetails } from "../../../redux/features/payment/paymentSlice";
+import { setOrderDetails } from "../../../redux/features/order/orderSlice";
 
 const Cart = () => {
   const [promoCode, setPromoCode] = useState("");
@@ -23,7 +23,7 @@ const Cart = () => {
   const router = useRouter();
 
   const userId = localStorage.getItem("userId");
-  const cartItems = useSelector((state) => state.cart.items);
+  const cartItems = useSelector((state) => state?.cart?.items);
   const currentUser = useSelector(selectUser);
   const dispatch = useDispatch();
 
@@ -145,6 +145,9 @@ const Cart = () => {
           checkoutAmount,
         };
 
+        localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
+        const d = JSON.parse(localStorage.getItem("orderDetails"));
+        console.log(d);
         dispatch(setOrderDetails(orderDetails));
 
         router?.push("/checkout");

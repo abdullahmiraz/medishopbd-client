@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   orderDetails: {},
-  invoiceNumber: "",
+  invoiceNumber: `INV-${Date.now()}`,
   checkoutAmount: {},
 };
 

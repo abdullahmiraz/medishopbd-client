@@ -78,7 +78,7 @@ const Payment = () => {
         await axios.post(`${serverUrl}/api/orders`, orderData);
 
         // Clear payment data in Redux
-        // dispatch(clearPaymentData());
+        dispatch(clearPaymentData());
       } else {
         throw new Error("Payment URL not found.");
       }

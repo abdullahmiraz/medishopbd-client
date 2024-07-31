@@ -8,6 +8,7 @@ import {
   setOrderDetails,
   setInvoiceNumber,
   setCheckoutAmount,
+  selectInvoiceNumber,
 } from "../../redux/features/order/orderSlice";
 import {
   selectCartItems,
@@ -27,13 +28,14 @@ const Checkout = () => {
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("payonline");
+  const invoiceNumber = useSelector(selectInvoiceNumber);
   const user = useSelector(selectUser);
   console.log(user);
   console.log(checkoutAmount);
 
   useEffect(() => {
-    // Generate a unique invoice number
-    const invoiceNumber = `INV-${Date.now()}`;
+    // // Generate a unique invoice number
+    // const invoiceNumber = `INV-${Date.now()}`;
 
     // Set order details
     const orderDetails = {

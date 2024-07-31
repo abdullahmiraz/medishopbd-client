@@ -1,18 +1,41 @@
 "use client";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import {
   selectInvoiceNumber,
-  selectCheckoutAmount,
   selectOrderDetails,
-} from "../../redux/features/payment/paymentSlice";
+} from "../../redux/features/order/orderSlice";
+import { selectCheckoutAmount } from "../../redux/features/cart/cartSlice";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
+import { clearPaymentData } from "../../redux/features/payment/paymentSlice";
 
 const Confirmation = () => {
-  const orderDetails = useSelector(selectOrderDetails);
+  const dispatch = useDispatch();
+
+  const router = useRouter();
   const invoiceNumber = useSelector(selectInvoiceNumber);
   const checkoutAmount = useSelector(selectCheckoutAmount);
+  const orderDetails = JSON.parse(
+    localStorage.getItem("orderDetails") || "null"
+  );
 
-  console.log(orderDetails);
+  useEffect(() => {
+    // Function to clear localStorage and redirect
+    const handleBeforeUnload = () => {
+      dispatch(clearPaymentData());
+      localStorage.removeItem("orderDetails");
+      localStorage.removeItem("confirmationDetails");
+    };
+
+    // Add event listener
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   if (!orderDetails || !invoiceNumber || !checkoutAmount) {
     return (
