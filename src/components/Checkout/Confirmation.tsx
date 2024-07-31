@@ -15,6 +15,7 @@ const Confirmation = () => {
   const invoiceNumber = useSelector(selectInvoiceNumber);
   const checkoutAmount = useSelector(selectCheckoutAmount);
   const [orderDetails, setOrderDetails] = useState(null);
+  console.log(orderDetails);
 
   useEffect(() => {
     const savedOrderData = localStorage.getItem("orderData");
@@ -34,6 +35,7 @@ const Confirmation = () => {
   }, [orderDetails]);
 
   const finalizeOrder = async (orderData) => {
+    console.log(orderData);
     try {
       await axios.post(`${serverUrl}/api/orders`, orderData);
       localStorage.removeItem("orderData");
