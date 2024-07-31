@@ -20,6 +20,8 @@ const Confirmation = () => {
     localStorage.getItem("orderDetails") || "null"
   );
 
+  console.log(invoiceNumber, checkoutAmount, orderDetails);
+
   useEffect(() => {
     // Function to clear localStorage and redirect
     const handleBeforeUnload = () => {

@@ -20,6 +20,7 @@ import PrescriptionMedicine from "./PrescriptionMedicines/PrescriptionMedicine";
 import SatisfiedCustomers from "./SatisfiedCustomers/SatisfiedCustomers";
 import ReviewCard from "./ServiceCard/ServiceCard";
 import SkinCareProducts from "./SkinCareProducts/SkinCareProducts";
+import FloatingCart from "./FloatingCart/FloatingCart";
 
 const HomeView = () => {
   const dispatch = useDispatch();
@@ -52,7 +53,10 @@ const HomeView = () => {
   // }
 
   return (
-    <div>
+    <div className="relative">
+      <div className="relative right-0 top-1/2">
+        <FloatingCart />
+      </div>
       <SearchBarTop />
       <OptionBar />
       <HeroCarousel />

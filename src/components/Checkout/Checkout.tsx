@@ -58,6 +58,7 @@ const Checkout = () => {
     paymentMethod,
     user?.phone,
     user?.address,
+    invoiceNumber,
   ]);
 
   const handleOrder = () => {

@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../../../redux/features/user/userSlice";
 import {
   removeFromCart,
+  selectCartItems,
   setCart,
 } from "../../../redux/features/cart/cartSlice";
 import { setOrderDetails } from "../../../redux/features/order/orderSlice";
@@ -23,7 +24,7 @@ const Cart = () => {
   const router = useRouter();
 
   const userId = localStorage.getItem("userId");
-  const cartItems = useSelector((state) => state?.cart?.items);
+  const cartItems = useSelector(selectCartItems);
   const currentUser = useSelector(selectUser);
   const dispatch = useDispatch();
 
@@ -145,9 +146,6 @@ const Cart = () => {
           checkoutAmount,
         };
 
-        localStorage.setItem("orderDetails", JSON.stringify(orderDetails));
-        const d = JSON.parse(localStorage.getItem("orderDetails"));
-        console.log(d);
         dispatch(setOrderDetails(orderDetails));
 
         router?.push("/checkout");
@@ -175,8 +173,9 @@ const Cart = () => {
                 className="border p-4 rounded-md flex justify-between items-center"
               >
                 <div>
+                  {/* const productUrl = `/products/${product?.productCode}/?pid=${product?._id}`; */}
                   <Link
-                    href={`../products/${item?.productId}`}
+                    href={`/products/${item?.productCode}/?pid=${item?.productId}`}
                     className="font-semibold"
                   >
                     {item?.name} {item?.measure}
@@ -228,9 +227,12 @@ const Cart = () => {
             </div>
             {message && <p className="mt-2">{message}</p>}
             <div className="flex justify-between mt-4">
-              <button className="px-4 py-2 bg-blue-500 text-white rounded">
+              <Link
+                href={"/products"}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
                 Buy More
-              </button>
+              </Link>
               <button
                 onClick={handleCheckout}
                 className="px-4 py-2 bg-green-500 text-white rounded"

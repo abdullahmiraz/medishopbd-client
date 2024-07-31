@@ -13,6 +13,8 @@ const orderSlice = createSlice({
   reducers: {
     setOrderDetails: (state, action) => {
       state.orderDetails = action.payload;
+      localStorage.setItem("orderDetails", JSON.stringify(action.payload));
+      console.log(state.orderDetails);
     },
     setInvoiceNumber: (state, action) => {
       state.invoiceNumber = action.payload;
