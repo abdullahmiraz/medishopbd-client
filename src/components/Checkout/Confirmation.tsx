@@ -1,43 +1,46 @@
 "use client";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import {
-  selectInvoiceNumber,
-  selectOrderDetails,
-} from "../../redux/features/order/orderSlice";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { serverUrl } from "../../../api";
 import { selectCheckoutAmount } from "../../redux/features/cart/cartSlice";
+import { selectInvoiceNumber } from "../../redux/features/order/orderSlice";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
-import { clearPaymentData } from "../../redux/features/payment/paymentSlice";
+import { selectUser } from "../../redux/features/user/userSlice";
 
 const Confirmation = () => {
-  const dispatch = useDispatch();
-
   const router = useRouter();
+
   const invoiceNumber = useSelector(selectInvoiceNumber);
   const checkoutAmount = useSelector(selectCheckoutAmount);
-  const orderDetails = JSON.parse(
-    localStorage.getItem("orderDetails") || "null"
-  );
-
-  console.log(invoiceNumber, checkoutAmount, orderDetails);
+  const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
-    // Function to clear localStorage and redirect
-    const handleBeforeUnload = () => {
-      dispatch(clearPaymentData());
-      localStorage.removeItem("orderDetails");
-      localStorage.removeItem("confirmationDetails");
-    };
+    const savedOrderData = localStorage.getItem("orderData");
+    if (savedOrderData) {
+      setOrderDetails(JSON.parse(savedOrderData));
+    } else {
+      // Redirect if no order data is available
+      router.push("/");
+    }
+  }, [router]);
 
-    // Add event listener
-    window.addEventListener("beforeunload", handleBeforeUnload);
+  useEffect(() => {
+    if (orderDetails) {
+      console.log(orderDetails);
+      finalizeOrder(orderDetails);
+    }
+  }, [orderDetails]);
 
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
+  const finalizeOrder = async (orderData) => {
+    try {
+      await axios.post(`${serverUrl}/api/orders`, orderData);
+      localStorage.removeItem("orderData");
+    } catch (error) {
+      console.error("Error finalizing order:", error);
+    }
+  };
 
   if (!orderDetails || !invoiceNumber || !checkoutAmount) {
     return (
@@ -61,13 +64,7 @@ const Confirmation = () => {
           Our customer care agents will call you shortly to confirm your order.
         </p>
         <div className="flex gap-4 my-4">
-          <InvoicePrint
-            confirmationDetails={{
-              orderDetails,
-              invoiceNumber,
-              checkoutAmount,
-            }}
-          />
+          <InvoicePrint />
         </div>
       </div>
     </div>

@@ -11,7 +11,6 @@ import {
   selectOrderCheckoutAmount,
 } from "../../redux/features/order/orderSlice";
 import { selectUser } from "../../redux/features/user/userSlice";
-import { clearPaymentData } from "../../redux/features/payment/paymentSlice";
 
 const Payment = () => {
   const dispatch = useDispatch();
@@ -20,9 +19,7 @@ const Payment = () => {
   const invoiceNumber = useSelector(selectInvoiceNumber);
   const checkoutAmount = useSelector(selectOrderCheckoutAmount);
   const user = useSelector(selectUser);
-  // const { userId } = user;
   const userId = localStorage.getItem("userId");
-  console.log(userId, orderDetails, invoiceNumber, checkoutAmount);
 
   useEffect(() => {
     if (orderDetails && invoiceNumber && checkoutAmount && userId) {
@@ -62,23 +59,16 @@ const Payment = () => {
         status: "Pending",
       };
 
-      console.log(orderData);
+      // Save order data to localStorage before initiating payment
+      localStorage.setItem("orderData", JSON.stringify(orderData));
 
       // Initiate payment
       const paymentProcess = await axios.post(
         `${serverUrl}/api/payments/initiate`,
         orderData
       );
-      console.log(paymentProcess.data);
       if (paymentProcess?.data?.url) {
-        // Redirect to SSL Commerz payment page
         window.location.replace(paymentProcess?.data?.url);
-
-        // Save order data to the backend
-        await axios.post(`${serverUrl}/api/orders`, orderData);
-
-        // Clear payment data in Redux
-        dispatch(clearPaymentData());
       } else {
         throw new Error("Payment URL not found.");
       }

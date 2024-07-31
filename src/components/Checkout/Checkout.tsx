@@ -1,54 +1,44 @@
-// src/pages/checkout.tsx
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  setOrderDetails,
-  setInvoiceNumber,
-  setCheckoutAmount,
-  selectInvoiceNumber,
-} from "../../redux/features/order/orderSlice";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectCartItems,
   selectCheckoutAmount,
-  clearCart,
 } from "../../redux/features/cart/cartSlice";
+import {
+  setCheckoutAmount,
+  setInvoiceNumber,
+  setOrderDetails,
+} from "../../redux/features/order/orderSlice";
+import { selectUser } from "../../redux/features/user/userSlice";
 import error from "next/error";
 import Link from "next/link";
-import { selectUser } from "../../redux/features/user/userSlice";
 
 const Checkout = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const cartItems = useSelector(selectCartItems);
   const checkoutAmount = useSelector(selectCheckoutAmount);
-  const [currentDeliveryFee, setCurrentDeliveryFee] = useState(0);
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("payonline");
-  const invoiceNumber = useSelector(selectInvoiceNumber);
+  const [currentDeliveryFee, setCurrentDeliveryFee] = useState(0);
   const user = useSelector(selectUser);
-  console.log(user);
-  console.log(checkoutAmount);
 
   useEffect(() => {
-    // // Generate a unique invoice number
-    // const invoiceNumber = `INV-${Date.now()}`;
-
-    // Set order details
     const orderDetails = {
       items: cartItems,
+      name: user?.name,
       phone: user?.phone,
       address: useDefaultAddress ? user?.address : address,
       paymentMethod,
     };
 
     dispatch(setOrderDetails(orderDetails));
-    dispatch(setInvoiceNumber(invoiceNumber));
+    dispatch(setInvoiceNumber(`INV-${Date.now()}`));
     dispatch(setCheckoutAmount(checkoutAmount));
-    console.log(orderDetails, invoiceNumber, checkoutAmount);
   }, [
     dispatch,
     cartItems,
@@ -56,31 +46,13 @@ const Checkout = () => {
     useDefaultAddress,
     address,
     paymentMethod,
-    user?.phone,
-    user?.address,
-    invoiceNumber,
+    user,
   ]);
 
   const handleOrder = () => {
-    // Save order details to Redux
-    const orderDetails = {
-      items: cartItems,
-      address: useDefaultAddress ? user?.address : address,
-      paymentMethod,
-      deliveryFee: currentDeliveryFee,
-      totalAmount: checkoutAmount.total,
-    };
-
-    dispatch(setOrderDetails(orderDetails));
-
     if (paymentMethod === "payonline") {
-      // Redirect to the Payment page for SSL Commerz
       router.push("/checkout/payment");
     } else {
-      // Clear the cart after placing the order
-      // dispatch(clearCart());
-
-      // Navigate to the confirmation page for other payment methods
       router.push("/checkout/confirmation");
     }
   };
@@ -119,7 +91,7 @@ const Checkout = () => {
                 <select
                   id="address"
                   name="address"
-                  className="w-full bg-slate-300 "
+                  className="w-full bg-slate-300"
                   onChange={(e) =>
                     setCurrentDeliveryFee(Number(e.target.value))
                   }
