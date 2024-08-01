@@ -107,6 +107,9 @@ const cartSlice = createSlice({
 
       // Clear cart from localStorage
       localStorage.removeItem("medicine_cart");
+      localStorage.removeItem("orderDetails");
+      localStorage.removeItem("invoiceNumber");
+      localStorage.removeItem("checkoutDetails");
     },
   },
 });
@@ -119,8 +122,13 @@ const calculateTotalAmount = (checkoutAmount) => {
   );
 };
 
-export const { addToCart, removeFromCart, setCart, updateCheckoutAmount, clearCart } =
-  cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  setCart,
+  updateCheckoutAmount,
+  clearCart,
+} = cartSlice.actions;
 
 export const selectCartItems = (state) => state.cart.items;
 export const selectCheckoutAmount = (state) => state.cart.checkoutAmount;

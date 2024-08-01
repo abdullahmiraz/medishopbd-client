@@ -49,7 +49,9 @@ const Confirmation = () => {
         },
         status: "Pending",
       };
+      console.log(orderData);
       dispatch(createOrder(orderData));
+      dispatch(clearOrderData());
     }
   }, [orderDetails, dispatch, invoiceNumber, userId, checkoutAmount]);
 
@@ -66,7 +68,7 @@ const Confirmation = () => {
           Our customer care agents will call you shortly to confirm your order.
         </p>
         <div className="flex gap-4 my-4">
-          <InvoicePrint printData = {printData} />
+          <InvoicePrint printData={printData} />
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ export const createOrder = createAsyncThunk(
     try {
       const response = await axios.post(`${serverUrl}/api/orders`, orderData);
       console.log(response.data);
-      dispatch(clearOrderData());
+
       localStorage.removeItem("orderData");
       return response.data;
     } catch (error) {

@@ -67,7 +67,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
 
       if (startDate && endDate) {
         filtered = orders.filter((order) => {
-          const orderDate = new Date(order.created_at);
+          const orderDate = new Date(order?.created_at);
           return (
             orderDate >= new Date(startDate) && orderDate <= new Date(endDate)
           );
@@ -195,7 +195,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                     {order.orderNumber || order._id}
                   </td>
                   <td className="py-2 border whitespace-nowrap text-sm ">
-                    {order.created_at.split("T")[0]}
+                    {order?.createdAt?.split("T")[0]}
                   </td>
                   <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount?.totalProfit}
