@@ -60,7 +60,7 @@ const Payment = () => {
       };
 
       // Save order data to localStorage before initiating payment
-      localStorage.setItem("orderData", JSON.stringify(orderData));
+      // localStorage.setItem("orderData", JSON.stringify(orderData));
 
       // Initiate payment
       const paymentProcess = await axios.post(

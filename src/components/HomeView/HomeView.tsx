@@ -21,6 +21,7 @@ import SatisfiedCustomers from "./SatisfiedCustomers/SatisfiedCustomers";
 import ReviewCard from "./ServiceCard/ServiceCard";
 import SkinCareProducts from "./SkinCareProducts/SkinCareProducts";
 import FloatingCart from "./FloatingCart/FloatingCart";
+import toast, { Toaster } from "react-hot-toast";
 
 const HomeView = () => {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const HomeView = () => {
       dispatch(fetchUserById(userId));
     } else {
       // Redirect to login if no userId is found
+      toast.error("Login First");
       router.push("/");
     }
   }, [dispatch, router]);
@@ -54,6 +56,7 @@ const HomeView = () => {
 
   return (
     <div className="relative">
+      <Toaster />
       <div className="relative right-0 top-1/2">
         <FloatingCart />
       </div>

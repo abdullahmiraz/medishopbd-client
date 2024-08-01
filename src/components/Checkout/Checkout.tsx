@@ -1,20 +1,40 @@
 "use client";
 
+import { v4 as uuidv4 } from "uuid"; // For generating random alphanumeric string
+import error from "next/error";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   selectCartItems,
   selectCheckoutAmount,
 } from "../../redux/features/cart/cartSlice";
+
 import {
   setCheckoutAmount,
   setInvoiceNumber,
   setOrderDetails,
 } from "../../redux/features/order/orderSlice";
 import { selectUser } from "../../redux/features/user/userSlice";
-import error from "next/error";
-import Link from "next/link";
+
+const generateInvoiceNumber = () => {
+  const now = new Date();
+
+  // Format date as YYYYMMDD in local BD format
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const day = String(now.getDate()).padStart(2, "0");
+
+  // Generate a random alphanumeric string
+  const randomString = uuidv4()
+    .slice(0, 6)
+    .toUpperCase();
+
+  // Construct the invoice number
+  return `INV-${year}${month}${day}-${randomString}`;
+};
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -37,7 +57,7 @@ const Checkout = () => {
     };
 
     dispatch(setOrderDetails(orderDetails));
-    dispatch(setInvoiceNumber(`INV-${Date.now()}`));
+    dispatch(setInvoiceNumber(generateInvoiceNumber()));
     dispatch(setCheckoutAmount(checkoutAmount));
   }, [
     dispatch,
@@ -49,6 +69,7 @@ const Checkout = () => {
     user,
   ]);
 
+  // setinvoice number here
   const handleOrder = () => {
     if (paymentMethod === "payonline") {
       router.push("/checkout/payment");

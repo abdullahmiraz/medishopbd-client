@@ -4,20 +4,23 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-import { serverUrl } from "../../../../api";
 import { useSelector, useDispatch } from "react-redux";
-import { selectUser } from "../../../redux/features/user/userSlice";
 import {
   removeFromCart,
   selectCartItems,
-  setCart,
+  updateCheckoutAmount,
+  selectCheckoutAmount,
 } from "../../../redux/features/cart/cartSlice";
+import {
+  setPromoCode,
+  clearPromoCode,
+  validatePromoCode,
+  selectPromoCode,
+} from "../../../redux/features/promoCode/promoCodeSlice";
 import { setOrderDetails } from "../../../redux/features/order/orderSlice";
+import { selectUser } from "../../../redux/features/user/userSlice";
 
 const Cart = () => {
-  const [promoCode, setPromoCode] = useState("");
-  const [discountedAmount, setDiscountedAmount] = useState(0);
   const [message, setMessage] = useState("");
   const [validateCheckout, setValidateCheckout] = useState(false);
   const [requiresPrescription, setRequiresPrescription] = useState(false);
@@ -25,36 +28,76 @@ const Cart = () => {
 
   const userId = localStorage.getItem("userId");
   const cartItems = useSelector(selectCartItems);
+  const checkoutAmount = useSelector(selectCheckoutAmount);
+  const promoCodeState = useSelector(selectPromoCode);
   const currentUser = useSelector(selectUser);
   const dispatch = useDispatch();
 
-  console.log(cartItems);
-
   useEffect(() => {
     const prescriptionRequired = cartItems.some(
-      (item) => item.prescription == "true"
+      (item) => item.prescription === "true"
     );
     setRequiresPrescription(prescriptionRequired);
   }, [cartItems]);
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await axios.get(`${serverUrl}/api/cart/${userId}`);
-        const cartData = response.data;
-        dispatch(setCart(cartData));
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      }
-    };
-
-    if (userId) {
-      fetchCartItems();
+    if (currentUser) {
+      const { phone, address, name } = currentUser;
+      setValidateCheckout(!!(phone && address && name)); // Ensure this sets a boolean value
     }
-  }, [userId, dispatch]);
+  }, [currentUser]);
 
   const handleRemoveItem = (productId) => {
     dispatch(removeFromCart(productId));
+  };
+
+  const handlePromoCodeChange = (event) => {
+    dispatch(setPromoCode(event.target.value));
+  };
+
+  const handleApplyPromoCode = () => {
+    dispatch(
+      validatePromoCode({
+        promoCode: promoCodeState.code,
+        subtotal: checkoutAmount.subtotal,
+      })
+    )
+      .unwrap()
+      .then(({ discount }) => {
+        dispatch(updateCheckoutAmount({ discountedAmount: discount }));
+        toast.success("Promo code applied successfully!");
+      })
+      .catch((error) => {
+        setMessage(error.message || "Invalid promo code.");
+        toast.error(error.message || "Invalid promo code.");
+      });
+  };
+  const handleCheckout = () => {
+    if (!userId) {
+      toast.error("Login/Signup First", {
+        duration: 5000,
+        position: "bottom-center",
+      });
+    } else {
+      if (validateCheckout) {
+        const calculatedCheckoutAmount = {
+          subtotal: checkoutAmount.subtotal,
+          discountedAmount: checkoutAmount.discountedAmount.toFixed(2),
+          totalProfit: calculateProfit() || 0,
+          total: calculateTotalAmount(),
+        };
+
+        const orderDetails = {
+          cartItems,
+          checkoutAmount: calculatedCheckoutAmount,
+        };
+
+        dispatch(setOrderDetails(orderDetails));
+        router.push("/checkout");
+      } else {
+        toast.error("Enter your name and address properly in profile page");
+      }
+    }
   };
 
   const calculateSubtotal = () => {
@@ -65,100 +108,14 @@ const Cart = () => {
     return cartItems.reduce((acc, item) => acc + item.totalProfit, 0);
   };
 
-  const applyPromoCode = async () => {
-    try {
-      const response = await axios.post(
-        `${serverUrl}/api/promocodes/validate`,
-        { code: promoCode }
-      );
-
-      const { discount, discountType } = response.data;
-      let calculatedDiscount = 0;
-
-      if (discountType === "percentage") {
-        calculatedDiscount = (discount / 100) * calculateSubtotal();
-      } else if (discountType === "fixed") {
-        calculatedDiscount = discount;
-      }
-
-      if (calculatedDiscount >= totalAmount) {
-        toast.error("Promo code cannot be less than total price!");
-      } else {
-        setDiscountedAmount(calculatedDiscount);
-        setMessage("Promo code applied successfully!");
-        toast.success("Promo code applied successfully!");
-      }
-    } catch (error) {
-      console.error("Error applying promo code:", error);
-      setMessage(error.response.data.message || "Invalid promo code.");
-      toast.error(error.response.data.message || "Invalid promo code.");
-      setDiscountedAmount(0);
-    }
+  const calculateTotalAmount = () => {
+    return Math.max(
+      checkoutAmount.subtotal - checkoutAmount.discountedAmount,
+      0
+    );
   };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
-        const userData = response.data;
-
-        const { phone, address, name } = userData;
-        if (phone !== "" && address !== "" && name !== "") {
-          setValidateCheckout(true);
-        } else {
-          setValidateCheckout(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
-
-    if (userId) {
-      fetchUser();
-    }
-  }, [userId]);
-
-  const handlePromoCodeChange = (event) => {
-    setPromoCode(event.target.value);
-  };
-
-  const handleApplyPromoCode = () => {
-    applyPromoCode();
-  };
-
-  const handleCheckout = () => {
-    if (!userId) {
-      toast.error("Login/Signup First", {
-        duration: 5000,
-        position: "bottom-center",
-      });
-    } else {
-      if (validateCheckout) {
-        const checkoutAmount = {
-          subtotal: calculateSubtotal(),
-          discountedAmount: discountedAmount.toFixed(2),
-          totalProfit: calculateProfit() || 0,
-          total: totalAmount,
-        };
-
-        const orderDetails = {
-          cartItems,
-          checkoutAmount,
-        };
-
-        dispatch(setOrderDetails(orderDetails));
-
-        router?.push("/checkout");
-      } else {
-        toast.error("Enter your name and address properly in profile page ");
-      }
-    }
-  };
-
-  const totalAmount =
-    calculateSubtotal() >= discountedAmount
-      ? calculateSubtotal() - discountedAmount
-      : 0;
+  const totalAmount = calculateTotalAmount();
 
   return (
     <div className="my-12 px-6">
@@ -173,7 +130,6 @@ const Cart = () => {
                 className="border p-4 rounded-md flex justify-between items-center"
               >
                 <div>
-                  {/* const productUrl = `/products/${product?.productCode}/?pid=${product?._id}`; */}
                   <Link
                     href={`/products/${item?.productCode}/?pid=${item?.productId}`}
                     className="font-semibold"
@@ -199,11 +155,11 @@ const Cart = () => {
             <h2 className="font-bold text-xl mb-4">Cart Summary</h2>
             <div className="flex justify-between mb-2">
               <span>Sub Total</span>
-              <span>৳{calculateSubtotal().toFixed(2)}</span>
+              <span>৳{checkoutAmount?.subtotal?.toFixed(2)}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span>Promo Discount</span>
-              <span>- ৳{discountedAmount.toFixed(2)}</span>
+              <span>- ৳{checkoutAmount?.discountedAmount?.toFixed(2)}</span>
             </div>
             <div className="border-t pt-2 mt-2 flex justify-between">
               <span>Total</span>
@@ -213,7 +169,7 @@ const Cart = () => {
               <input
                 type="text"
                 placeholder="Enter Promo Code"
-                value={promoCode}
+                value={promoCodeState.code}
                 onChange={handlePromoCodeChange}
                 className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full"
               />

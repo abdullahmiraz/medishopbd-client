@@ -1,57 +1,57 @@
 "use client";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { serverUrl } from "../../../api";
 import { selectCheckoutAmount } from "../../redux/features/cart/cartSlice";
-import { selectInvoiceNumber } from "../../redux/features/order/orderSlice";
+import {
+  selectInvoiceNumber,
+  clearOrderData,
+  createOrder,
+} from "../../redux/features/order/orderSlice";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
 import { selectUser } from "../../redux/features/user/userSlice";
 
 const Confirmation = () => {
   const router = useRouter();
-
-  const invoiceNumber = useSelector(selectInvoiceNumber);
+  const dispatch = useDispatch();
   const checkoutAmount = useSelector(selectCheckoutAmount);
-  const [orderDetails, setOrderDetails] = useState(null);
-  console.log(orderDetails);
+  const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+  const invoiceNumber = localStorage.getItem("invoiceNumber");
+  const userId = localStorage.getItem("userId");
 
-  useEffect(() => {
-    const savedOrderData = localStorage.getItem("orderData");
-    if (savedOrderData) {
-      setOrderDetails(JSON.parse(savedOrderData));
-    } else {
-      // Redirect if no order data is available
-      router.push("/");
-    }
-  }, [router]);
+  console.log(orderDetails, invoiceNumber, checkoutAmount);
+  const printData = {
+    orderDetails,
+    invoiceNumber,
+    checkoutAmount,
+  };
 
   useEffect(() => {
     if (orderDetails) {
-      console.log(orderDetails);
-      finalizeOrder(orderDetails);
+      const orderData = {
+        userId: userId,
+        orderNumber: invoiceNumber,
+        name: orderDetails.name,
+        phone: orderDetails.phone,
+        address: orderDetails.address,
+        products: orderDetails.items.map((item) => ({
+          productId: item.productId,
+          quantity: item.stripCount,
+          price: item.pricePerStrip,
+        })),
+        checkoutAmount: {
+          subtotal: checkoutAmount.subtotal,
+          discountedAmount: checkoutAmount.discountedAmount,
+          deliveryFee: checkoutAmount.deliveryFee,
+          total: checkoutAmount.total,
+          totalProfit: checkoutAmount.totalProfit || 0,
+        },
+        status: "Pending",
+      };
+      dispatch(createOrder(orderData));
     }
-  }, [orderDetails]);
-
-  const finalizeOrder = async (orderData) => {
-    console.log(orderData);
-    try {
-      await axios.post(`${serverUrl}/api/orders`, orderData);
-      localStorage.removeItem("orderData");
-    } catch (error) {
-      console.error("Error finalizing order:", error);
-    }
-  };
-
-  if (!orderDetails || !invoiceNumber || !checkoutAmount) {
-    return (
-      <div className="container mx-auto my-12 px-6">
-        <h1 className="text-2xl font-bold mb-4">Order Confirmation</h1>
-        <p>Loading confirmation details...</p>
-      </div>
-    );
-  }
+  }, [orderDetails, dispatch, invoiceNumber, userId, checkoutAmount]);
 
   return (
     <div className="container mx-auto my-12 px-6">
@@ -66,7 +66,7 @@ const Confirmation = () => {
           Our customer care agents will call you shortly to confirm your order.
         </p>
         <div className="flex gap-4 my-4">
-          <InvoicePrint />
+          <InvoicePrint printData = {printData} />
         </div>
       </div>
     </div>

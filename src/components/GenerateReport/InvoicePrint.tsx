@@ -9,12 +9,13 @@ import {
 } from "../../redux/features/order/orderSlice";
 import { selectUser } from "../../redux/features/user/userSlice";
 
-const InvoicePrint = () => {
+const InvoicePrint = ({ printData }) => {
+  const { invoiceNumber } = printData;
   const itemDetails = JSON.parse(localStorage.getItem("orderDetails"));
   const checkoutDetails = JSON.parse(localStorage.getItem("checkoutDetails"));
   console.log(checkoutDetails);
   console.log(itemDetails);
-  const invoiceNumber = useSelector(selectInvoiceNumber);
+
   const checkoutAmount = useSelector(selectOrderCheckoutAmount);
   console.log(checkoutDetails);
   const user = useSelector(selectUser);
@@ -145,7 +146,9 @@ const InvoicePrint = () => {
               <td className="w-40 text-left font-semibold py-2">
                 <strong>Discount:</strong>
               </td>
-              <td className="py-2">- Tk. {checkoutDetails?.discountedAmount}</td>
+              <td className="py-2">
+                - Tk. {checkoutDetails?.discountedAmount}
+              </td>
             </tr>
             <tr>
               <td className="w-40 text-left font-semibold py-2">
