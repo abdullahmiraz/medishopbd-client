@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { serverUrl } from "../../../api";
@@ -20,7 +20,6 @@ const Payment = () => {
   const checkoutAmount = useSelector(selectOrderCheckoutAmount);
   const user = useSelector(selectUser);
   const userId = localStorage.getItem("userId");
-  const [paymentUrl, setPaymentUrl] = useState("");
 
   useEffect(() => {
     if (orderDetails && invoiceNumber && checkoutAmount && userId) {
@@ -29,12 +28,6 @@ const Payment = () => {
       router.push("/");
     }
   }, [orderDetails, invoiceNumber, checkoutAmount, userId, router]);
-
-  useEffect(() => {
-    if (paymentUrl) {
-      const newWindow = window.open(paymentUrl, "_blank", "noopener,noreferrer");
-    }
-  }, [paymentUrl]);
 
   const saveOrderToDatabase = async (
     orderDetails,
@@ -66,6 +59,9 @@ const Payment = () => {
         status: "Pending",
       };
 
+      // Save order data to localStorage before initiating payment
+      // localStorage.setItem("orderData", JSON.stringify(orderData));
+
       // Initiate payment
       const paymentProcess = await axios.post(
         `${serverUrl}/api/payments/initiate`,
@@ -73,7 +69,7 @@ const Payment = () => {
       );
       if (paymentProcess?.data?.url) {
         console.log(paymentProcess?.data?.url);
-        setPaymentUrl(paymentProcess?.data?.url);
+        window.location.replace(paymentProcess?.data?.url);
       } else {
         throw new Error("Payment URL not found.");
       }

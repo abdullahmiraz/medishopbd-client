@@ -3,7 +3,10 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { serverUrl } from "../../../api";
-import { selectCheckoutAmount } from "../../redux/features/cart/cartSlice";
+import {
+  selectCheckoutAmount,
+  clearCart,
+} from "../../redux/features/cart/cartSlice";
 import {
   selectInvoiceNumber,
   clearOrderData,
@@ -11,6 +14,7 @@ import {
 } from "../../redux/features/order/orderSlice";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
 import { selectUser } from "../../redux/features/user/userSlice";
+import Link from "next/link";
 
 const Confirmation = () => {
   const router = useRouter();
@@ -54,6 +58,28 @@ const Confirmation = () => {
       dispatch(clearOrderData());
     }
   }, [orderDetails, dispatch, invoiceNumber, userId, checkoutAmount]);
+
+  useEffect(() => {
+    const handleUnload = () => {
+      dispatch(clearCart());
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, [dispatch]);
+
+  if (!invoiceNumber) {
+    return (
+      <div className="my-24 text-center space-y-8">
+        <div className="text-2xl font-bold">There's no order details here</div>
+        <Link href={"/"} className="btn bg-warning">
+          Return Home
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto my-12 px-6">
