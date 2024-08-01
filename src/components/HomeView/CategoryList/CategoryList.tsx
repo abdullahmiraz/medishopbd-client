@@ -32,6 +32,7 @@ const CategoryList: React.FC = () => {
       try {
         const response = await axios.get(`${serverUrl}/api/categories`); // Adjust the endpoint as needed
         setCategories(response.data);
+        // console.log(response.data);
       } catch (error: any) {
         setError(error.message);
       } finally {

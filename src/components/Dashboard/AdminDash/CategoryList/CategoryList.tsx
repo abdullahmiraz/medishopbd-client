@@ -48,6 +48,16 @@ const CategoryList: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${serverUrl}/api/categories`);
+        const names = await response?.data;
+        console.log(names);
+
+        names.forEach((name) => {
+          console.log(name.name);
+          name.subCategories.forEach((item) => {
+            console.log(item.name);
+          });
+        });
+
         if (Array.isArray(response.data)) {
           setCategories(response.data);
         } else {
@@ -274,7 +284,7 @@ const CategoryList: React.FC = () => {
         console.log(imageUrl);
       } else {
         setNewSubCategory({ ...newSubCategory, image: imageUrl });
-        console.log(imageUrl);
+        // console.log(imageUrl);
       }
     } else {
       if (editingCategory) {
@@ -289,7 +299,7 @@ const CategoryList: React.FC = () => {
     toast.success("Image uploaded successfully!");
   };
 
-  categories.map((category) => console.log(category.name));
+  // categories.map((category) => console.log(category.name));
 
   return (
     <div className=" px-4 py-8">
