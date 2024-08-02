@@ -8,13 +8,13 @@ import ImageUploader from "../../ImageUploader/ImageUploader";
 import Image from "next/image";
 
 const MyPrescription = () => {
-  const mongoUserId = sessionStorage.getItem("mongoUserId");
+  const userId = localStorage.getItem("userId");
   const [currentPrescription, setCurrentPrescription] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCurrentPrescription = async () => {
       try {
-        const response = await axios.get(`${serverUrl}/api/users/${mongoUserId}`);
+        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
         if (response.data && response.data.prescription) {
           setCurrentPrescription(response.data.prescription);
         }
@@ -25,11 +25,11 @@ const MyPrescription = () => {
     };
 
     fetchCurrentPrescription();
-  }, [mongoUserId]);
+  }, [userId]);
 
   const handleImageUploadSuccess = async (imageUrl: string) => {
     try {
-      const updateResponse = await axios.patch(`${serverUrl}/api/users/${mongoUserId}`, {
+      const updateResponse = await axios.patch(`${serverUrl}/api/users/${userId}`, {
         prescription: imageUrl,
       });
 
@@ -45,7 +45,7 @@ const MyPrescription = () => {
 
   const deletePrescription = async () => {
     try {
-      await axios.patch(`${serverUrl}/api/users/${mongoUserId}`, {
+      await axios.patch(`${serverUrl}/api/users/${userId}`, {
         prescription: null,
       });
 

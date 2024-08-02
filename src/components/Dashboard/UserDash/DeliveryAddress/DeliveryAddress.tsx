@@ -10,15 +10,13 @@ interface User {
 }
 
 const DeliveryAddress: React.FC = () => {
-  const mongoUserId = sessionStorage.getItem("mongoUserId");
+  const userId = localStorage.getItem("userId");
   const [userAddress, setUserAddress] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUserAddress = async () => {
       try {
-        const response = await axios.get(
-          `${serverUrl}/api/users/${mongoUserId}`
-        );
+        const response = await axios.get(`${serverUrl}/api/users/${userId}`);
         setUserAddress(response?.data); // Assuming user ID is 1
         console.log(response?.data);
       } catch (error) {

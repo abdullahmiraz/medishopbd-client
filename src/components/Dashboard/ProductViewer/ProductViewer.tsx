@@ -20,7 +20,7 @@ const ProductViewer: React.FC<{ productId: string }> = ({ productId }) => {
           `${serverUrl}/api/products/${productId}`
         );
         setProduct(response.data);
-        sessionStorage.setItem("productDetails", JSON.stringify(response.data)); // Save to localStorage
+        localStorage.setItem("productDetails", JSON.stringify(response.data)); // Save to localStorage
       } catch (error) {
         console.error("Failed to fetch product:", error);
       }

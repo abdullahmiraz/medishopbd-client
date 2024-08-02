@@ -49,7 +49,7 @@ const OptionBar = () => {
       <li>
         <Link href={"/"}>Home</Link>
       </li>
-      {categories.map((category) => (
+      {categories.slice(0,8).map((category) => (
         <li key={category.code} className="relative group">
           <Link
             href={`/categories/${category.code}`}

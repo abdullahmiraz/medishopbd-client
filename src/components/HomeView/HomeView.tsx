@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -25,9 +25,11 @@ import toast, { Toaster } from "react-hot-toast";
 
 const HomeView = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
   const user = useSelector(selectUser);
   const status = useSelector(selectStatus);
+  const router = useRouter();
+  const pathname = usePathname();
+  console.log(pathname);
 
   useEffect(() => {
     // Fetch user data from localStorage or cookies
@@ -37,7 +39,9 @@ const HomeView = () => {
       dispatch(fetchUserById(userId));
     } else {
       // Redirect to login if no userId is found
-      toast.error("Login First");
+      if (pathname !== "/") {
+        toast.error("Login First");
+      }
       router.push("/");
     }
   }, [dispatch, router]);

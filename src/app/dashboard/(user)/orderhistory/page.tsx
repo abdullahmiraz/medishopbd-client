@@ -3,7 +3,7 @@ import React from "react";
 import OrderHistory from "../../../../components/Dashboard/UserDash/OrderHistory/OrderHistory";
 
 const OrderHistoryPage = () => {
-  const userId = sessionStorage.getItem("mongoUserId");
+  const userId = localStorage.getItem("userId");
   console.log(userId);
   return (
     <div>

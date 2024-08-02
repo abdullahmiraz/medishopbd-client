@@ -1,30 +1,71 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserById, selectUser } from "../../redux/features/user/userSlice";
 import { useRouter } from "next/navigation";
 import { menuItems } from "../../utils/menuItems";
 
+const allowedRoutes = {
+  admin: [
+    "profile",
+    "overview",
+    "userslist",
+    "productlist",
+    "categorylist",
+    "addproducts",
+    "orders",
+    "payments",
+    "promocodes",
+  ],
+  manager: [
+    "profile",
+    "overview",
+    "productlist",
+    "categorylist",
+    "addproducts",
+    "orders",
+    "payments",
+    "promocodes",
+  ],
+  customer: ["profile", "orderhistory", "myprescription", "home", "cart"],
+};
+
 const Dashboard = ({ content }: any) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const user = useSelector((state) => selectUser(state));
-  console.log(user);
+  const [isAuthorized, setIsAuthorized] = useState(true);
 
   useEffect(() => {
-    const mongoUserId = localStorage.getItem("userId");
+    const userId = localStorage.getItem("userId");
 
-    if (mongoUserId) {
-      dispatch(fetchUserById(mongoUserId));
+    if (userId) {
+      dispatch(fetchUserById(userId));
     } else {
       router.push("/login");
     }
   }, [dispatch, router]);
 
+  useEffect(() => {
+    if (user) {
+      const path = window.location.pathname.split("/").pop(); // Get the current route
+      const userRole = (user?.role).toLowerCase();
+
+      if (!allowedRoutes[userRole].includes(path)) {
+        setIsAuthorized(false);
+        router.push("/unauthorized"); // Redirect to an unauthorized page or home
+      }
+    }
+  }, [user, router]);
+
   if (!user) {
     return <div>Loading...</div>;
+  }
+
+  if (!isAuthorized) {
+    return <div>Redirecting...</div>;
   }
 
   const dashLocation = (user?.role).toLowerCase(); // Simplified to always use "user" dashboard

@@ -11,9 +11,11 @@ const initialState = {
 };
 
 // Async thunk to fetch user data by ID
+// Async thunk to fetch user data by ID
 export const fetchUserById = createAsyncThunk(
   "user/fetchUserById",
   async (userId) => {
+    console.log(userId);
     const response = await axios.get(`${serverUrl}/api/users/${userId}`);
     return response.data;
   }
@@ -22,12 +24,16 @@ export const fetchUserById = createAsyncThunk(
 export const updateUserDetails = createAsyncThunk(
   "user/updateUserDetails",
   async (userDetails) => {
-    console.log(userDetails)
-    const { id, name, email, phone, address, photoURL } = userDetails;
-    const response = await axios.patch(`${serverUrl}/api/users/${id}`, {
-      name, email, phone, address, photoURL
+    console.log(userDetails);
+    const { userId, name, email, phone, address, photoURL } = userDetails;
+    const response = await axios.patch(`${serverUrl}/api/users/${userId}`, {
+      name,
+      email,
+      phone,
+      address,
+      photoURL,
     });
-    console.log(response.data)
+    console.log(response.data);
     return response.data;
   }
 );
@@ -40,6 +46,7 @@ export const loginUser = createAsyncThunk(
         phone,
         password,
       });
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -55,6 +62,16 @@ export const signUpUser = createAsyncThunk(
         phone,
         password,
       });
+      // After sign-up, attempt to log the user in immediately
+      const response = await axios.post(`${serverUrl}/api/users/login`, {
+        phone,
+        password,
+      });
+      localStorage.setItem("userId", response?.data?.userId);
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("role", response?.data?.role);
+      console.log(response.data);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -65,13 +82,14 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logoutUser: (state) => {
+    logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
       state.status = StatusCode.IDLE;
       state.error = null;
       localStorage.removeItem("userId");
       localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("role");
     },
   },
   extraReducers: (builder) => {
@@ -98,7 +116,9 @@ const userSlice = createSlice({
         state.status = StatusCode.SUCCEEDED;
         state.user = action.payload.user;
         state.isAuthenticated = true;
-        localStorage.setItem("userId", action.payload.user._id);
+        console.log(action.payload);
+        localStorage.setItem("userId", action.payload.userId);
+        localStorage.setItem("role", action.payload.role);
         localStorage.setItem("isAuthenticated", "true");
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -132,7 +152,7 @@ const userSlice = createSlice({
   },
 });
 
-export const { logoutUser } = userSlice.actions;
+export const { logout } = userSlice.actions;
 
 export const selectUser = (state) => state.user.user;
 export const selectIsAuthenticated = (state) => state.user.isAuthenticated;

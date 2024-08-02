@@ -52,7 +52,7 @@ const CategoryList: React.FC = () => {
         Shop by Category
       </h1>
       <div className="grid gap-8">
-        {categories.slice(0, 10).map((category) => (
+        {categories.map((category) => (
           <div
             key={category.code}
             className="bg-white rounded-lg shadow-md p-4"

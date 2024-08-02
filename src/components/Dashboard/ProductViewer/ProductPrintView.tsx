@@ -80,7 +80,7 @@ const ProductPrintView: React.FC = () => {
   const [product, setProduct] = useState<ProductData | null>(null);
 
   useEffect(() => {
-    const storedProduct = sessionStorage.getItem("productDetails");
+    const storedProduct = localStorage.getItem("productDetails");
     if (storedProduct) {
       setProduct(JSON.parse(storedProduct));
     }

@@ -62,6 +62,11 @@ export const menuItems = {
   ],
   manager: [
     {
+      href: `profile`,
+      icon: FaUser,
+      text: "Profile",
+    },
+    {
       href: "overview",
       icon: FaHome,
       text: "Overview",
@@ -90,6 +95,11 @@ export const menuItems = {
       href: "payments",
       icon: FaDollarSign,
       text: "Payments",
+    },
+    {
+      href: "promocodes",
+      icon: FaCashRegister,
+      text: "Promo Codes",
     },
   ],
   customer: [

@@ -15,7 +15,7 @@ interface User {
   prescription: string;
 }
 
-const mongoUserId = sessionStorage.getItem("mongoUserId");
+const userId = localStorage.getItem("userId");
 
 const UsersList = (): JSX.Element => {
   const [users, setUsers] = useState<User[]>([]);
@@ -61,8 +61,8 @@ const UsersList = (): JSX.Element => {
   };
 
   const handleDeleteClick = async (userId: string) => {
-    if (userId == mongoUserId) {
-      sessionStorage.clear();
+    if (userId == userId) {
+      localStorage.clear();
       localStorage.clear();
     }
     try {
