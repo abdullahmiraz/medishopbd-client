@@ -13,27 +13,29 @@ const MostSold = () => {
       try {
         const { data: orders } = await axios.get(`${serverUrl}/api/orders`);
 
-        console.log(orders);
+        // console.log(orders);
         const productSales = {};
 
-        orders.forEach((order) => {
+        orders?.forEach((order) => {
+          // console.log(order);
           order.products.forEach((product) => {
-            const productId = product.productId._id;
+            const productId = product?.productId?._id;
+            !productId ? console.log(order.orderNumber, productId) : "";
             if (!productSales[productId]) {
               productSales[productId] = {
-                productName: product.productId.productName,
+                productName: product?.productId?.productName,
                 quantitySold: 0,
-                pricePerUnit: product.price,
+                pricePerUnit: product?.price,
                 totalRevenue: 0,
                 totalProfit: 0,
               };
             }
-            productSales[productId].quantitySold += product.quantity;
+            productSales[productId].quantitySold += product?.quantity;
             productSales[productId].totalRevenue +=
-              product.quantity * product.price;
+              product.quantity * product?.price;
             productSales[productId].totalProfit +=
               product.quantity * product.price -
-              product.productId.buyingPricePerUnit;
+              product?.productId?.buyingPricePerUnit;
           });
         });
 

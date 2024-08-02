@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowRight, FaImage } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,11 +9,14 @@ import {
   selectError,
   selectStatus,
   selectUser,
+  updateUserDetails,
 } from "../../../../redux/features/user/userSlice";
 import { useRouter } from "next/navigation";
 import Spinner from "../../../Shared/Spinner/Spinner";
 import OrderHistory from "../OrderHistory/OrderHistory";
 import { StatusCode } from "../../../../utils/statusCode";
+import ImageUploader from "../../../ImageUploader/ImageUploader";
+import toast from "react-hot-toast";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -21,17 +24,33 @@ const UserProfile = () => {
   const user = useSelector(selectUser);
   const status = useSelector(selectStatus);
   const error = useSelector(selectError);
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [photoURL, setPhotoURL] = useState("");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    const isAuthenticated = localStorage.getItem("isAuthenticated");
 
-    if (userId && isAuthenticated === 'true') {
+    if (userId && isAuthenticated === "true") {
       dispatch(fetchUserById(userId));
     } else {
       router.push("/login");
     }
   }, [dispatch, router]);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name);
+      setEmail(user.email);
+      setPhone(user.phone);
+      setAddress(user.address);
+      setPhotoURL(user.photoURL);
+    }
+  }, [user]);
 
   if (status === StatusCode.LOADING) {
     return <Spinner />;
@@ -45,15 +64,34 @@ const UserProfile = () => {
     return <div className="text-center my-20">No user data found.</div>;
   }
 
+  const handleUpdateUserDetails = async () => {
+    try {
+      const updatedUser = { id: userId, name, email, phone, address, photoURL };
+      await dispatch(updateUserDetails(updatedUser)).unwrap();
+      toast.success("User updated successfully!");
+      setIsEditing(false);
+    } catch (error) {
+      toast.error("Error updating user.");
+    }
+  };
+
+  const handleImageUploadSuccess = async (imageUrl: string) => {
+    await setPhotoURL(imageUrl);
+    toast.success("Profile picture updated successfully!");
+  };
+
+  if (!user) {
+    return <div className="text-center my-20">Loading...</div>;
+  }
   return (
     <div className="p-6">
       <h2 className="text-3xl font-bold mb-6">User Profile</h2>
       <div className="bg-white p-8 rounded shadow-md flex flex-col md:flex-row gap-8">
         <div className="flex flex-col items-center md:w-1/3">
           <div className="relative w-40 h-40 mb-4">
-            {user.photoURL ? (
+            {photoURL ? (
               <Image
-                src={user.photoURL}
+                src={photoURL}
                 alt="Profile Picture"
                 layout="fill"
                 objectFit="cover"
@@ -64,35 +102,103 @@ const UserProfile = () => {
                 <FaImage size={50} />
               </div>
             )}
+            {isEditing && (
+              <div className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full cursor-pointer">
+                <ImageUploader
+                  onUploadSuccess={handleImageUploadSuccess}
+                  showSubmitButton={true}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="flex-1">
           <div className="flex justify-between">
             <h3 className="text-xl font-semibold mb-4">Personal Information</h3>
-            {/* Add Save Profile Editing functionality */}
+            {isEditing ? (
+              <button
+                onClick={handleUpdateUserDetails}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Save Profile Editing
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Edit Profile
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 font-bold mb-1">Name:</label>
-              <p className="border rounded px-3 py-2">{user.name || 'N/A'}</p>
+              <label className="block text-gray-700 font-bold mb-1">
+                Name:
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                />
+              ) : (
+                <p className="border rounded px-3 py-2">{user.name}</p>
+              )}
             </div>
             <div>
-              <label className="block text-gray-700 font-bold mb-1">Email:</label>
-              <p className="border rounded px-3 py-2">{user.email || 'N/A'}</p>
+              <label className="block text-gray-700 font-bold mb-1">
+                Email:
+              </label>
+              {isEditing ? (
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                />
+              ) : (
+                <p className="border rounded px-3 py-2">{user.email}</p>
+              )}
             </div>
             <div>
-              <label className="block text-gray-700 font-bold mb-1">Phone:</label>
-              <p className="border rounded px-3 py-2">{user.phone || 'N/A'}</p>
+              <label className="block text-gray-700 font-bold mb-1">
+                Phone:
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                />
+              ) : (
+                <p className="border rounded px-3 py-2">{user.phone}</p>
+              )}
             </div>
             <div>
-              <label className="block text-gray-700 font-bold mb-1">Address:</label>
-              <p className="border rounded px-3 py-2">{user.address || 'N/A'}</p>
+              <label className="block text-gray-700 font-bold mb-1">
+                Address:
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                />
+              ) : (
+                <p className="border rounded px-3 py-2">{user.address}</p>
+              )}
             </div>
           </div>
           {user.prescription && (
             <div className="mt-4">
-              <label className="block text-gray-700 font-bold mb-1">Prescription:</label>
+              <label className="block text-gray-700 font-bold mb-1">
+                Prescription:
+              </label>
               <a
                 href={user.prescription}
                 target="_blank"

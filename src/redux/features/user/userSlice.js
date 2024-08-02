@@ -14,8 +14,20 @@ const initialState = {
 export const fetchUserById = createAsyncThunk(
   "user/fetchUserById",
   async (userId) => {
-    console.log(userId);
     const response = await axios.get(`${serverUrl}/api/users/${userId}`);
+    return response.data;
+  }
+);
+
+export const updateUserDetails = createAsyncThunk(
+  "user/updateUserDetails",
+  async (userDetails) => {
+    console.log(userDetails)
+    const { id, name, email, phone, address, photoURL } = userDetails;
+    const response = await axios.patch(`${serverUrl}/api/users/${id}`, {
+      name, email, phone, address, photoURL
+    });
+    console.log(response.data)
     return response.data;
   }
 );
@@ -43,12 +55,6 @@ export const signUpUser = createAsyncThunk(
         phone,
         password,
       });
-      // After sign-up, attempt to log the user in immediately
-      const loginResponse = await axios.post(`${serverUrl}/api/users/login`, {
-        phone,
-        password,
-      });
-      return loginResponse.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -59,65 +65,78 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logout: (state) => {
+    logoutUser: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      state.status = StatusCode.IDLE;
+      state.error = null;
       localStorage.removeItem("userId");
       localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("role");
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginUser.pending, (state) => {
-        state.status = StatusCode.LOADING;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = StatusCode.SUCCEEDED;
-        state.user = action.payload;
-        state.isAuthenticated = true;
-        const { userId, role } = action.payload;
-        console.log(action.payload);
-
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("role", role);
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.status = StatusCode.ERROR;
-        state.error = action.payload;
-      })
-      .addCase(signUpUser.pending, (state) => {
-        state.status = StatusCode.LOADING;
-      })
-      .addCase(signUpUser.fulfilled, (state, action) => {
-        state.status = StatusCode.SUCCEEDED;
-        state.user = action.payload;
-        state.isAuthenticated = true;
-      })
-      .addCase(signUpUser.rejected, (state, action) => {
-        state.status = StatusCode.ERROR;
-        state.error = action.payload;
-      })
       .addCase(fetchUserById.pending, (state) => {
         state.status = StatusCode.LOADING;
+        state.error = null;
       })
       .addCase(fetchUserById.fulfilled, (state, action) => {
         state.status = StatusCode.SUCCEEDED;
         state.user = action.payload;
+        state.isAuthenticated = true;
       })
       .addCase(fetchUserById.rejected, (state, action) => {
         state.status = StatusCode.ERROR;
         state.error = action.error.message;
+        state.isAuthenticated = false;
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.status = StatusCode.LOADING;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.status = StatusCode.SUCCEEDED;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+        localStorage.setItem("userId", action.payload.user._id);
+        localStorage.setItem("isAuthenticated", "true");
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = StatusCode.ERROR;
+        state.error = action.payload || action.error.message;
+        state.isAuthenticated = false;
+      })
+      .addCase(signUpUser.pending, (state) => {
+        state.status = StatusCode.LOADING;
+        state.error = null;
+      })
+      .addCase(signUpUser.fulfilled, (state) => {
+        state.status = StatusCode.SUCCEEDED;
+      })
+      .addCase(signUpUser.rejected, (state, action) => {
+        state.status = StatusCode.ERROR;
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(updateUserDetails.pending, (state) => {
+        state.status = StatusCode.LOADING;
+        state.error = null;
+      })
+      .addCase(updateUserDetails.fulfilled, (state, action) => {
+        state.status = StatusCode.SUCCEEDED;
+        state.user = action.payload;
+      })
+      .addCase(updateUserDetails.rejected, (state, action) => {
+        state.status = StatusCode.ERROR;
+        state.error = action.payload || action.error.message;
       });
   },
 });
 
+export const { logoutUser } = userSlice.actions;
+
 export const selectUser = (state) => state.user.user;
+export const selectIsAuthenticated = (state) => state.user.isAuthenticated;
 export const selectStatus = (state) => state.user.status;
 export const selectError = (state) => state.user.error;
 
-console.log(selectUser);
-
-export const { logout } = userSlice.actions;
 export default userSlice.reducer;

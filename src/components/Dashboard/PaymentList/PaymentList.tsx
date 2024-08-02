@@ -21,6 +21,8 @@ const PaymentList = () => {
     fetchPayments();
   }, []);
 
+  console.log(payments);
+
   return (
     <div className="container">
       <h2 className="font-extrabold text-2xl m-4">Payment History</h2>
@@ -45,32 +47,32 @@ const PaymentList = () => {
           <tbody>
             {payments?.map((payment) => (
               <tr
-                key={payment._id}
+                key={payment?._id}
                 className="border-b border-gray-200 hover:bg-gray-100"
               >
                 <td className="border border-gray-300 px-4 py-2">
-                  {payment.sessionkey}
+                  {payment?.sessionkey}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {payment.orderNumber}
+                  {payment?.orderNumber}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {payment.name}
+                  {payment?.name}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {payment.phone}
+                  {payment?.phone}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {payment.address}
+                  {payment?.address}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {payment.paymentStatus ? "Paid" : "Pending"}
+                  {payment?.paymentStatus ? "Paid" : "Pending"}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {payment.tranId}
+                  {payment?.tranId || payment?._id}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {new Date(payment.createdAt).toLocaleString()}
+                  {new Date(payment?.createdAt).toLocaleString()}
                 </td>
               </tr>
             ))}

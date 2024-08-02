@@ -11,6 +11,7 @@ const Dashboard = ({ content }: any) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const user = useSelector((state) => selectUser(state));
+  console.log(user);
 
   useEffect(() => {
     const mongoUserId = localStorage.getItem("userId");
@@ -26,7 +27,7 @@ const Dashboard = ({ content }: any) => {
     return <div>Loading...</div>;
   }
 
-  const dashLocation = "admin"; // Simplified to always use "user" dashboard
+  const dashLocation = (user?.role).toLowerCase(); // Simplified to always use "user" dashboard
 
   return (
     <div className="w-full flex justify-start">

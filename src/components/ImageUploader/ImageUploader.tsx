@@ -43,7 +43,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       });
 
       if (uploadResponse.data.success) {
-        const imageUrl = uploadResponse.data.data.url;
+        const imageUrl = uploadResponse?.data?.data?.url;
         console.log(imageUrl);
         onUploadSuccess(imageUrl);
         setSelectedFile(null);
