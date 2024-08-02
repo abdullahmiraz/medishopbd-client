@@ -172,7 +172,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
 
       {filteredOrders.length > 0 ? (
         <div ref={orderRef} className="overflow-auto ">
-          <h2 className="print-only">Invoice</h2> {/* Title to be printed */}
+          <h2 className="print-only text-2xl font-bold text-center my-4">
+            Invoice: Sales Report:  {startDate} to   {endDate}
+          </h2>{" "}
+          {/* Title to be printed */}
           <table className=" divide-y divide-gray-200 order-history-table min-w-full table-xs table-zebra border">
             <thead className="bg-gray-200 font-bold text-left">
               <tr>
@@ -195,7 +198,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                     {order.orderNumber || order._id}
                   </td>
                   <td className="py-2 border whitespace-nowrap text-sm ">
-                    {order?.createdAt?.split("T")[0]}
+                    {order?.created_at?.split("T")[0]}
                   </td>
                   <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount?.totalProfit}
@@ -212,13 +215,25 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                   <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount.total}
                   </td>
-                  <td className="py-2 border whitespace-nowrap text-sm  hide-column">
+                  <td
+                    className={`py-2 border whitespace-nowrap text-sm hide-column `}
+                  >
                     <select
                       value={order.status}
                       onChange={(e) =>
                         handleStatusChange(order._id, e.target.value)
                       }
-                      className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+                      className={`border border-gray-300 rounded-md px-2 py-1 text-sm ${
+                        order.status === "Pending"
+                          ? "bg-slate-300"
+                          : order.status === "Processing"
+                          ? "bg-yellow-300"
+                          : order.status === "Shipped"
+                          ? "bg-blue-300"
+                          : order.status === "Delivered"
+                          ? "bg-green-300"
+                          : ""
+                      }`}
                     >
                       <option value="Pending">Pending</option>
                       <option value="Processing">Processing</option>
@@ -226,6 +241,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                       <option value="Delivered">Delivered</option>
                     </select>
                   </td>
+
                   <td className="py-2 border whitespace-nowrap text-sm  hide-column">
                     <ul>
                       {order.products.map((item, index) => (
