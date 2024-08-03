@@ -10,7 +10,7 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
   },
   devIndicators: {
-    buildActivity: false,
+    buildActivity: true,
     buildActivityPosition: "bottom-right",
   },
 };

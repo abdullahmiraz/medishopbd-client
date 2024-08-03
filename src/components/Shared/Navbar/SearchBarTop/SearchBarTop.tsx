@@ -29,7 +29,7 @@ const SearchBarTop = () => {
       <ProductSearch />
       <div className="user-need-section flex items-center gap-6">
         <div className="gap-4 items-center hidden lg:flex border-r-4 pr-4 sm:border-cyan-800">
-          <div className="track-order flex items-center gap-2">
+          {/* <div className="track-order flex items-center gap-2">
             <div className="track-icon">
               <FaTruck size={40} />
               <span className="absolute -top-4 -right-2 h-5 w-5 text-center rounded-full text-white bg-red-800">
@@ -39,7 +39,7 @@ const SearchBarTop = () => {
             <p>
               Track <br /> Order
             </p>
-          </div>
+          </div> */}
           <Link href={"/cart"}>
             <div className="card-top-nav w-25 flex items-center gap-2 ">
               <div className="card-icon-top relative">

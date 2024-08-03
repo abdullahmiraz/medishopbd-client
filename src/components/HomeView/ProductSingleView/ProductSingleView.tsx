@@ -120,16 +120,14 @@ const ProductSingleView = ({ productId }) => {
       <Toaster />
       <div className="">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
-          <div
-            className="relative md:col-span-1 xl:col-span-1 min-h-52"
-            style={{ paddingBottom: "60%" }}
-          >
+          <div className=" min-h-40  md:col-span-1 ">
             <Image
               src={`${product?.productImage}` || placeholderImage}
               alt={product?.productName}
-              layout="fill"
+              height={300}
+              width={300}
               objectFit="cover"
-              className="rounded-t-md border"
+              className="rounded border w-full h-full"
             />
           </div>
           <div className="info-table grid grid-cols-1 md:grid-cols-1 xl:grid-cols-10 md:col-span-1 xl:col-span-2 gap-4">

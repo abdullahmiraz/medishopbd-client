@@ -17,6 +17,7 @@ import OrderHistory from "../OrderHistory/OrderHistory";
 import { StatusCode } from "../../../../utils/statusCode";
 import ImageUploader from "../../../ImageUploader/ImageUploader";
 import toast from "react-hot-toast";
+import { placeholderImage } from "../../../../../api";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,8 @@ const UserProfile = () => {
   const [photoURL, setPhotoURL] = useState("");
   const userId = localStorage.getItem("userId");
 
+  console.log(user);
+
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
 
@@ -44,11 +47,11 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (user) {
-      setName(user.name);
-      setEmail(user.email);
-      setPhone(user.phone);
-      setAddress(user.address);
-      setPhotoURL(user.photoURL);
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+      setAddress(user.address || "");
+      setPhotoURL(user.photoURL || "");
     }
   }, [user]);
 
@@ -57,6 +60,7 @@ const UserProfile = () => {
   }
 
   if (status === StatusCode.ERROR) {
+    console.log(error);
     return <div className="text-center my-20 text-red-500">{error}</div>;
   }
 
@@ -66,8 +70,16 @@ const UserProfile = () => {
 
   const handleUpdateUserDetails = async () => {
     try {
-      const updatedUser = { id: userId, name, email, phone, address, photoURL };
-      await dispatch(updateUserDetails(updatedUser)).unwrap();
+      const updatedUser = {
+        name,
+        email,
+        phone,
+        address,
+        photoURL,
+      };
+      await dispatch(
+        updateUserDetails({ userId, userDetails: updatedUser })
+      ).unwrap();
       toast.success("User updated successfully!");
       setIsEditing(false);
     } catch (error) {
@@ -76,7 +88,7 @@ const UserProfile = () => {
   };
 
   const handleImageUploadSuccess = async (imageUrl: string) => {
-    await setPhotoURL(imageUrl);
+    setPhotoURL(imageUrl);
     toast.success("Profile picture updated successfully!");
   };
 
@@ -88,12 +100,13 @@ const UserProfile = () => {
       <h2 className="text-3xl font-bold mb-6">User Profile</h2>
       <div className="bg-white p-8 rounded shadow-md flex flex-col md:flex-row gap-8">
         <div className="flex flex-col items-center md:w-1/3">
-          <div className="relative w-40 h-40 mb-4">
+          <div className="  w-40 h-40 mb-4">
             {photoURL ? (
               <Image
-                src={photoURL}
+                src={photoURL || placeholderImage}
                 alt="Profile Picture"
-                layout="fill"
+                height={150}
+                width={150}
                 objectFit="cover"
                 className="rounded-full"
               />

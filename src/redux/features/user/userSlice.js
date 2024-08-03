@@ -11,30 +11,36 @@ const initialState = {
 };
 
 // Async thunk to fetch user data by ID
-// Async thunk to fetch user data by ID
 export const fetchUserById = createAsyncThunk(
   "user/fetchUserById",
-  async (userId) => {
-    console.log(userId);
-    const response = await axios.get(`${serverUrl}/api/users/${userId}`);
-    return response.data;
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${serverUrl}/api/users/${userId}`);
+      if (response.data) {
+        return response.data;
+      } else {
+        return rejectWithValue({ message: "User not found" });
+      }
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 
 export const updateUserDetails = createAsyncThunk(
   "user/updateUserDetails",
-  async (userDetails) => {
+  async ({ userId, userDetails }, { rejectWithValue }) => {
     console.log(userDetails);
-    const { userId, name, email, phone, address, photoURL } = userDetails;
-    const response = await axios.patch(`${serverUrl}/api/users/${userId}`, {
-      name,
-      email,
-      phone,
-      address,
-      photoURL,
-    });
-    console.log(response.data);
-    return response.data;
+    try {
+      const response = await axios.patch(
+        `${serverUrl}/api/users/${userId}`,
+        userDetails
+      );
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
 
@@ -147,6 +153,7 @@ const userSlice = createSlice({
       })
       .addCase(updateUserDetails.rejected, (state, action) => {
         state.status = StatusCode.ERROR;
+        console.log(state.status);
         state.error = action.payload || action.error.message;
       });
   },

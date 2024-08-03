@@ -80,8 +80,12 @@ const Login: React.FC = () => {
                 {status === StatusCode.LOADING ? "Logging in..." : "Login"}
               </button>
             </div>
-            {status === StatusCode.ERROR && (
-              <div className="text-red-500">{error}</div>
+            {status === StatusCode.ERROR && error && (
+              <div className="text-red-500 mt-4">
+                {typeof error === "string"
+                  ? error
+                  : "An unexpected error occurred"}
+              </div>
             )}
           </form>
         </div>

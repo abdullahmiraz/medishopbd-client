@@ -1,9 +1,29 @@
-import React from 'react'
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { serverUrl } from "../../../../api";
 
 const SatisfiedCustomers = () => {
-  return (
-    <div>SatisfiedCustomers</div>
-  )
-}
+  const [reviews, setReviews ]= useState('')
+  useEffect(() => {
+    try {
+      const fetchReviews = async () => {
+        const response = await axios.get(`${serverUrl}/api/reviews`);
+        console.log(response.data);
+      };
+ 
+      fetchReviews();
+    } catch (error) {
+      toast.error("Unable to fetch the reviews");
+    }
+  }, []);
 
-export default SatisfiedCustomers
+  return (
+    <div>
+      <Toaster />
+      SatisfiedCustomers
+    </div>
+  );
+};
+
+export default SatisfiedCustomers;

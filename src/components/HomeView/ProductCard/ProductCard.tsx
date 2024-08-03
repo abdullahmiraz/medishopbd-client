@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { placeholderImage } from "../../../../api";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product }: any) => {
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
 
   const productUrl = `/products/${product?.productCode}/?pid=${product?._id}`;
@@ -11,15 +11,16 @@ const ProductCard = ({ product }) => {
     ?.expirationDate >= currentDate ? (
     <Link href={productUrl}>
       <div className="flex flex-col border cursor-pointer rounded-md shadow-md hover:shadow-2xl hover:scale-95 transition-all duration-200  overflow-hidden h-full text-sm md:text-base">
-        <figure className="relative" style={{ paddingBottom: "60%" }}>
+        <div className=" min-h-40 h-full w-full">
           <Image
             src={`${product?.productImage}` || placeholderImage}
             alt={product?.productName}
-            layout="fill"
+            width={200}
+            height={200}
             objectFit="cover"
             className="rounded-t-md"
           />
-        </figure>
+        </div>
         <div className="card-body p-4 flex justify-between flex-col flex-grow">
           <h2 className="text-xl font-bold mb-2">
             {product?.productName} {product?.measure}
@@ -35,13 +36,13 @@ const ProductCard = ({ product }) => {
                 </span>
               </p>
               {/* <p>Stock: {product?.availableStock}</p> */}
-              <p>
+              {/* <p>
                 Date:{" "}
                 {
                   product?.stockDetails[product?.stockDetails.length - 1]
                     ?.expirationDate
                 }
-              </p>
+              </p> */}
             </div>
           </div>
         </div>
