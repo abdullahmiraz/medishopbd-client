@@ -7,6 +7,7 @@ const ProductCard = ({ product }: any) => {
 
   const productUrl = `/products/${product?.productCode}/?pid=${product?._id}`;
 
+  
   return product?.stockDetails[product?.stockDetails.length - 1]
     ?.expirationDate >= currentDate ? (
     <Link href={productUrl}>
