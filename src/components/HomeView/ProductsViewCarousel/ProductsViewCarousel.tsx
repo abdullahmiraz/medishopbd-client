@@ -37,6 +37,7 @@ export default function ProductsViewCarousel({ categoryCode, title }: any) {
         const filteredProducts = products.filter(
           (product) => product?.primaryCategory === categoryCode
         );
+        console.log(product?.primaryCategory);
         setProductByCategory(filteredProducts);
       } catch (error) {
         console.error("Error filtering category products", error);
