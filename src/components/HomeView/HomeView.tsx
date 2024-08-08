@@ -14,7 +14,6 @@ import OptionBar from "../Shared/Navbar/OptionBar/OptionBar";
 import SearchBarTop from "../Shared/Navbar/SearchBarTop/SearchBarTop";
 import Spinner from "../Shared/Spinner/Spinner";
 import AllMedicineViewCarousel from "./AllMedicineViewCarousel/AllMedicineViewCarousel";
-import CategoryCard from "./CategoryCard/CategoryCard";
 import HeroCarousel from "./HeroCarousel/HeroCarousel";
 import PrescriptionMedicine from "./PrescriptionMedicines/PrescriptionMedicine";
 import SatisfiedCustomers from "./SatisfiedCustomers/SatisfiedCustomers";
@@ -22,6 +21,8 @@ import ReviewCard from "./ServiceCard/ServiceCard";
 import SkinCareProducts from "./SkinCareProducts/SkinCareProducts";
 import FloatingCart from "./FloatingCart/FloatingCart";
 import toast, { Toaster } from "react-hot-toast";
+import AllCategoryProductViewCarousel from "./AllCategoryProductViewCarousel/AllCategoryProductViewCarousel";
+import CategoryCard from "./CategoryCard/CategoryCard";
 
 const HomeView = () => {
   const dispatch = useDispatch();
@@ -69,9 +70,10 @@ const HomeView = () => {
       <HeroCarousel />
       <ReviewCard />
       <CategoryCard />
-      <AllMedicineViewCarousel />
+      <AllCategoryProductViewCarousel />
+      {/* <AllMedicineViewCarousel />
       <PrescriptionMedicine />
-      <SkinCareProducts />
+      <SkinCareProducts /> */}
       <SatisfiedCustomers />
       <Footer />
     </div>

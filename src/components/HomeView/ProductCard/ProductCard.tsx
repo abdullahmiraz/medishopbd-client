@@ -7,7 +7,7 @@ const ProductCard = ({ product }: any) => {
 
   const productUrl = `/products/${product?.productCode}/?pid=${product?._id}`;
 
-  
+
   return product?.stockDetails[product?.stockDetails.length - 1]
     ?.expirationDate >= currentDate ? (
     <Link href={productUrl}>
@@ -19,7 +19,7 @@ const ProductCard = ({ product }: any) => {
             width={200}
             height={200}
             objectFit="cover"
-            className="rounded-t-md"
+            className="rounded-t-md w-full"
           />
         </div>
         <div className="card-body p-4 flex justify-between flex-col flex-grow">
