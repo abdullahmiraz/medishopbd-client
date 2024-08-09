@@ -7,21 +7,18 @@ const ProductCard = ({ product }: any) => {
 
   const productUrl = `/products/${product?.productCode}/?pid=${product?._id}`;
 
-
   return product?.stockDetails[product?.stockDetails.length - 1]
     ?.expirationDate >= currentDate ? (
     <Link href={productUrl}>
       <div className="flex flex-col border cursor-pointer rounded-md shadow-md hover:shadow-2xl hover:scale-95 transition-all duration-200  overflow-hidden h-full text-sm md:text-base">
-        <div className=" min-h-40 h-full w-full">
-          <Image
-            src={`${product?.productImage}` || placeholderImage}
-            alt={product?.productName}
-            width={200}
-            height={200}
-            objectFit="cover"
-            className="rounded-t-md w-full"
-          />
-        </div>
+        <Image
+          src={`${product?.productImage}` || placeholderImage}
+          alt={product?.productName}
+          width={200}
+          height={200}
+          className="rounded-t-md w-full h-52 object-cover"
+        />
+
         <div className="card-body p-4 flex justify-between flex-col flex-grow">
           <h2 className="text-xl font-bold mb-2">
             {product?.productName} {product?.measure}

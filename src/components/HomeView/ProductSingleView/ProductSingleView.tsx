@@ -126,8 +126,7 @@ const ProductSingleView = ({ productId }) => {
               alt={product?.productName}
               height={300}
               width={300}
-              objectFit="cover"
-              className="rounded border w-full h-full"
+              className="rounded border w-full h-full object-cover"
             />
           </div>
           <div className="info-table grid grid-cols-1 md:grid-cols-1 xl:grid-cols-10 md:col-span-1 xl:col-span-2 gap-4">

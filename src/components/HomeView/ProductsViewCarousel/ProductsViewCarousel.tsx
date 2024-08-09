@@ -3,20 +3,28 @@
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { AutoScroll } from "@splidejs/splide-extension-auto-scroll";
+import axios from "axios";
 import { useEffect, useState } from "react";
+import { serverUrl } from "../../../../api";
 import { ProductData } from "../../Dashboard/AdminDash/AddProducts/products.types";
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
 import ProductCard from "../ProductCard/ProductCard";
-import axios from "axios";
-import { serverUrl } from "../../../../api";
 
-export default function ProductsViewCarousel({ categoryCode, title }: any) {
+interface ProductsViewCarouselProps {
+  categoryCode: string;
+  title: string;
+}
+
+export default function ProductsViewCarousel({
+  categoryCode,
+  title,
+}: ProductsViewCarouselProps) {
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
 
   const [products, setProducts] = useState([]);
   const [productByCategory, setProductByCategory] = useState([]);
-  console.log(categoryCode);
+  // console.log(categoryCode);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -32,22 +40,24 @@ export default function ProductsViewCarousel({ categoryCode, title }: any) {
   }, []);
 
   useEffect(() => {
-    const categorizedProducts = () => {
-      try {
-        const filteredProducts = products.filter(
-          (product) => product?.primaryCategory === categoryCode
-        );
-        console.log(product?.primaryCategory);
-        setProductByCategory(filteredProducts);
-      } catch (error) {
-        console.error("Error filtering category products", error);
-      }
-    };
-    categorizedProducts();
+    if (products.length > 0) {
+      const categorizedProducts = () => {
+        try {
+          const filteredProducts = products.filter(
+            (product) => product.primaryCategory === categoryCode
+          );
+          setProductByCategory(filteredProducts);
+        } catch (error) {
+          console.error("Error filtering category products", error);
+        }
+      };
+
+      categorizedProducts();
+    }
   }, [products, categoryCode]);
 
-  console.log("Products:", products);
-  console.log(productByCategory);
+  // console.log("Products:", products);
+  // console.log(productByCategory);
 
   return (
     <div className="shadow-md  flex flex-col gap-8  border-b-8   my-16  ">
@@ -71,14 +81,16 @@ export default function ProductsViewCarousel({ categoryCode, title }: any) {
         extensions={{ AutoScroll }}
         className="mx-6"
       >
-        {productByCategory?.map((product: ProductData, index) =>
-          product?.stockDetails[product?.stockDetails.length - 1]
-            ?.expirationDate >= currentDate ? (
+        {productByCategory.map((product: ProductData, index) => {
+          const lastStockDetail =
+            product.stockDetails[product.stockDetails.length - 1];
+          return lastStockDetail &&
+            lastStockDetail.expirationDate >= currentDate ? (
             <SplideSlide key={index}>
               <ProductCard product={product} />
             </SplideSlide>
-          ) : null
-        )}
+          ) : null;
+        })}
       </Splide>
       <BannerWide />
     </div>
