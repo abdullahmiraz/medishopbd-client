@@ -18,6 +18,7 @@ import { StatusCode } from "../../../../utils/statusCode";
 import ImageUploader from "../../../ImageUploader/ImageUploader";
 import toast from "react-hot-toast";
 import { placeholderImage } from "../../../../../api";
+import Head from "next/head";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -97,6 +98,9 @@ const UserProfile = () => {
   }
   return (
     <div className="p-6">
+      <Head>
+        <title>User Profile</title>
+      </Head>
       <h2 className="text-3xl font-bold mb-6">User Profile</h2>
       <div className="bg-white p-8 rounded shadow-md flex flex-col md:flex-row gap-8">
         <div className="flex flex-col items-center md:w-1/3">

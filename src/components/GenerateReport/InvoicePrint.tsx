@@ -1,15 +1,17 @@
 import Link from "next/link";
 import React, { useRef } from "react";
 import ReactToPrint from "react-to-print";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectOrderDetails,
   selectInvoiceNumber,
   selectOrderCheckoutAmount,
 } from "../../redux/features/order/orderSlice";
 import { selectUser } from "../../redux/features/user/userSlice";
+import { clearCart } from "../../redux/features/cart/cartSlice";
 
 const InvoicePrint = ({ printData }) => {
+  const dispatch = useDispatch();
   const { invoiceNumber } = printData;
   const itemDetails = JSON.parse(localStorage.getItem("orderDetails"));
   const checkoutDetails = JSON.parse(localStorage.getItem("checkoutDetails"));
@@ -23,18 +25,31 @@ const InvoicePrint = ({ printData }) => {
 
   const invoiceRef = useRef();
 
+  const clearCurrentCart = () => {
+    dispatch(clearCart());
+  };
+
   return (
     <div className="container mx-auto p-12 my-8 bg-white shadow-md">
       <div className="flex gap-8 mb-4">
         <ReactToPrint
+
           trigger={() => (
-            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+          
+            <button
+              onClick={clearCurrentCart}
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
               Print Invoice
             </button>
           )}
           content={() => invoiceRef.current}
         />
-        <Link href="/" className="px-4 py-2 bg-blue-500 text-white rounded">
+        <Link
+          onClick={clearCurrentCart}
+          href="/"
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
           Return to Homepage
         </Link>
       </div>

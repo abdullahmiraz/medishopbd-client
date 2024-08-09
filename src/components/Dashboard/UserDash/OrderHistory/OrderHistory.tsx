@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa"; // Import icons
 import ReactToPrint from "react-to-print";
 import { serverUrl } from "../../../../../api";
+import Head from "next/head";
 
 type OrderItem = {
   productId: { productName: string }; // Assuming the product has a name property
@@ -121,6 +122,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
 
   return (
     <div className="m-4">
+      <Head>
+        <title>Order History</title>
+      </Head>
       <h2 className="text-2xl font-bold mb-4">Order History</h2>
       <div className="mb-4 flex flex-col md:flex-row gap-4">
         {/* Date Range Filter */}
@@ -187,10 +191,10 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                 <th className=" text-xs border ">Discnt</th>
                 <th className=" text-xs border ">Del.Fee</th>
                 <th className=" text-xs border ">Total</th>
+                <th className=" text-xs border  hide-column">Status</th>
+                <th className=" text-xs  hide-column">Items</th>
                 {!userId && (
                   <>
-                    <th className=" text-xs border  hide-column">Status</th>
-                    <th className=" text-xs  hide-column">Items</th>
                     <th className=" text-xs   hide-column">Actions</th>
                   </>
                 )}
@@ -220,45 +224,45 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                   <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount.total}
                   </td>
+                  <td
+                    className={`py-2 border whitespace-nowrap text-sm hide-column `}
+                  >
+                    <select
+                      disabled={!!userId || order.status === "Delivered"}
+                      value={order.status}
+                      onChange={(e) =>
+                        handleStatusChange(order._id, e.target.value)
+                      }
+                      className={`border border-gray-300 rounded-md px-2 py-1 text-sm ${
+                        order.status === "Pending"
+                          ? "bg-slate-300"
+                          : order.status === "Processing"
+                          ? "bg-yellow-300"
+                          : order.status === "Shipped"
+                          ? "bg-blue-300"
+                          : order.status === "Delivered"
+                          ? "bg-green-300"
+                          : ""
+                      }`}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                  </td>
+                  <td className="py-2 border whitespace-nowrap text-sm  hide-column">
+                    <ul>
+                      {order.products.map((item, index) => (
+                        <li key={index}>
+                          {item?.productId?.productName} - {item.quantity} x Tk.{" "}
+                          {item.price}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
                   {!userId && (
                     <>
-                      <td
-                        className={`py-2 border whitespace-nowrap text-sm hide-column `}
-                      >
-                        <select
-                          value={order.status}
-                          onChange={(e) =>
-                            handleStatusChange(order._id, e.target.value)
-                          }
-                          className={`border border-gray-300 rounded-md px-2 py-1 text-sm ${
-                            order.status === "Pending"
-                              ? "bg-slate-300"
-                              : order.status === "Processing"
-                              ? "bg-yellow-300"
-                              : order.status === "Shipped"
-                              ? "bg-blue-300"
-                              : order.status === "Delivered"
-                              ? "bg-green-300"
-                              : ""
-                          }`}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                        </select>
-                      </td>
-
-                      <td className="py-2 border whitespace-nowrap text-sm  hide-column">
-                        <ul>
-                          {order.products.map((item, index) => (
-                            <li key={index}>
-                              {item?.productId?.productName} - {item.quantity} x
-                              Tk. {item.price}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
                       <td className="py-2 border whitespace-nowrap text-sm  hide-column">
                         <button
                           onClick={() => handleDelete(order._id)}

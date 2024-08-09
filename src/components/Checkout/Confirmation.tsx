@@ -15,6 +15,7 @@ import {
 import InvoicePrint from "../GenerateReport/InvoicePrint";
 import { selectUser } from "../../redux/features/user/userSlice";
 import Link from "next/link";
+import Head from "next/head";
 
 const Confirmation = () => {
   const router = useRouter();
@@ -83,6 +84,9 @@ const Confirmation = () => {
 
   return (
     <div className="container mx-auto my-12 px-6">
+      <Head>
+        <title>Confirmation</title>
+      </Head>
       <h1 className="text-2xl font-bold mb-4">Order Confirmation</h1>
       <div>
         <p>Thank you for your order!</p>
