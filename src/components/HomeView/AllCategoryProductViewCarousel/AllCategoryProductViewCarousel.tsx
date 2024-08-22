@@ -11,7 +11,6 @@ const AllCategoryProductViewCarousel = () => {
   const [products, setProducts] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
 
-
   useEffect(() => {
     const fetchCategory = async () => {
       try {
@@ -30,11 +29,7 @@ const AllCategoryProductViewCarousel = () => {
   return (
     <div>
       {categoryList?.map((category, index) => (
-        <ProductsViewCarousel
-          key={index}
-          title={category?.name}
-          categoryCode={category?.code}
-        />
+        <ProductsViewCarousel key={index} category={category} />
       ))}
     </div>
   );

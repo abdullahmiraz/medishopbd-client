@@ -10,21 +10,20 @@ import { ProductData } from "../../Dashboard/AdminDash/AddProducts/products.type
 import TitleStyle from "../../Shared/TitleStyle/TitleStyle";
 import BannerWide from "../BannerWide/BannerWide";
 import ProductCard from "../ProductCard/ProductCard";
+import Link from "next/link";
 
 interface ProductsViewCarouselProps {
-  categoryCode: string;
-  title: string;
+  category: any;
 }
 
 export default function ProductsViewCarousel({
-  categoryCode,
-  title,
+  category,
 }: ProductsViewCarouselProps) {
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
 
   const [products, setProducts] = useState([]);
   const [productByCategory, setProductByCategory] = useState([]);
-  // console.log(categoryCode);
+  // console.log(category.code);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -44,7 +43,7 @@ export default function ProductsViewCarousel({
       const categorizedProducts = () => {
         try {
           const filteredProducts = products.filter(
-            (product) => product.primaryCategory === categoryCode
+            (product) => product?.primaryCategory === category.code
           );
           setProductByCategory(filteredProducts);
         } catch (error) {
@@ -54,14 +53,16 @@ export default function ProductsViewCarousel({
 
       categorizedProducts();
     }
-  }, [products, categoryCode]);
+  }, [products, category.code]);
 
   // console.log("Products:", products);
   // console.log(productByCategory);
 
   return (
     <div className="shadow-md  flex flex-col gap-8  border-b-8   my-16  ">
-      <TitleStyle title={title} />
+      <Link href={`/categories/${category.code}`}>
+        <TitleStyle title={category?.name} />
+      </Link>
       <Splide
         options={{
           type: "loop",
