@@ -8,6 +8,9 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+const bannerImg1 = "/image/carousel/banner-image-1.jpg";
+const bannerImg2 = "/image/carousel/banner-image-2.jpg";
+
 // import required modules
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
@@ -29,22 +32,12 @@ export default function HeroCarousel() {
     >
       <SwiperSlide>
         <div className="relative w-full" style={{ paddingBottom: "36.25%" }}>
-          <Image
-            src="https://osudpotro.com/_next/image?url=https%3A%2F%2Fcdn.osudpotro.com%2Fcarousal%2Fapp-banner-02-499-1708432950231.webp&w=1920&q=75"
-            alt="slide"
-            layout="fill"
-            objectFit="cover"
-          />
+          <Image src={bannerImg1} alt="slide" layout="fill" objectFit="cover" />
         </div>
       </SwiperSlide>
       <SwiperSlide>
         <div className="relative w-full" style={{ paddingBottom: "36.25%" }}>
-          <Image
-            src="https://osudpotro.com/_next/image?url=https%3A%2F%2Fcdn.osudpotro.com%2Fcarousal%2Fapp-banner-02-499-1708432950231.webp&w=1920&q=75"
-            alt="slide"
-            layout="fill"
-            objectFit="cover"
-          />
+          <Image src={bannerImg2} alt="slide" layout="fill" objectFit="cover" />
         </div>
       </SwiperSlide>
     </Swiper>

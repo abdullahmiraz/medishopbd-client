@@ -59,7 +59,7 @@ export default function ProductsViewCarousel({
   // console.log(productByCategory);
 
   return (
-    <div className="shadow-md  flex flex-col gap-8  border-b-8   my-16  ">
+    <div className="  flex flex-col gap-8  shadow  ">
       <Link href={`/categories/${category.code}`}>
         <TitleStyle title={category?.name} />
       </Link>
@@ -80,7 +80,7 @@ export default function ProductsViewCarousel({
         }}
         aria-label="React Splide Example"
         extensions={{ AutoScroll }}
-        className="mx-6"
+        // className="mx-6"
       >
         {productByCategory.map((product: ProductData, index) => {
           const lastStockDetail =

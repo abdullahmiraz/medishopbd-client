@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { placeholderImage } from "../../../../api";
 
+
+
 const ProductCard = ({ product }: any) => {
   const currentDate = JSON.stringify(new Date()).substring(1, 11);
 
