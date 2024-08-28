@@ -192,7 +192,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                 <th className=" text-xs border ">Del.Fee</th>
                 <th className=" text-xs border ">Total</th>
                 <th className=" text-xs border  hide-column">Status</th>
-                <th className=" text-xs  hide-column">Items</th>
+                {/* <th className=" text-xs  hide-column">Items</th> */}
+                <th className=" text-xs ">Items</th>
                 {!userId && (
                   <>
                     <th className=" text-xs   hide-column">Actions</th>

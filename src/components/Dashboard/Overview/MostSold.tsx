@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../../api";
 import {
@@ -17,11 +17,14 @@ import {
   Area,
   AreaChart,
 } from "recharts";
+import ReactToPrint from "react-to-print";
 
 const MostSold = () => {
   const [mostSoldProducts, setMostSoldProducts] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const mostSoldRef = useRef();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -108,6 +111,14 @@ const MostSold = () => {
             className="border p-2 rounded"
           />
         </div>
+        <ReactToPrint
+          trigger={() => (
+            <button className="py-0 px-2 bg-blue-500 text-white rounded">
+              Print Invoice
+            </button>
+          )}
+          content={() => mostSoldRef.current}
+        />
       </div>
 
       <div className="flex w-full gap-2">
@@ -153,7 +164,13 @@ const MostSold = () => {
           </ResponsiveContainer>
         </div>
         <div>
-          <div className="overflow-x-auto">
+          <div ref={mostSoldRef} className="overflow-x-auto">
+            <h2 className="print-only text-2xl font-bold text-center my-4">
+              {startDate
+                ? `Most Sold Products Report: ${startDate} to ${endDate}`
+                : "Most Sold Products Report"}
+            </h2>{" "}
+            {/* Title to be printed */}
             <table className="table-auto w-full text-left border-collapse border border-gray-300">
               <thead>
                 <tr className="bg-gray-200">
@@ -192,7 +209,7 @@ const MostSold = () => {
                       {product?.totalRevenue.toFixed(2)}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {product?.totalProfit?.toFixed(2)}
+                      {product?.totalProfit?.toFixed(2) || "N/A"}
                     </td>
                   </tr>
                 ))}
