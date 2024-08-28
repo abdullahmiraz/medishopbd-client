@@ -20,46 +20,58 @@ import {
 
 const MostSold = () => {
   const [mostSoldProducts, setMostSoldProducts] = useState([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const { data: orders } = await axios.get(`${serverUrl}/api/orders`);
+        console.log(orders);
 
         const productSales = {};
 
         orders?.forEach((order) => {
-          order.products.forEach((product) => {
-            const productId = product?.productId?._id;
-            if (!productSales[productId]) {
-              productSales[productId] = {
-                productName: product?.productId?.productName,
-                quantitySold: 0,
-                pricePerUnit: product?.price,
-                totalRevenue: 0,
-                totalProfit: 0,
-              };
-            }
-            productSales[productId].quantitySold += product?.quantity;
-            productSales[productId].totalRevenue +=
-              product.quantity * product?.price;
-            productSales[productId].totalProfit +=
-              product.quantity * product.price -
-              product?.productId?.buyingPricePerUnit;
-          });
+          // Check if the order falls within the selected date range
+          const orderDate = new Date(order.created_at);
+          const isWithinRange =
+            (!startDate || orderDate >= new Date(startDate)) &&
+            (!endDate || orderDate <= new Date(endDate));
+
+          if (isWithinRange) {
+            order.products.forEach((product) => {
+              const productId = product?.productId?._id;
+              if (!productSales[productId]) {
+                productSales[productId] = {
+                  productName: product?.productId?.productName,
+                  quantitySold: 0,
+                  pricePerUnit: product?.price,
+                  totalRevenue: 0,
+                  totalProfit: 0,
+                };
+              }
+              productSales[productId].quantitySold += product?.quantity;
+              productSales[productId].totalRevenue +=
+                product.quantity * product?.price;
+              productSales[productId].totalProfit +=
+                product.quantity * product.price -
+                product?.productId?.buyingPricePerUnit;
+            });
+          }
         });
 
-        const sortedProducts = Object.values(productSales).sort(
-          (a, b) => b.quantitySold - a.quantitySold
-        );
+        const sortedProducts = Object.values(productSales)
+          .sort((a, b) => b.quantitySold - a.quantitySold)
+          .slice(0, 10); // Limit to the top 10 most sold products
         setMostSoldProducts(sortedProducts);
       } catch (error) {
         toast.error("Error fetching most sold products");
         console.error(error);
       }
     };
+
     fetchOrders();
-  }, []);
+  }, [startDate, endDate]);
 
   // Transform data for the chart
   const chartData = mostSoldProducts.map((product) => ({
@@ -75,6 +87,29 @@ const MostSold = () => {
       <h2 className="text-2xl font-bold mb-4 bg-blue-100 p-2">
         Most Sold Products
       </h2>
+
+      {/* Date Range Picker */}
+      <div className="flex mb-4 gap-4">
+        <div>
+          <label className="block text-sm">Start Date:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border p-2 rounded"
+          />
+        </div>
+        <div>
+          <label className="block text-sm">End Date:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border p-2 rounded"
+          />
+        </div>
+      </div>
+
       <div className="flex w-full gap-2">
         <div className="min-h-96 w-full bg-orange-50 rounded p-2 border">
           <ResponsiveContainer width="100%" height="100%">
