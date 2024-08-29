@@ -105,7 +105,7 @@ const Checkout = () => {
               />
             </div>
             <div className="mb-4">
-              <div className="flex items-center gap-8 mb-3">
+              <div className="flex items-center gap-8 mb-3">  
                 <label className="block font-semibold " htmlFor="address">
                   Address:
                 </label>

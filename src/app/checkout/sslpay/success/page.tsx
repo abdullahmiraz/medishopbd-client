@@ -16,7 +16,7 @@ const SuccessPayPageById = ({}) => {
           <span className="font-bold">{oid}</span>
         </div>
         <div>
-          Go to the 'Confirmation' page to print the Invoice{" "}
+          Go to the &#39;Confirmation&#39; page to print the Invoice{" "}
           <Link className="btn bg-warning" href={"../confirmation"}>Confirmation</Link>
         </div>
       </div>

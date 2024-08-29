@@ -92,7 +92,7 @@ const MostSold = () => {
       </h2>
 
       {/* Date Range Picker */}
-      <div className="flex mb-4 gap-4">
+      <div className="flex mb-4 gap-4 flex-row items-end">
         <div>
           <label className="block text-sm">Start Date:</label>
           <input
@@ -111,14 +111,16 @@ const MostSold = () => {
             className="border p-2 rounded"
           />
         </div>
-        <ReactToPrint
-          trigger={() => (
-            <button className="py-0 px-2 bg-blue-500 text-white rounded">
-              Print Invoice
-            </button>
-          )}
-          content={() => mostSoldRef.current}
-        />
+        <div>
+          <ReactToPrint
+            trigger={() => (
+              <button className=" py-[10px] px-4 bg-blue-500 text-white rounded">
+                Print Invoice
+              </button>
+            )}
+            content={() => mostSoldRef.current}
+          />
+        </div>
       </div>
 
       <div className="flex w-full gap-2">

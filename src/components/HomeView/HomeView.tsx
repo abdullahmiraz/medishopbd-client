@@ -37,7 +37,7 @@ const HomeView = () => {
     const userId = localStorage.getItem("userId");
 
     if (userId) {
-      dispatch(fetchUserById(userId));
+      dispatch<any>(fetchUserById(userId));
     } else {
       // Redirect to login if no userId is found
       if (pathname !== "/") {

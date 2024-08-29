@@ -136,7 +136,7 @@ const Cart = () => {
                   >
                     {item?.name} {item?.measure}
                   </Link>
-                  <p>You've Selected: {item?.stripCount} items</p>
+                  <p>You&#39;ve Selected: {item?.stripCount} items</p>
                   <p>Price per strip: Tk. {item?.pricePerStrip}</p>
                   <p>Total Price: Tk. {item?.totalPrice.toFixed(2)}</p>
                 </div>

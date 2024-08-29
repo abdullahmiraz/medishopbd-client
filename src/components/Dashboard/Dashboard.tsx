@@ -18,6 +18,7 @@ const allowedRoutes = {
     "orders",
     "payments",
     "promocodes",
+    "deliveryfees",
   ],
   manager: [
     "profile",
@@ -28,6 +29,7 @@ const allowedRoutes = {
     "orders",
     "payments",
     "promocodes",
+    "deliveryfees",
   ],
   customer: ["profile", "orderhistory", "myprescription", "home", "cart"],
 };

@@ -252,7 +252,8 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                       <option value="Delivered">Delivered</option>
                     </select>
                   </td>
-                  <td className="py-2 border whitespace-nowrap text-sm  hide-column">
+                  {/* <td className="py-2 border whitespace-nowrap text-sm  hide-column"> */}
+                  <td className="py-2 border whitespace-nowrap text-sm ">
                     <ul>
                       {order.products.map((item, index) => (
                         <li key={index}>

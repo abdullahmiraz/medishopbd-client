@@ -6,6 +6,7 @@ import {
   FaHistory,
   FaHome,
   FaList,
+  FaTruckPickup,
   FaUser,
   FaUsers,
   FaUtensils,
@@ -59,6 +60,11 @@ export const menuItems = {
       icon: FaCashRegister,
       text: "Promo Codes",
     },
+    {
+      href: "deliveryfees",
+      icon: FaTruckPickup,
+      text: "Delivery Fees",
+    },
   ],
   manager: [
     {
@@ -100,6 +106,11 @@ export const menuItems = {
       href: "promocodes",
       icon: FaCashRegister,
       text: "Promo Codes",
+    },
+    {
+      href: "deliveryfees",
+      icon: FaTruckPickup,
+      text: "Delivery Fees",
     },
   ],
   customer: [

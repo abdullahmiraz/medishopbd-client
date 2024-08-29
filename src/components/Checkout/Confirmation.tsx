@@ -55,7 +55,7 @@ const Confirmation = () => {
         status: "Pending",
       };
       console.log(orderData);
-      dispatch(createOrder(orderData));
+      dispatch<any>(createOrder(orderData));
       dispatch(clearOrderData());
     }
   }, [orderDetails, dispatch, invoiceNumber, userId, checkoutAmount]);
@@ -74,7 +74,7 @@ const Confirmation = () => {
   if (!invoiceNumber) {
     return (
       <div className="my-24 text-center space-y-8">
-        <div className="text-2xl font-bold">There's no order details here</div>
+        <div className="text-2xl font-bold">There&#39;s no order details here</div>
         <Link href={"/"} className="btn bg-warning">
           Return Home
         </Link>

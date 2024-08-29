@@ -40,7 +40,7 @@ const UserProfile = () => {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
 
     if (userId && isAuthenticated === "true") {
-      dispatch(fetchUserById(userId));
+      dispatch<any>(fetchUserById(userId));
     } else {
       router.push("/login");
     }
@@ -78,7 +78,7 @@ const UserProfile = () => {
         address,
         photoURL,
       };
-      await dispatch(
+      await dispatch<any>(
         updateUserDetails({ userId, userDetails: updatedUser })
       ).unwrap();
       toast.success("User updated successfully!");
