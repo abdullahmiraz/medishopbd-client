@@ -64,7 +64,7 @@ const MostSold = () => {
         });
 
         const sortedProducts = Object.values(productSales)
-          .sort((a, b) => b.quantitySold - a.quantitySold)
+          .sort((a: any, b: any) => b.quantitySold - a.quantitySold)
           .slice(0, 10); // Limit to the top 10 most sold products
         setMostSoldProducts(sortedProducts);
       } catch (error) {

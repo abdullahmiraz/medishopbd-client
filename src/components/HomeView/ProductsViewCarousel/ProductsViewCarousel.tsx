@@ -60,9 +60,11 @@ export default function ProductsViewCarousel({
 
   return (
     <div className="  flex flex-col gap-8  shadow  ">
-      <Link href={`/categories/${category.code}`}>
-        <TitleStyle title={category?.name} />
-      </Link>
+      <TitleStyle
+        title={category?.name}
+        link={`/categories/${category?.code}`}
+      />
+
       <Splide
         options={{
           type: "loop",

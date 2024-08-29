@@ -61,16 +61,20 @@ const UsersList = (): JSX.Element => {
   };
 
   const handleDeleteClick = async (userId: string) => {
-    if (userId == userId) {
-      localStorage.clear();
-      localStorage.clear();
-    }
-    try {
-      const response = await axios.delete(`${serverUrl}/api/users/${userId}`);
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error deleting user", error);
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+
+    if (isConfirmed) {
+      try {
+        const response = await axios.delete(`${serverUrl}/api/users/${userId}`);
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => user._id !== userId)
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error deleting user", error);
+      }
     }
   };
 
