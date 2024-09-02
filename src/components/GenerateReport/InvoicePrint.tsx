@@ -16,6 +16,7 @@ const InvoicePrint = ({ printData }) => {
   const itemDetails = useSelector(selectOrderDetails);
 
   const checkoutDetails = JSON.parse(localStorage.getItem("checkoutDetails"));
+  const medicineCart = JSON.parse(localStorage.getItem("medicine_cart"));
   console.log(checkoutDetails);
   console.log(itemDetails);
 
@@ -131,8 +132,9 @@ const InvoicePrint = ({ printData }) => {
             </tr>
           </thead>
           <tbody className="text-lg">
-            {itemDetails &&
-              itemDetails?.items.map((item, index) => (
+            {medicineCart &&
+              // itemDetails?.items?.map((item, index) => (
+              medicineCart.map((item, index) => (
                 <tr key={index} className="border-b border-gray-200">
                   <td className="p-2">{`${item.name} (${item.measure})`}</td>
                   <td className="p-2">{`Tk. ${item.pricePerStrip}`}</td>

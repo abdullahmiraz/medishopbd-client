@@ -22,8 +22,8 @@ const Confirmation = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const checkoutAmount = useSelector(selectCheckoutAmount);
-  // const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
-  const orderDetails = useSelector(selectOrderDetails);
+  const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+  // const orderDetails = useSelector(selectOrderDetails);
   const invoiceNumber = localStorage.getItem("invoiceNumber");
 
   const userId = localStorage.getItem("userId");
@@ -43,7 +43,7 @@ const Confirmation = () => {
         name: orderDetails.name,
         phone: orderDetails.phone,
         address: orderDetails.address,
-        products: orderDetails.items.map((item) => ({
+        products: orderDetails?.items?.map((item) => ({
           productId: item.productId,
           quantity: item.stripCount,
           price: item.pricePerStrip,
