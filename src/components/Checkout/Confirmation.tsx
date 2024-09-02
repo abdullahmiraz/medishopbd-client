@@ -11,6 +11,7 @@ import {
   selectInvoiceNumber,
   clearOrderData,
   createOrder,
+  selectOrderDetails,
 } from "../../redux/features/order/orderSlice";
 import InvoicePrint from "../GenerateReport/InvoicePrint";
 import { selectUser } from "../../redux/features/user/userSlice";
@@ -21,8 +22,10 @@ const Confirmation = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const checkoutAmount = useSelector(selectCheckoutAmount);
-  const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+  // const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
+  const orderDetails = useSelector(selectOrderDetails);
   const invoiceNumber = localStorage.getItem("invoiceNumber");
+
   const userId = localStorage.getItem("userId");
 
   console.log(orderDetails, invoiceNumber, checkoutAmount);

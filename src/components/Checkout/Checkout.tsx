@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   selectCartItems,
   selectCheckoutAmount,
+  updateCheckoutAmount,
 } from "../../redux/features/cart/cartSlice";
 
 import {
@@ -18,6 +19,9 @@ import {
   setOrderDetails,
 } from "../../redux/features/order/orderSlice";
 import { selectUser } from "../../redux/features/user/userSlice";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { serverUrl } from "../../../api";
 
 const generateInvoiceNumber = () => {
   const now = new Date();
@@ -28,9 +32,7 @@ const generateInvoiceNumber = () => {
   const day = String(now.getDate()).padStart(2, "0");
 
   // Generate a random alphanumeric string
-  const randomString = uuidv4()
-    .slice(0, 6)
-    .toUpperCase();
+  const randomString = uuidv4().slice(0, 6).toUpperCase();
 
   // Construct the invoice number
   return `INV-${year}${month}${day}-${randomString}`;
@@ -45,7 +47,22 @@ const Checkout = () => {
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("payonline");
   const [currentDeliveryFee, setCurrentDeliveryFee] = useState(0);
+  const [deliveryFees, setDeliveryFees] = useState([]); // New state for delivery fees
+
   const user = useSelector(selectUser);
+
+  useEffect(() => {
+    const fetchDeliveryFees = async () => {
+      try {
+        const { data } = await axios.get(`${serverUrl}/api/deliveryFees/all`);
+        setDeliveryFees(data);
+      } catch (error) {
+        toast.error("Error fetching delivery fees");
+        console.error(error);
+      }
+    };
+    fetchDeliveryFees();
+  }, []);
 
   useEffect(() => {
     const orderDetails = {
@@ -55,6 +72,7 @@ const Checkout = () => {
       address: useDefaultAddress ? user?.address : address,
       paymentMethod,
     };
+    console.log("Dispatching orderDetails: ", orderDetails); // Log here
 
     dispatch(setOrderDetails(orderDetails));
     dispatch(setInvoiceNumber(generateInvoiceNumber()));
@@ -105,7 +123,7 @@ const Checkout = () => {
               />
             </div>
             <div className="mb-4">
-              <div className="flex items-center gap-8 mb-3">  
+              <div className="flex items-center gap-8 mb-3">
                 <label className="block font-semibold " htmlFor="address">
                   Address:
                 </label>
@@ -113,21 +131,27 @@ const Checkout = () => {
                   id="address"
                   name="address"
                   className="w-full bg-slate-300"
-                  onChange={(e) =>
-                    setCurrentDeliveryFee(Number(e.target.value))
-                  }
+                  onChange={(e) => {
+                    const selectedFee = deliveryFees.find(
+                      (fee) => fee.division === e.target.value
+                    );
+                    const newDeliveryFee = selectedFee ? selectedFee.fee : 0;
+                    setCurrentDeliveryFee(newDeliveryFee);
+
+                    // Dispatch to update the checkout amount in Redux
+                    dispatch(
+                      updateCheckoutAmount({ deliveryFee: newDeliveryFee })
+                    );
+                  }}
                 >
                   <option value="" disabled selected>
                     Select a division
                   </option>
-                  <option value={60}>Dhaka</option>
-                  <option value={70}>Chattogram</option>
-                  <option value={80}>Rajshahi</option>
-                  <option value={90}>Khulna</option>
-                  <option value={100}>Barishal</option>
-                  <option value={110}>Sylhet</option>
-                  <option value={120}>Rangpur</option>
-                  <option value={100}>Mymensingh</option>
+                  {deliveryFees.map((fee) => (
+                    <option key={fee.division} value={fee.division}>
+                      {fee.division} (Tk. {fee.fee})
+                    </option>
+                  ))}
                 </select>
               </div>
 

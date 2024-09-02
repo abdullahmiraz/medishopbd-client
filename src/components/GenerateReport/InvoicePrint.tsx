@@ -13,7 +13,8 @@ import { clearCart } from "../../redux/features/cart/cartSlice";
 const InvoicePrint = ({ printData }) => {
   const dispatch = useDispatch();
   const { invoiceNumber } = printData;
-  const itemDetails = JSON.parse(localStorage.getItem("orderDetails"));
+  const itemDetails = useSelector(selectOrderDetails);
+
   const checkoutDetails = JSON.parse(localStorage.getItem("checkoutDetails"));
   console.log(checkoutDetails);
   console.log(itemDetails);
@@ -33,9 +34,7 @@ const InvoicePrint = ({ printData }) => {
     <div className="container mx-auto p-12 my-8 bg-white shadow-md">
       <div className="flex gap-8 mb-4">
         <ReactToPrint
-
           trigger={() => (
-          
             <button
               onClick={clearCurrentCart}
               className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -132,14 +131,15 @@ const InvoicePrint = ({ printData }) => {
             </tr>
           </thead>
           <tbody className="text-lg">
-            {itemDetails?.items?.map((item, index) => (
-              <tr key={index} className="border-b border-gray-200">
-                <td className="p-2">{`${item.name} (${item.measure})`}</td>
-                <td className="p-2">{`Tk. ${item.pricePerStrip}`}</td>
-                <td className="p-2">{item.stripCount}</td>
-                <td className="p-2">{`Tk. ${item.totalPrice}`}</td>
-              </tr>
-            ))}
+            {itemDetails &&
+              itemDetails?.items.map((item, index) => (
+                <tr key={index} className="border-b border-gray-200">
+                  <td className="p-2">{`${item.name} (${item.measure})`}</td>
+                  <td className="p-2">{`Tk. ${item.pricePerStrip}`}</td>
+                  <td className="p-2">{item.stripCount}</td>
+                  <td className="p-2">{`Tk. ${item.totalPrice}`}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
 
