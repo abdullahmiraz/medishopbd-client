@@ -53,12 +53,12 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className="p-4 shadow-xl relative">
+    <div className="p-4 shadow-xl relative overflow-hidden">
       <Toaster />
       <h2 className="text-2xl font-bold mb-4">Products List</h2>
 
-      <div className="">
-        <table className="table table-zebra table-xs border ">
+      <div className="  overflow-x-auto">
+        <table className="table table-zebra table-xs border-2">
           <thead>
             <tr className="bg-gray-200 text-black">
               <th className="max-w-32 border   ">Actions</th>

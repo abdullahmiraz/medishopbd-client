@@ -73,8 +73,8 @@ const Dashboard = ({ content }: any) => {
   const dashLocation = (user?.role).toLowerCase(); // Simplified to always use "user" dashboard
 
   return (
-    <div className="w-full flex justify-start">
-      <div className="">
+    <div className="flex justify-start">
+      <div className="w-1/5 ">
         <div className="bg-green-400 min-h-screen text-[darkblue] min-w-max sticky top-0 left-0">
           <div>
             <ul className="menu p-0">
@@ -96,7 +96,7 @@ const Dashboard = ({ content }: any) => {
           </div>
         </div>
       </div>
-      <div className="w-full">{content}</div>
+      <div className="w-4/5">{content}</div>
     </div>
   );
 };
