@@ -22,13 +22,17 @@ const Confirmation = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const checkoutAmount = useSelector(selectCheckoutAmount);
-  const orderDetails = JSON.parse(localStorage.getItem("orderDetails"));
-  // const orderDetails = useSelector(selectOrderDetails);
-  const invoiceNumber = localStorage.getItem("invoiceNumber");
 
+  // Retrieve from localStorage
+  const orderDetails = JSON.parse(
+    localStorage.getItem("orderDetails") || "null"
+  );
+  const invoiceNumber = localStorage.getItem("invoiceNumber");
   const userId = localStorage.getItem("userId");
 
+  // Log to check values
   console.log(orderDetails, invoiceNumber, checkoutAmount);
+
   const printData = {
     orderDetails,
     invoiceNumber,
@@ -36,14 +40,14 @@ const Confirmation = () => {
   };
 
   useEffect(() => {
-    if (orderDetails) {
+    if (orderDetails && invoiceNumber && checkoutAmount && userId) {
       const orderData = {
         userId: userId,
         orderNumber: invoiceNumber,
         name: orderDetails.name,
         phone: orderDetails.phone,
         address: orderDetails.address,
-        products: orderDetails?.items?.map((item) => ({
+        products: orderDetails.items.map((item) => ({
           productId: item.productId,
           quantity: item.stripCount,
           price: item.pricePerStrip,
@@ -53,31 +57,35 @@ const Confirmation = () => {
           discountedAmount: checkoutAmount.discountedAmount,
           deliveryFee: checkoutAmount.deliveryFee,
           total: checkoutAmount.total,
-          totalProfit: checkoutAmount.totalProfit || 0,
+          totalProfit: checkoutAmount?.totalProfit,
         },
         status: "Pending",
       };
       console.log(orderData);
       dispatch<any>(createOrder(orderData));
-      dispatch(clearOrderData());
+
     }
   }, [orderDetails, dispatch, invoiceNumber, userId, checkoutAmount]);
 
   useEffect(() => {
     const handleUnload = () => {
-      dispatch(clearCart());
+      if (invoiceNumber) {
+        dispatch(clearCart());
+      }
     };
 
     window.addEventListener("beforeunload", handleUnload);
     return () => {
       window.removeEventListener("beforeunload", handleUnload);
     };
-  }, [dispatch]);
+  }, [dispatch, invoiceNumber]);
 
   if (!invoiceNumber) {
     return (
       <div className="my-24 text-center space-y-8">
-        <div className="text-2xl font-bold">There&#39;s no order details here</div>
+        <div className="text-2xl font-bold">
+          There&#39;s no order details here
+        </div>
         <Link href={"/"} className="btn bg-warning">
           Return Home
         </Link>

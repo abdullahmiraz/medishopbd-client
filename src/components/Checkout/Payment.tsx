@@ -63,13 +63,14 @@ const Payment = () => {
       // localStorage.setItem("orderData", JSON.stringify(orderData));
 
       // Initiate payment
-      const paymentProcess = await axios.post(
+      // Initiate payment
+      const { data } = await axios.post(
         `${serverUrl}/api/payments/initiate`,
         orderData
       );
-      if (paymentProcess?.data?.url) {
-        console.log(paymentProcess?.data?.url);
-        window.location.replace(paymentProcess?.data?.url);
+
+      if (data?.url) {
+        window.location.replace(data.url);
       } else {
         throw new Error("Payment URL not found.");
       }

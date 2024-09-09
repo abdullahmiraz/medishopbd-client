@@ -24,7 +24,7 @@ const PaymentPage = () => {
     const userId = localStorage.getItem("userId");
 
     if (userId) {
-      dispatch(fetchUserById(userId));
+      dispatch(fetchUserById(userId) as any); // Cast to any to bypass TypeScript error
     } else {
       // Redirect to login if no userId is found
       router.push("/");

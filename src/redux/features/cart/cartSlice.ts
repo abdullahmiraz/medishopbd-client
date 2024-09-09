@@ -1,27 +1,56 @@
-// src/redux/features/cart/cartSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+// src/redux/features/cart/cartSlice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+// Define types for the items, checkout amounts, and state
+interface CartItem {
+  productId: string;
+  stripCount: number;
+  productCount: number;
+  totalPrice: number;
+  totalProfit: number;
+  discountedAmount?: number;
+  name?: any;
+  measure?: any;
+  pricePerStrip: any;
+}
+
+interface CheckoutAmount {
+  subtotal: number;
+  deliveryFee: number;
+  discountedAmount: number;
+  total: number;
+  totalProfit?: any;
+}
+
+interface CartState {
+  items: CartItem[];
+  checkoutAmount: CheckoutAmount;
+}
 
 // Function to calculate the checkout amount
-const calculateCheckoutAmount = (items) => {
+const calculateCheckoutAmount = (items: CartItem[]): CheckoutAmount => {
   let subtotal = 0;
   let discountedAmount = 0;
+  let totalProfit = 0;
   items.forEach((item) => {
     subtotal += item.totalPrice;
     discountedAmount += item.discountedAmount || 0;
+    totalProfit += item?.totalProfit || 0;
   });
   return {
     subtotal,
     deliveryFee: 0, // Initial value, can be updated later
     discountedAmount,
     total: subtotal, // Initial value, will be updated later
+    totalProfit,
   };
 };
 
 // Function to get initial state from localStorage
-const getInitialCartState = () => {
+const getInitialCartState = (): CartState => {
   const storedCart = localStorage.getItem("medicine_cart");
   if (storedCart) {
-    const cart = JSON.parse(storedCart);
+    const cart: CartItem[] = JSON.parse(storedCart);
     return {
       items: cart,
       checkoutAmount: calculateCheckoutAmount(cart),
@@ -34,18 +63,19 @@ const getInitialCartState = () => {
       deliveryFee: 0,
       discountedAmount: 0,
       total: 0,
+      totalProfit: 0,
     },
   };
 };
 
 // Initial state with data from localStorage if available
-const initialState = getInitialCartState();
+const initialState: CartState = getInitialCartState();
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action) => {
+    addToCart: (state, action: PayloadAction<CartItem>) => {
       const item = action.payload;
       const existingItemIndex = state.items.findIndex(
         (cartItem) => cartItem.productId === item.productId
@@ -62,11 +92,12 @@ const cartSlice = createSlice({
 
       // Recalculate checkoutAmount
       state.checkoutAmount = calculateCheckoutAmount(state.items);
+      console.log(state?.items);
 
       // Save cart to localStorage
       localStorage.setItem("medicine_cart", JSON.stringify(state.items));
     },
-    removeFromCart: (state, action) => {
+    removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(
         (item) => item.productId !== action.payload
       );
@@ -77,7 +108,7 @@ const cartSlice = createSlice({
       // Save updated cart to localStorage
       localStorage.setItem("medicine_cart", JSON.stringify(state.items));
     },
-    setCart: (state, action) => {
+    setCart: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
 
       // Recalculate checkoutAmount
@@ -86,7 +117,10 @@ const cartSlice = createSlice({
       // Save updated cart to localStorage
       localStorage.setItem("medicine_cart", JSON.stringify(state.items));
     },
-    updateCheckoutAmount: (state, action) => {
+    updateCheckoutAmount: (
+      state,
+      action: PayloadAction<Partial<CheckoutAmount>>
+    ) => {
       state.checkoutAmount = {
         ...state.checkoutAmount,
         ...action.payload,
@@ -103,6 +137,7 @@ const cartSlice = createSlice({
         deliveryFee: 0,
         discountedAmount: 0,
         total: 0,
+        totalProfit: 0,
       };
 
       // Clear cart from localStorage
@@ -114,7 +149,8 @@ const cartSlice = createSlice({
   },
 });
 
-const calculateTotalAmount = (checkoutAmount) => {
+// Function to calculate the total amount in checkout
+const calculateTotalAmount = (checkoutAmount: CheckoutAmount): number => {
   return (
     checkoutAmount.subtotal +
     checkoutAmount.deliveryFee -
@@ -130,7 +166,8 @@ export const {
   clearCart,
 } = cartSlice.actions;
 
-export const selectCartItems = (state) => state.cart.items;
-export const selectCheckoutAmount = (state) => state.cart.checkoutAmount;
+export const selectCartItems = (state: { cart: CartState }) => state.cart.items;
+export const selectCheckoutAmount = (state: { cart: CartState }) =>
+  state.cart.checkoutAmount;
 
 export default cartSlice.reducer;

@@ -101,11 +101,11 @@ const Cart = () => {
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
+    return cartItems.reduce((acc, item) => acc + item?.totalPrice, 0);
   };
 
   const calculateProfit = () => {
-    return cartItems.reduce((acc, item) => acc + item.totalProfit, 0);
+    return cartItems.reduce((acc, item) => acc + item?.totalProfit, 0);
   };
 
   const calculateTotalAmount = () => {
