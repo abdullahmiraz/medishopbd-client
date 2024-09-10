@@ -17,6 +17,7 @@ import InvoicePrint from "../GenerateReport/InvoicePrint";
 import { selectUser } from "../../redux/features/user/userSlice";
 import Link from "next/link";
 import Head from "next/head";
+import axios from "axios";
 
 const Confirmation = () => {
   const router = useRouter();
@@ -37,6 +38,25 @@ const Confirmation = () => {
     orderDetails,
     invoiceNumber,
     checkoutAmount,
+  };
+
+  const updateStock = async (orderItems) => {
+    for (const item of orderItems) {
+      const productId = item.productId;
+      const quantityToDeduct = item.productCount; // Deduct the ordered quantity directly
+
+      try {
+        // Call your API to update stock for each product
+        await axios.put(`${serverUrl}/api/products/${productId}`, {
+          quantityToDeduct,
+        });
+      } catch (error) {
+        console.error(
+          `Failed to update stock for product ${productId}:`,
+          error
+        );
+      }
+    }
   };
 
   useEffect(() => {
@@ -62,8 +82,14 @@ const Confirmation = () => {
         status: "Pending",
       };
       console.log(orderData);
-      dispatch<any>(createOrder(orderData));
-
+      dispatch<any>(createOrder(orderData))
+        .then(() => {
+          // Ensure updateStock is called only once after order creation
+          updateStock(orderDetails.items);
+        })
+        .catch((error) => {
+          console.error("Order creation failed:", error);
+        });
     }
   }, [orderDetails, dispatch, invoiceNumber, userId, checkoutAmount]);
 

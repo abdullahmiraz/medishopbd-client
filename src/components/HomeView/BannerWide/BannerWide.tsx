@@ -3,16 +3,16 @@ import React from "react";
 
 const bannerImg3 = "/image/carousel/banner-image-3.jpg";
 
-const BannerWide = () => {
+const BannerWide = ({ bannerBg }) => {
   return (
     <div className=" ">
       <div className=" w-full">
         {/* banner image */}
         <Image
-          src={bannerImg3}
+          src={bannerBg || bannerImg3}
           alt="slide"
-          height={300}
-          width={600}
+          height={900}
+          width={1200}
           className="h-52 w-full object-cover"
         />
         {/* name */}

@@ -95,7 +95,7 @@ export default function ProductsViewCarousel({
           ) : null;
         })}
       </Splide>
-      <BannerWide />
+      <BannerWide bannerBg={category?.image} />
     </div>
   );
 }
