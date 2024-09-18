@@ -45,9 +45,10 @@ const Checkout = () => {
   const checkoutAmount = useSelector(selectCheckoutAmount);
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const [address, setAddress] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("payonline");
+  const [paymentMethod, setPaymentMethod] = useState("cashOnDelivery");
   const [currentDeliveryFee, setCurrentDeliveryFee] = useState(0);
   const [deliveryFees, setDeliveryFees] = useState([]); // New state for delivery fees
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const user = useSelector(selectUser);
 
@@ -89,6 +90,8 @@ const Checkout = () => {
 
   // setinvoice number here
   const handleOrder = () => {
+    setIsProcessing(true); // Disable the button when the order process starts
+
     if (paymentMethod === "payonline") {
       router.push("/checkout/payment");
     } else {
@@ -269,9 +272,12 @@ const Checkout = () => {
               <button
                 className="px-4 py-2 bg-green-500 text-white rounded"
                 onClick={handleOrder}
-                disabled={useDefaultAddress ? !user?.address : !address}
+                disabled={
+                  isProcessing ||
+                  (useDefaultAddress ? !user?.address : !address)
+                } // Disable when processing or missing address
               >
-                Place Order
+                {isProcessing ? "Processing..." : "Place Order"}
               </button>
             </div>
           </div>

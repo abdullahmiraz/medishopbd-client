@@ -33,22 +33,22 @@ const initialState: OrderState = {
 };
 
 // Create async thunk for creating an order
-export const createOrder = createAsyncThunk(
-  "order/createOrder",
-  async (orderData: OrderDetails, { dispatch, rejectWithValue }) => {
-    console.log(orderData);
-    try {
-      const response = await axios.post(`${serverUrl}/api/orders`, orderData);
-      console.log(response.data);
+// export const createOrder = createAsyncThunk(
+//   "order/createOrder",
+//   async (orderData: OrderDetails, { dispatch, rejectWithValue }) => {
+//     console.log(orderData);
+//     try {
+//       const response = await axios.post(`${serverUrl}/api/orders`, orderData);
+//       console.log(response.data);
 
-      localStorage.removeItem("orderData");
-      return response.data;
-    } catch (error: any) {
-      console.error("Error finalizing order:", error);
-      return rejectWithValue(error.message);
-    }
-  }
-);
+//       localStorage.removeItem("orderData");
+//       return response.data;
+//     } catch (error: any) {
+//       console.error("Error finalizing order:", error);
+//       return rejectWithValue(error.message);
+//     }
+//   }
+// );
 
 // Create the order slice
 const orderSlice = createSlice({
@@ -79,23 +79,23 @@ const orderSlice = createSlice({
       localStorage.removeItem("checkoutDetails");
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(createOrder.pending, (state) => {
-        state.status = "loading"; // Set status to loading
-        state.error = null; // Clear previous errors
-      })
-      .addCase(createOrder.fulfilled, (state, action: PayloadAction<any>) => {
-        state.status = "succeeded"; // Set status to succeeded
-        // Optionally update state with any additional data from action.payload
-        // Example: state.orderDetails = action.payload;
-      })
-      .addCase(createOrder.rejected, (state, action: PayloadAction<any>) => {
-        state.status = "failed"; // Set status to failed
-        state.error = action.payload; // Set the error message
-        console.error("Order creation failed:", action.payload);
-      });
-  },
+  // extraReducers: (builder) => {
+  //   builder
+  //     .addCase(createOrder.pending, (state) => {
+  //       state.status = "loading"; // Set status to loading
+  //       state.error = null; // Clear previous errors
+  //     })
+  //     .addCase(createOrder.fulfilled, (state, action: PayloadAction<any>) => {
+  //       state.status = "succeeded"; // Set status to succeeded
+  //       // Optionally update state with any additional data from action.payload
+  //       // Example: state.orderDetails = action.payload;
+  //     })
+  //     .addCase(createOrder.rejected, (state, action: PayloadAction<any>) => {
+  //       state.status = "failed"; // Set status to failed
+  //       state.error = action.payload; // Set the error message
+  //       console.error("Order creation failed:", action.payload);
+  //     });
+  // },
 });
 
 export const {

@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { serverUrl } from "../../../api";
 import {
@@ -23,6 +23,7 @@ const Confirmation = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const checkoutAmount = useSelector(selectCheckoutAmount);
+  const [hasUpdatedStock, setHasUpdatedStock] = useState(false);
 
   // Retrieve from localStorage
   const orderDetails = JSON.parse(
@@ -59,8 +60,31 @@ const Confirmation = () => {
     }
   };
 
-  useEffect(() => {
-    if (orderDetails && invoiceNumber && checkoutAmount && userId) {
+  const handleOrder = async (orderData, orderDetails) => {
+    try {
+      // Create the order
+      const response = await axios.post(`${serverUrl}/api/orders`, orderData);
+      console.log(response.data);
+
+      // Remove order data from localStorage
+      localStorage.removeItem("orderData");
+
+      // Update stock
+      await updateStock(orderDetails.items);
+      setHasUpdatedStock(true);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  // useEffect(() => {
+    if (
+      orderDetails &&
+      invoiceNumber &&
+      checkoutAmount &&
+      userId &&
+      !hasUpdatedStock
+    ) {
       const orderData = {
         userId: userId,
         orderNumber: invoiceNumber,
@@ -82,16 +106,10 @@ const Confirmation = () => {
         status: "Pending",
       };
       console.log(orderData);
-      dispatch<any>(createOrder(orderData))
-        .then(() => {
-          // Ensure updateStock is called only once after order creation
-          updateStock(orderDetails.items);
-        })
-        .catch((error) => {
-          console.error("Order creation failed:", error);
-        });
+
+      handleOrder(orderData, orderDetails);
     }
-  }, [orderDetails, dispatch, invoiceNumber, userId, checkoutAmount]);
+  // }, [orderDetails, invoiceNumber, checkoutAmount, userId, hasUpdatedStock]);
 
   useEffect(() => {
     const handleUnload = () => {
