@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { serverUrl } from "../../../api";
 import {
@@ -41,75 +41,104 @@ const Confirmation = () => {
     checkoutAmount,
   };
 
-  const updateStock = async (orderItems) => {
-    for (const item of orderItems) {
-      const productId = item.productId;
-      const quantityToDeduct = item.productCount; // Deduct the ordered quantity directly
-
+  const updateProductStock = useMemo(
+    () => async (productId, quantityToDeduct) => {
       try {
-        // Call your API to update stock for each product
-        await axios.put(`${serverUrl}/api/products/${productId}`, {
-          quantityToDeduct,
-        });
-      } catch (error) {
-        console.error(
-          `Failed to update stock for product ${productId}:`,
-          error
+        // Make the PUT request and capture the response
+        const response = await axios.put(
+          `${serverUrl}/api/products/stockupdate/${productId}`,
+          { productId, quantityToDeduct }
         );
+        console.log(`Stock updated for product ${productId}:`, response.data);
+
+        return response.data;
+      } catch (error) {
+        console.error(`Error updating stock for product ${productId}:`, error);
       }
-    }
-  };
+    },
+    [serverUrl]
+  );
 
-  const handleOrder = async (orderData, orderDetails) => {
-    try {
-      // Create the order
-      const response = await axios.post(`${serverUrl}/api/orders`, orderData);
-      console.log(response.data);
+  const updateStock = useCallback(
+    async (items) => {
+      for (const item of items) {
+        const { productId, stripCount } = item;
+        try {
+          await updateProductStock(productId, stripCount); // Deduct stock for each item
+        } catch (error) {
+          console.error(
+            `Failed to update stock for product ${productId}:`,
+            error
+          );
+        }
+      }
+    },
+    [updateProductStock]
+  );
 
-      // Remove order data from localStorage
-      localStorage.removeItem("orderData");
+  useEffect(() => {
+    const handleOrderCreation = async () => {
+      if (
+        orderDetails &&
+        invoiceNumber &&
+        checkoutAmount &&
+        userId &&
+        !hasUpdatedStock
+      ) {
+        const orderData = {
+          userId: userId,
+          orderNumber: invoiceNumber,
+          name: orderDetails.name,
+          phone: orderDetails.phone,
+          address: orderDetails.address,
+          products: orderDetails.items.map((item) => ({
+            productId: item.productId,
+            quantity: item.stripCount,
+            price: item.pricePerStrip,
+          })),
+          checkoutAmount: {
+            subtotal: checkoutAmount.subtotal,
+            discountedAmount: checkoutAmount.discountedAmount,
+            deliveryFee: checkoutAmount.deliveryFee,
+            total: checkoutAmount.total,
+            totalProfit: checkoutAmount?.totalProfit,
+          },
+          status: "Pending",
+        };
 
-      // Update stock
-      await updateStock(orderDetails.items);
-      setHasUpdatedStock(true);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+        try {
+          // Update stock first
+          await updateStock(orderDetails.items);
 
-  // useEffect(() => {
-    if (
-      orderDetails &&
-      invoiceNumber &&
-      checkoutAmount &&
-      userId &&
-      !hasUpdatedStock
-    ) {
-      const orderData = {
-        userId: userId,
-        orderNumber: invoiceNumber,
-        name: orderDetails.name,
-        phone: orderDetails.phone,
-        address: orderDetails.address,
-        products: orderDetails.items.map((item) => ({
-          productId: item.productId,
-          quantity: item.stripCount,
-          price: item.pricePerStrip,
-        })),
-        checkoutAmount: {
-          subtotal: checkoutAmount.subtotal,
-          discountedAmount: checkoutAmount.discountedAmount,
-          deliveryFee: checkoutAmount.deliveryFee,
-          total: checkoutAmount.total,
-          totalProfit: checkoutAmount?.totalProfit,
-        },
-        status: "Pending",
-      };
-      console.log(orderData);
+          // Set flag to true after stock is updated
+          setHasUpdatedStock(true);
 
-      handleOrder(orderData, orderDetails);
-    }
-  // }, [orderDetails, invoiceNumber, checkoutAmount, userId, hasUpdatedStock]);
+          // Create the order
+          const response = await axios.post(
+            `${serverUrl}/api/orders`,
+            orderData
+          );
+          console.log(response?.data);
+          return response?.data;
+        } catch (error) {
+          console.error(
+            "Order creation failed:",
+            error.response ? error.response.data : error.message
+          );
+        }
+      }
+    };
+
+    handleOrderCreation();
+  }, [
+    orderDetails,
+    dispatch,
+    invoiceNumber,
+    userId,
+    checkoutAmount,
+    hasUpdatedStock,
+    updateStock,
+  ]);
 
   useEffect(() => {
     const handleUnload = () => {

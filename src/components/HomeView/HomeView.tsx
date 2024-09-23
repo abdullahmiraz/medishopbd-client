@@ -74,7 +74,7 @@ const HomeView = () => {
       {/* <AllMedicineViewCarousel />
       <PrescriptionMedicine />
       <SkinCareProducts /> */}
-      <SatisfiedCustomers />
+      {/* <SatisfiedCustomers /> */}
       <Footer />
     </div>
   );
