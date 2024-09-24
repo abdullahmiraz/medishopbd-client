@@ -13,18 +13,18 @@ const BannerWide = ({ category }) => {
           alt={category?.name || "Category Image"}
           height={700}
           width={1200}
-          className="h-56 w-full object-cover"
+          className="h-64 w-full object-cover"
         />
         {/* Category Name and Description */}
-        <div className="absolute top-0 left-0 p-4 text-white">
+        <div className="absolute top-0 left-0 p-4 text-white bg-black bg-opacity-70 mb-8">
           <h2 className="text-3xl font-bold">{category?.name}</h2>
           <p>{category?.description}</p>
         </div>
 
         {/* Subcategories overlayed on banner */}
-        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-10 p-4 flex justify-evenly items-center space-x-4">
+        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-30 p-4 flex justify-evenly items-center space-x-4">
           {category?.subCategories?.map((subCategory) => (
-            <div key={subCategory._id} className="text-center text-white">
+            <div key={subCategory._id} className="flex flex-col justify-center items-center text-white">
               {/* Subcategory Image */}
               <Image
                 src={subCategory?.image}
