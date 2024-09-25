@@ -41,6 +41,25 @@ const Login: React.FC = () => {
               <label className="label">
                 <span className="label-text">Phone Number</span>
               </label>
+              <div className="flex">
+                <span className="input input-bordered flex bg-gray-200 text-black px-3 py-3">
+                  +88
+                </span>
+                <input
+                  type="tel"
+                  placeholder="01XXXXXXXXX"
+                  className="input input-bordered flex-grow"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  // pattern="^01[3-9][0-9]{8}$"
+                  required
+                />
+              </div>
+            </div>
+            {/* <div className="form-control">
+              <label className="label">
+                <span className="label-text">Phone Number</span>
+              </label>
               <input
                 type="tel"
                 placeholder="phone number"
@@ -49,7 +68,7 @@ const Login: React.FC = () => {
                 onChange={(e) => setPhone(e.target.value)}
                 required
               />
-            </div>
+            </div> */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Password</span>

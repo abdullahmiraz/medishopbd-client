@@ -104,15 +104,14 @@ const UserProfile = () => {
       <h2 className="text-3xl font-bold mb-6">User Profile</h2>
       <div className="bg-white p-8 rounded shadow-md flex flex-col md:flex-row gap-8">
         <div className="flex flex-col items-center md:w-1/3">
-          <div className="relative  bg-slate-200 w-full h-full">
+          <div className="relative  w-full h-full">
             {photoURL ? (
               <Image
                 src={photoURL || placeholderImage}
                 alt="Profile Picture"
                 height={150}
                 width={150}
-                objectFit="cover"
-                className="rounded-full  w-full h-full border-2"
+                className="rounded-full  w-56 h-56 object-cover border-2"
               />
             ) : (
               <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center text-gray-400">

@@ -64,7 +64,9 @@ const StockOut: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
       <Toaster />
-      <h2 className="text-2xl font-bold mb-4 bg-blue-100 p-2">Stock Out Products</h2>
+      <h2 className="text-2xl font-bold mb-4 bg-blue-100 p-2">
+        Stock Out Products
+      </h2>
       <div className="flex gap-2 mt-6">
         <div className="flex w-full border rounded p-2">
           <div className="flex flex-col mr-6">
@@ -116,43 +118,59 @@ const StockOut: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((product, index) => (
-              <React.Fragment key={product._id}>
-                {product.stockDetails.map(
-                  (stock, stockIndex) =>
-                    (stock.quantity <= 0 ||
-                      new Date(stock.expirationDate) <= warningDate) && (
-                      <tr
-                        key={`${product._id}-${stockIndex}`}
-                        className="hover:bg-gray-100"
-                      >
-                        <td className="border border-gray-300 px-4 py-2">
-                          {index + 1}
-                        </td>
-                        <td className="border border-gray-300 px-4 py-2">
-                          {product.productName}
-                        </td>
-                        <td
-                          className={`border border-gray-300 px-4 py-2 ${
-                            stock.quantity <= 0 ? "bg-red-500 text-white" : ""
-                          }`}
-                        >
-                          {stock.quantity}
-                        </td>
-                        <td
-                          className={`border border-gray-300 px-4 py-2 ${
-                            new Date(stock.expirationDate) <= warningDate
-                              ? "bg-orange-500 text-white"
-                              : ""
-                          }`}
-                        >
-                          {stock.expirationDate}
-                        </td>
-                      </tr>
-                    )
-                )}
-              </React.Fragment>
-            ))}
+            {filteredProducts.map((product, index) => {
+              // Calculate total quantity of the product stock
+              const totalQuantity = product.stockDetails.reduce(
+                (acc, stock) => acc + stock.quantity,
+                0
+              );
+
+              // Check if any stock has expired or has zero quantity
+              const isAnyStockWarning = product.stockDetails.some(
+                (stock) =>
+                  stock.quantity <= 0 ||
+                  new Date(stock.expirationDate) <= warningDate
+              );
+
+              // Find the nearest expiration date for the product
+              const nearestExpirationDate = product.stockDetails.reduce(
+                (nearestExp, stock) =>
+                  new Date(stock.expirationDate) < new Date(nearestExp)
+                    ? stock.expirationDate
+                    : nearestExp,
+                product.stockDetails[0]?.expirationDate // Handle edge case for empty stockDetails
+              );
+
+              return (
+                // Show only one row for each product with total quantity and nearest expiration date
+                isAnyStockWarning && (
+                  <tr key={product._id} className="hover:bg-gray-100">
+                    <td className="border border-gray-300 px-4 py-2">
+                      {index + 1}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {product.productName}
+                    </td>
+                    <td
+                      className={`border border-gray-300 px-4 py-2 ${
+                        totalQuantity <= 0 ? "bg-red-500 text-white" : ""
+                      }`}
+                    >
+                      {totalQuantity}
+                    </td>
+                    <td
+                      className={`border border-gray-300 px-4 py-2 ${
+                        new Date(nearestExpirationDate) <= warningDate
+                          ? "bg-orange-500 text-white"
+                          : ""
+                      }`}
+                    >
+                      {nearestExpirationDate}
+                    </td>
+                  </tr>
+                )
+              );
+            })}
           </tbody>
         </table>
       </div>

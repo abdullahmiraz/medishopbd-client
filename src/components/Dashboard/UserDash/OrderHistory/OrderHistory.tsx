@@ -40,6 +40,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
   const [endDate, setEndDate] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
+  const userRole = localStorage.getItem("role").toLowerCase();
+  console.log(userRole);
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -186,7 +189,9 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
               <tr>
                 <th className=" text-xs border ">Order Number</th>
                 <th className=" text-xs  border">Date</th>
-                <th className=" text-xs border ">Profit</th>
+                {userRole === "admin" && (
+                  <th className=" text-xs border ">Profit</th>
+                )}
                 <th className=" text-xs border ">Subtotal</th>
                 <th className=" text-xs border ">Discnt</th>
                 <th className=" text-xs border ">Del.Fee</th>
@@ -210,9 +215,12 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
                   <td className="py-2 border whitespace-nowrap text-sm ">
                     {order?.created_at?.split("T")[0]}
                   </td>
-                  <td className="py-2 border whitespace-nowrap text-sm ">
-                    Tk. {order.checkoutAmount?.totalProfit}
-                  </td>
+
+                  {userRole === "admin" && (
+                    <td className="py-2 border whitespace-nowrap text-sm ">
+                      Tk. {order.checkoutAmount?.totalProfit}
+                    </td>
+                  )}
                   <td className="py-2 border whitespace-nowrap text-sm ">
                     Tk. {order.checkoutAmount.subtotal}
                   </td>

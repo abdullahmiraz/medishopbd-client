@@ -25,13 +25,12 @@ const ConfirmationPage = () => {
   const orderDetails = useSelector(selectOrderDetails);
 
   useEffect(() => {
-    // Fetch user data from localStorage or cookies
-    const userId = localStorage.getItem("userId");
+     const userId = localStorage.getItem("userId");
 
     if (userId) {
-      dispatch(fetchUserById(userId) as any); // Cast to any to bypass TypeScript error
+      dispatch(fetchUserById(userId) as any);
     } else {
-      // Redirect to login if no userId is found
+
       router.push("/");
     }
   }, [dispatch, router]);

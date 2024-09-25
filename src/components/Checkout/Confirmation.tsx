@@ -27,7 +27,9 @@ const Confirmation = () => {
   const [isConfirmed, setIsConfirmed] = useState(false); // State to track if purchase is confirmed
 
   // Retrieve from localStorage
-  const orderDetails = JSON.parse(localStorage.getItem("orderDetails") || "null");
+  const orderDetails = JSON.parse(
+    localStorage.getItem("orderDetails") || "null"
+  );
   const invoiceNumber = localStorage.getItem("invoiceNumber");
   const userId = localStorage.getItem("userId");
 
@@ -62,7 +64,10 @@ const Confirmation = () => {
         try {
           await updateProductStock(productId, stripCount); // Deduct stock for each item
         } catch (error) {
-          console.error(`Failed to update stock for product ${productId}:`, error);
+          console.error(
+            `Failed to update stock for product ${productId}:`,
+            error
+          );
         }
       }
     },
@@ -109,7 +114,10 @@ const Confirmation = () => {
         console.log(response?.data);
         return response?.data;
       } catch (error) {
-        console.error("Order creation failed:", error.response ? error.response.data : error.message);
+        console.error(
+          "Order creation failed:",
+          error.response ? error.response.data : error.message
+        );
       }
     }
   };
@@ -122,21 +130,30 @@ const Confirmation = () => {
 
   useEffect(() => {
     const handleUnload = () => {
-      if (invoiceNumber) {
-        dispatch(clearCart());
-      }
+      dispatch(clearOrderData());
+      dispatch(clearCart());
+    };
+
+    // Block back navigation
+    window.history.pushState(null, "", window.location.href);
+    const handlePopState = () => {
+      handleUnload();
+      window.history.pushState(null, "", window.location.href); // Prevent navigating back
     };
 
     window.addEventListener("beforeunload", handleUnload);
+    window.addEventListener("popstate", handlePopState);
+
     return () => {
       window.removeEventListener("beforeunload", handleUnload);
+      window.removeEventListener("popstate", handlePopState);
     };
-  }, [dispatch, invoiceNumber]);
+  }, [dispatch]);
 
   if (!invoiceNumber) {
     return (
       <div className="my-24 text-center space-y-8">
-        <div className="text-2xl font-bold">There's no order details here</div>
+        <div className="text-2xl font-bold">Theres no order details here</div>
         <Link href={"/"} className="btn bg-warning">
           Return Home
         </Link>
@@ -152,9 +169,13 @@ const Confirmation = () => {
       <h1 className="text-2xl font-bold mb-4">Order Confirmation</h1>
       <div>
         <p>Thank you for your order!</p>
-        <p>Your order number is <strong>{invoiceNumber}</strong>.</p>
+        <p>
+          Your order number is <strong>{invoiceNumber}</strong>.
+        </p>
         <p>A PDF receipt has been generated for your records.</p>
-        <p>Our customer care agents will call you shortly to confirm your order.</p>
+        <p>
+          Our customer care agents will call you shortly to confirm your order.
+        </p>
 
         {/* Conditionally show the confirmation button or success message */}
         {!isConfirmed ? (

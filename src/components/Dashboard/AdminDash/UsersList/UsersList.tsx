@@ -54,7 +54,7 @@ const UsersList = (): JSX.Element => {
       );
       setEditingUserId(null);
       setEditedRole("");
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error("Error updating user role", error);
     }
@@ -79,6 +79,7 @@ const UsersList = (): JSX.Element => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    e.preventDefault();
     setEditedRole(e.target.value);
   };
 
