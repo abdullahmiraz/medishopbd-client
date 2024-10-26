@@ -52,7 +52,7 @@ export interface ProductData {
   pricePerUnit: number;
   stockDetails: StockDetail[]; // Updated to use StockDetail interface
   manufacturer: string;
-  requiresPrescription: boolean; // Changed from string to boolean
+  requiresPrescription: boolean | string; // Changed from string to boolean
   pageCategory: string;
   productImage: string;
   leafletImage: string;

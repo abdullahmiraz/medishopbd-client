@@ -10,8 +10,8 @@ import {
   selectStatus,
   selectUser,
 } from "../../redux/features/user/userSlice";
-import { StatusCode } from "../../utils/statusCode";
-import Spinner from "../../components/Shared/Spinner/Spinner";
+ import Spinner from "../../components/Shared/Spinner/Spinner";
+import { StatusCode } from "../../utils/StatusCode";
 
 const page = () => {
   const dispatch = useDispatch();

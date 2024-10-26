@@ -145,6 +145,7 @@ const cartSlice = createSlice({
       localStorage.removeItem("orderDetails");
       localStorage.removeItem("invoiceNumber");
       localStorage.removeItem("checkoutDetails");
+      localStorage.removeItem("prescription");
     },
   },
 });

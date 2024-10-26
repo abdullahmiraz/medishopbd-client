@@ -35,10 +35,12 @@ const Cart = () => {
 
   useEffect(() => {
     const prescriptionRequired = cartItems.some(
-      (item) => item.prescription === "true"
+      (item: any) => item.prescription === "true"
     );
     setRequiresPrescription(prescriptionRequired);
   }, [cartItems]);
+
+  requiresPrescription && localStorage.setItem("prescription", "true");
 
   useEffect(() => {
     if (currentUser) {

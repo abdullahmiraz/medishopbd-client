@@ -13,6 +13,7 @@ interface BasicInformationProps {
   applicationArea: string;
   productType: string;
   pricePerUnit: number;
+  buyingPricePerUnit: number;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;

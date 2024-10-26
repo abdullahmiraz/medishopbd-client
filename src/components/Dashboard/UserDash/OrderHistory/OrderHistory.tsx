@@ -218,7 +218,7 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ userId }) => {
 
                   {userRole === "admin" && (
                     <td className="py-2 border whitespace-nowrap text-sm ">
-                      Tk. {order.checkoutAmount?.totalProfit}
+                      Tk. {order.checkoutAmount?.totalProfit?.toFixed(2)}
                     </td>
                   )}
                   <td className="py-2 border whitespace-nowrap text-sm ">

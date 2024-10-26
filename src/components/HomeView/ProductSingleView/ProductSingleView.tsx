@@ -13,6 +13,7 @@ import { placeholderImage, serverUrl } from "../../../../api";
 import ReviewSection from "./ReviewSection";
 
 const ProductSingleView = ({ productId }) => {
+  const [reviews, setReviews] = useState(null);
   const [product, setProduct] = useState(null);
   const [stripCount, setStripCount] = useState(0);
   const [stockOutAlert, setStockOutAlert] = useState(false);

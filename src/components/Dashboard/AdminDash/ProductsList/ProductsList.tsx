@@ -79,7 +79,7 @@ const ProductsList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((product, index) => (
+            {products.map((product: any, index) => (
               <tr key={product._id}>
                 <td className="flex gap-2 items-center h-20">
                   <Link href={`/dashboard/product/${product._id}`}>

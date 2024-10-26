@@ -19,6 +19,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
     if (event.target.files && event.target.files[0]) {
       setSelectedFile(event.target.files[0]);
     }

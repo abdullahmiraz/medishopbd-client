@@ -31,7 +31,7 @@ const AllOrdersList = () => {
   };
 
   const filteredAndSortedOrders = () => {
-    let filteredOrders = orders;
+    let filteredOrders = orders as { created_at: string }[];
 
     if (startDate && endDate) {
       filteredOrders = orders.filter((order) => {
@@ -41,9 +41,13 @@ const AllOrdersList = () => {
     }
 
     if (sortOrder === "oldest") {
-      filteredOrders.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      filteredOrders.sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
     } else if (sortOrder === "newest") {
-      filteredOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      filteredOrders.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
     }
 
     return filteredOrders;
@@ -98,7 +102,7 @@ const AllOrdersList = () => {
           </div>
         </div>
         {filteredAndSortedOrders().length > 0 ? (
-          filteredAndSortedOrders().map((order) => (
+          filteredAndSortedOrders().map((order: any) => (
             <div key={order._id} className="mb-4 p-4 border rounded">
               <p>
                 <strong>Order ID: </strong> {order._id}

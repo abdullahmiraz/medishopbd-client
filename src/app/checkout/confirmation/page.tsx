@@ -15,7 +15,7 @@ import {
   selectStatus,
   selectUser,
 } from "../../../redux/features/user/userSlice";
-import { StatusCode } from "../../../utils/statusCode";
+import { StatusCode } from "../../../utils/StatusCode";
 
 const ConfirmationPage = () => {
   const dispatch = useDispatch();

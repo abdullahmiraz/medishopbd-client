@@ -37,14 +37,14 @@ const allowedRoutes = {
 const Dashboard = ({ content }: any) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const user = useSelector((state) => selectUser(state));
+  const user = useSelector((state) => selectUser(state as any));
   const [isAuthorized, setIsAuthorized] = useState(true);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
 
     if (userId) {
-      dispatch(fetchUserById(userId));
+      dispatch(fetchUserById(userId) as any);
     } else {
       router.push("/login");
     }

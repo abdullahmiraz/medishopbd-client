@@ -399,8 +399,8 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
         productType={product.productType}
         buyingPricePerUnit={product.buyingPricePerUnit}
         pricePerUnit={product.pricePerUnit}
-        primaryCategory={product.primaryCategory}
-        subCategory={product.subCategory}
+        // primaryCategory={product.primaryCategory}
+        // subCategory={product.subCategory}
         onChange={handleInputChange}
       />
       <CategoryDetails
@@ -408,8 +408,8 @@ const ProductForm = ({ onSubmit, initialProduct }: any) => {
         subCategory={product.subCategory}
         onCategoryChange={handleCategoryChange}
         onSubCategoryChange={handleSubCategoryChange}
-        categories={categories}
-        subCategories={subCategories}
+        // categories={categories}
+        // subCategories={subCategories}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">

@@ -160,7 +160,7 @@ const CategoryList: React.FC = () => {
         setCategories([...categories, response.data]);
       }
       setNewCategory({});
-      window.location.reload();
+      // window.location.reload();
     } catch (err) {
       setError("Failed to save category");
     }
@@ -202,7 +202,7 @@ const CategoryList: React.FC = () => {
       }
       setNewSubCategory({});
       setSelectedCategoryId(null); // Close the subcategory form after submit
-      window.location.reload();
+      // window.location.reload();
     } catch (err) {
       setError("Failed to save subcategory");
     }

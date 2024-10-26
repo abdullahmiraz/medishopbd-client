@@ -19,13 +19,16 @@ interface Category {
 interface CategoryDetailsProps {
   primaryCategory: string;
   subCategory: string;
-  code: string;
+  // code: string;
   onCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSubCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  productData: {
-    primaryCategory: { code: string };
-    subCategory: { code: string };
-  };
+  // productData: {
+  //   primaryCategory: {
+  //     id: any;
+  //     code: string;
+  //   };
+  //   subCategory: { code: string };
+  // };
 }
 
 const CategoryDetails: React.FC<CategoryDetailsProps> = ({
@@ -33,10 +36,13 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
   subCategory,
   onCategoryChange,
   onSubCategoryChange,
-  productData,
+  // productData,
 }) => {
+
+  console.log(primaryCategory);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
+  console.log(categories);
 
   // Fetch all categories and initialize subCategories on component mount
   useEffect(() => {
@@ -49,17 +55,18 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
         console.log(response.data);
 
         // Set initial subCategories based on the primaryCategory from productData
-        const initialCategory = response.data.find(
-          (cat) => cat._id === productData?.primaryCategory?.id
-        );
-        setSubCategories(initialCategory?.subCategories ?? []);
+        // const initialCategory = response.data.find(
+        //   (cat) => cat._id === productData?.primaryCategory?.id
+        // );
+        // setSubCategories(initialCategory?.subCategories ?? []);
       } catch (err) {
         console.error("Failed to fetch categories", err);
       }
     };
 
     fetchCategories();
-  }, [productData?.primaryCategory?.id]);
+  }, []);
+  // }, [productData?.primaryCategory?.id]);
 
   // Update subCategories when primaryCategory or categories change
   useEffect(() => {

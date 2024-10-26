@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   table: {
-    display: "table",
+    // display: "table",
     width: "auto",
     borderStyle: "solid",
     borderColor: "#bfbfbf",

@@ -13,7 +13,9 @@ import ProductCard from "../ProductCard/ProductCard";
 import Link from "next/link";
 
 interface ProductsViewCarouselProps {
-  category: any;
+  title? : any ;
+  products? : any ;
+  category?: any;
 }
 
 export default function ProductsViewCarousel({

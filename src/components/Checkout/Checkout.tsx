@@ -20,7 +20,7 @@ import {
 } from "../../redux/features/order/orderSlice";
 import { selectUser } from "../../redux/features/user/userSlice";
 import axios from "axios";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { serverUrl } from "../../../api";
 
 const generateInvoiceNumber = () => {
@@ -49,6 +49,7 @@ const Checkout = () => {
   const [currentDeliveryFee, setCurrentDeliveryFee] = useState(0);
   const [deliveryFees, setDeliveryFees] = useState([]); // New state for delivery fees
   const [isProcessing, setIsProcessing] = useState(false);
+  const prescriptionRequired = localStorage.getItem("prescription");
 
   const user = useSelector(selectUser);
 
@@ -90,6 +91,12 @@ const Checkout = () => {
 
   // setinvoice number here
   const handleOrder = () => {
+    if (prescriptionRequired) {
+      toast.error(
+        "This order will process after checking your latest prescription !"
+      );
+      setTimeout(() => {}, 3000);
+    }
     setIsProcessing(true); // Disable the button when the order process starts
 
     if (paymentMethod === "payonline") {
@@ -101,12 +108,13 @@ const Checkout = () => {
 
   return (
     <div className="container mx-auto my-12 px-6">
+      <Toaster />
       <h1 className="text-2xl font-bold mb-4">Checkout</h1>
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 md:col-span-8">
           <div className="border p-4 rounded-md mb-4">
             <h2 className="font-bold text-xl mb-4">Shipping Information</h2>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
+            {error && <p className="text-red-500 mb-4">{error as any}</p>}
             <div className="mb-4">
               <label className="block mb-2 font-semibold">Name:</label>
               <input

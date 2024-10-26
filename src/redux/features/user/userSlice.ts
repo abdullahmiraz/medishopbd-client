@@ -1,16 +1,20 @@
 // src/redux/features/user/userSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
- import { serverUrl } from "../../../../api";
-import { StatusCode, StatusCodeType } from "../../../utils/statusCode";
+import { serverUrl } from "../../../../api";
+import { StatusCode, StatusCodeType } from "../../../utils/StatusCode";
 
 // Define types for user data and state
 interface User {
+  photoURL: string;
+  _id: string;
+  email: string;
   userId: string;
   role: string;
   name?: string;
   phone?: string;
   address?: string;
+  prescription?: string;
   // Add any other properties relevant to your user object
 }
 
@@ -76,6 +80,7 @@ export const loginUser = createAsyncThunk<
       phone,
       password,
     });
+    console.log(response.data);
     return response.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || error.message);
