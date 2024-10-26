@@ -1,3 +1,5 @@
+'use client'
+
 // src/redux/features/order/orderSlice.ts
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { serverUrl } from "../../../../api";

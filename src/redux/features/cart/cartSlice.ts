@@ -1,8 +1,11 @@
+'use client'
+
 // src/redux/features/cart/cartSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define types for the items, checkout amounts, and state
 interface CartItem {
+  productCode: any;
   productId: string;
   stripCount: number;
   productCount: number;

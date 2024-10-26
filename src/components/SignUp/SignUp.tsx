@@ -5,11 +5,12 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { signUpUser } from "../../redux/features/user/userSlice";
+import { AppDispatch } from "../../redux/store/store";
 
 const SignUp: React.FC = () => {
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>(); 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {

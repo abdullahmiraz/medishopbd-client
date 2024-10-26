@@ -1,3 +1,5 @@
+'use client'
+
 // components/ReviewSection.tsx
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -19,7 +21,7 @@ interface ReviewSectionProps {
 }
 
 const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
-  const [orders, setOrders] = useState();
+  const [orders, setOrders] = useState([]);
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState([]);
@@ -109,6 +111,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get(`${serverUrl}/api/orders`);
+        console.log(response?.data);
         setOrders(response?.data);
       } catch (error) {
         toast.error("Error fetching orders");
@@ -214,7 +217,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
                   : setComment(e.target.value)
               }
               className="border rounded px-2 py-1 w-full"
-              rows="4"
+              // rows="4"
             />
           </div>
           <button

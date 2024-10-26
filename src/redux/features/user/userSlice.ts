@@ -1,3 +1,5 @@
+'use client'
+
 // src/redux/features/user/userSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -6,6 +8,7 @@ import { StatusCode, StatusCodeType } from "../../../utils/StatusCode";
 
 // Define types for user data and state
 interface User {
+  displayName: string;
   photoURL: string;
   _id: string;
   email: string;

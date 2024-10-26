@@ -85,7 +85,7 @@ const ProductSingleView = ({ productId }) => {
       };
 
       // Dispatch the addToCart action
-      dispatch(addToCart(cartItem));
+      dispatch(addToCart(cartItem as any));
 
       toast.success("Product added successfully!");
     } else {

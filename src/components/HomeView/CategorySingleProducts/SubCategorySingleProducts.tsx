@@ -7,6 +7,7 @@ import ProductCard from "../ProductCard/ProductCard";
 import Link from "next/link";
 
 interface Product {
+  [x: string]: string;
   productId: string;
   subcategory: string;
   // Add other product fields as needed

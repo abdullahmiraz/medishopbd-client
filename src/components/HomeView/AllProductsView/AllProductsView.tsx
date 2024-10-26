@@ -6,7 +6,7 @@ import { serverUrl } from "../../../../api";
 import ProductCard from "../ProductCard/ProductCard";
 
 const AllProductsView = () => {
-  const [products, setProducts] = useState();
+  const [products, setProducts] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
       try {

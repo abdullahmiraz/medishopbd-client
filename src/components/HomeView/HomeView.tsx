@@ -8,8 +8,7 @@ import {
   selectStatus,
   selectUser,
 } from "../../redux/features/user/userSlice";
-import { StatusCode } from "../../utils/statusCode";
-import Footer from "../Shared/Footer/Footer";
+ import Footer from "../Shared/Footer/Footer";
 import OptionBar from "../Shared/Navbar/OptionBar/OptionBar";
 import SearchBarTop from "../Shared/Navbar/SearchBarTop/SearchBarTop";
 import Spinner from "../Shared/Spinner/Spinner";
@@ -23,6 +22,7 @@ import FloatingCart from "./FloatingCart/FloatingCart";
 import toast, { Toaster } from "react-hot-toast";
 import AllCategoryProductViewCarousel from "./AllCategoryProductViewCarousel/AllCategoryProductViewCarousel";
 import CategoryCard from "./CategoryCard/CategoryCard";
+import { StatusCode } from "../../utils/StatusCode";
 
 const HomeView = () => {
   const dispatch = useDispatch();

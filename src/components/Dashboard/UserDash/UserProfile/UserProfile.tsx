@@ -14,11 +14,11 @@ import {
 import { useRouter } from "next/navigation";
 import Spinner from "../../../Shared/Spinner/Spinner";
 import OrderHistory from "../OrderHistory/OrderHistory";
-import { StatusCode } from "../../../../utils/statusCode";
 import ImageUploader from "../../../ImageUploader/ImageUploader";
 import toast from "react-hot-toast";
 import { placeholderImage } from "../../../../../api";
 import Head from "next/head";
+import { StatusCode } from "../../../../utils/StatusCode";
 
 const UserProfile = () => {
   const dispatch = useDispatch();

@@ -19,6 +19,7 @@ import {
 } from "../../../redux/features/promoCode/promoCodeSlice";
 import { setOrderDetails } from "../../../redux/features/order/orderSlice";
 import { selectUser } from "../../../redux/features/user/userSlice";
+import { AppDispatch } from "../../../redux/store/store";
 
 const Cart = () => {
   const [message, setMessage] = useState("");
@@ -31,7 +32,7 @@ const Cart = () => {
   const checkoutAmount = useSelector(selectCheckoutAmount);
   const promoCodeState = useSelector(selectPromoCode);
   const currentUser = useSelector(selectUser);
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     const prescriptionRequired = cartItems.some(

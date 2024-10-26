@@ -5,15 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../redux/features/user/userSlice";
 import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
-import { StatusCode } from "../../utils/statusCode";
+import { StatusCode } from "../../utils/StatusCode";
+import { AppDispatch, RootState } from "../../redux/store/store";
 
 const Login: React.FC = () => {
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>(); // Type useDispatch as AppDispatch
   const router = useRouter();
 
-  const { status, error, isAuthenticated } = useSelector((state) => state.user);
+  const { status, error, isAuthenticated } = useSelector((state: RootState) => state.user);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
