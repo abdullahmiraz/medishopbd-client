@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
 // components/ReviewSection.tsx
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { serverUrl } from "../../../../api";
-import EditProductPage from "../../../app/dashboard/editproduct/[id]/page";
+import EditProductPage from "../../../app/(dashboard)/dashboard/editproduct/[id]/page";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../redux/features/user/userSlice";
 
@@ -168,9 +168,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId }) => {
 
   useEffect(() => {
     reviews?.map((review) =>
-      review?.userId === userId
-        ? setUserReviewCount(userReviewCount + 1)
-        : ""
+      review?.userId === userId ? setUserReviewCount(userReviewCount + 1) : ""
     );
   }, [userId, reviews]);
 

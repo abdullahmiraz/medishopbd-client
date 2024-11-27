@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 // src/redux/features/cart/cartSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -49,15 +49,17 @@ const calculateCheckoutAmount = (items: CartItem[]): CheckoutAmount => {
   };
 };
 
-// Function to get initial state from localStorage
+// Function to get initial state from localStorage safely
 const getInitialCartState = (): CartState => {
-  const storedCart = localStorage.getItem("medicine_cart");
-  if (storedCart) {
-    const cart: CartItem[] = JSON.parse(storedCart);
-    return {
-      items: cart,
-      checkoutAmount: calculateCheckoutAmount(cart),
-    };
+  if (typeof window !== "undefined") {
+    const storedCart = localStorage.getItem("medicine_cart");
+    if (storedCart) {
+      const cart: CartItem[] = JSON.parse(storedCart);
+      return {
+        items: cart,
+        checkoutAmount: calculateCheckoutAmount(cart),
+      };
+    }
   }
   return {
     items: [],
@@ -98,7 +100,9 @@ const cartSlice = createSlice({
       console.log(state?.items);
 
       // Save cart to localStorage
-      localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      }
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(
@@ -109,7 +113,9 @@ const cartSlice = createSlice({
       state.checkoutAmount = calculateCheckoutAmount(state.items);
 
       // Save updated cart to localStorage
-      localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      }
     },
     setCart: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
@@ -118,7 +124,9 @@ const cartSlice = createSlice({
       state.checkoutAmount = calculateCheckoutAmount(state.items);
 
       // Save updated cart to localStorage
-      localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      }
     },
     updateCheckoutAmount: (
       state,
@@ -131,7 +139,9 @@ const cartSlice = createSlice({
       state.checkoutAmount.total = calculateTotalAmount(state.checkoutAmount);
 
       // Save updated checkoutAmount to localStorage
-      localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("medicine_cart", JSON.stringify(state.items));
+      }
     },
     clearCart: (state) => {
       state.items = [];
@@ -144,11 +154,13 @@ const cartSlice = createSlice({
       };
 
       // Clear cart from localStorage
-      localStorage.removeItem("medicine_cart");
-      localStorage.removeItem("orderDetails");
-      localStorage.removeItem("invoiceNumber");
-      localStorage.removeItem("checkoutDetails");
-      localStorage.removeItem("prescription");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("medicine_cart");
+        localStorage.removeItem("orderDetails");
+        localStorage.removeItem("invoiceNumber");
+        localStorage.removeItem("checkoutDetails");
+        localStorage.removeItem("prescription");
+      }
     },
   },
 });

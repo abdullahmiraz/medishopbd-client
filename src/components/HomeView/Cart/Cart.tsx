@@ -25,9 +25,14 @@ const Cart = () => {
   const [message, setMessage] = useState("");
   const [validateCheckout, setValidateCheckout] = useState(false);
   const [requiresPrescription, setRequiresPrescription] = useState(false);
+  const [userId, setUserId] = useState<any>();
   const router = useRouter();
 
-  const userId = localStorage.getItem("userId");
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
+
   const cartItems = useSelector(selectCartItems);
   const checkoutAmount = useSelector(selectCheckoutAmount);
   const promoCodeState = useSelector(selectPromoCode);
@@ -41,7 +46,11 @@ const Cart = () => {
     setRequiresPrescription(prescriptionRequired);
   }, [cartItems]);
 
-  requiresPrescription && localStorage.setItem("prescription", "true");
+  useEffect(() => {
+    if (requiresPrescription) {
+      localStorage.setItem("prescription", "true");
+    }
+  }, [requiresPrescription]);
 
   useEffect(() => {
     if (currentUser) {

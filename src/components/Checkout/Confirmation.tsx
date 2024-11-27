@@ -24,14 +24,28 @@ const Confirmation = () => {
   const dispatch = useDispatch();
   const checkoutAmount = useSelector(selectCheckoutAmount);
   const [hasUpdatedStock, setHasUpdatedStock] = useState(false);
-  const [isConfirmed, setIsConfirmed] = useState(false); // State to track if purchase is confirmed
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   // Retrieve from localStorage
-  const orderDetails = JSON.parse(
-    localStorage.getItem("orderDetails") || "null"
-  );
-  const invoiceNumber = localStorage.getItem("invoiceNumber");
-  const userId = localStorage.getItem("userId");
+  // const orderDetails = JSON.parse(
+  //   localStorage.getItem("orderDetails") || "null"
+  // );
+  // const invoiceNumber = localStorage.getItem("invoiceNumber");
+  // const userId = localStorage.getItem("userId");
+
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [invoiceNumber, setInvoiceNumber] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const storedOrderDetails = localStorage.getItem("orderDetails");
+    const storedInvoiceNumber = localStorage.getItem("invoiceNumber");
+    const storedUserId = localStorage.getItem("userId");
+
+    setOrderDetails(storedOrderDetails ? JSON.parse(storedOrderDetails) : null);
+    setInvoiceNumber(storedInvoiceNumber);
+    setUserId(storedUserId);
+  }, []);
 
   const printData = {
     orderDetails,

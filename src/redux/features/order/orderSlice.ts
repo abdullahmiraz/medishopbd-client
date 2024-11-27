@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 // src/redux/features/order/orderSlice.ts
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -43,7 +43,9 @@ export const createOrder = createAsyncThunk(
       const response = await axios.post(`${serverUrl}/api/orders`, orderData);
       console.log(response.data);
 
-      localStorage.removeItem("orderData");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("orderData");
+      }
       return response.data;
     } catch (error: any) {
       console.error("Error finalizing order:", error);
@@ -59,16 +61,25 @@ const orderSlice = createSlice({
   reducers: {
     setOrderDetails: (state, action: PayloadAction<OrderDetails>) => {
       state.orderDetails = action.payload;
-      localStorage.setItem("orderDetails", JSON.stringify(action.payload));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("orderDetails", JSON.stringify(action.payload));
+      }
       console.log(action.payload);
     },
     setInvoiceNumber: (state, action: PayloadAction<string>) => {
       state.invoiceNumber = action.payload;
-      localStorage.setItem("invoiceNumber", action.payload);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("invoiceNumber", action.payload);
+      }
     },
-    setCheckoutAmount: (state, action: PayloadAction<Partial<CheckoutAmount>>) => {
+    setCheckoutAmount: (
+      state,
+      action: PayloadAction<Partial<CheckoutAmount>>
+    ) => {
       state.checkoutAmount = action.payload;
-      localStorage.setItem("checkoutDetails", JSON.stringify(action.payload));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("checkoutDetails", JSON.stringify(action.payload));
+      }
 
       console.log(action.payload);
     },
@@ -76,9 +87,13 @@ const orderSlice = createSlice({
       state.orderDetails = {};
       state.invoiceNumber = "";
       state.checkoutAmount = {};
-      localStorage.removeItem("orderDetails");
-      localStorage.removeItem("invoiceNumber");
-      localStorage.removeItem("checkoutDetails");
+
+      // Clear from localStorage (client-side only)
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("orderDetails");
+        localStorage.removeItem("invoiceNumber");
+        localStorage.removeItem("checkoutDetails");
+      }
     },
   },
   extraReducers: (builder) => {
@@ -107,10 +122,15 @@ export const {
   clearOrderData,
 } = orderSlice.actions;
 
-export const selectOrderDetails = (state: { order: OrderState }) => state.order.orderDetails;
-export const selectInvoiceNumber = (state: { order: OrderState }) => state.order.invoiceNumber;
-export const selectOrderCheckoutAmount = (state: { order: OrderState }) => state.order.checkoutAmount;
-export const selectOrderError = (state: { order: OrderState }) => state.order.error;
-export const selectOrderStatus = (state: { order: OrderState }) => state.order.status;
+export const selectOrderDetails = (state: { order: OrderState }) =>
+  state.order.orderDetails;
+export const selectInvoiceNumber = (state: { order: OrderState }) =>
+  state.order.invoiceNumber;
+export const selectOrderCheckoutAmount = (state: { order: OrderState }) =>
+  state.order.checkoutAmount;
+export const selectOrderError = (state: { order: OrderState }) =>
+  state.order.error;
+export const selectOrderStatus = (state: { order: OrderState }) =>
+  state.order.status;
 
 export default orderSlice.reducer;

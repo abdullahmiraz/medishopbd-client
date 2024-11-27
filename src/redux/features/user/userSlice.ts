@@ -1,6 +1,5 @@
 'use client'
 
-// src/redux/features/user/userSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { serverUrl } from "../../../../api";
@@ -18,7 +17,6 @@ interface User {
   phone?: string;
   address?: string;
   prescription?: string;
-  // Add any other properties relevant to your user object
 }
 
 interface UserState {
@@ -83,7 +81,12 @@ export const loginUser = createAsyncThunk<
       phone,
       password,
     });
-    console.log(response.data);
+    const { userId, role } = response.data;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("role", role);
+      localStorage.setItem("isAuthenticated", "true");
+    }
     return response.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || error.message);
@@ -100,14 +103,16 @@ export const signUpUser = createAsyncThunk<
       phone,
       password,
     });
-    // After sign-up, attempt to log the user in immediately
     const response = await axios.post(`${serverUrl}/api/users/login`, {
       phone,
       password,
     });
-    localStorage.setItem("userId", response?.data?.userId);
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("role", response?.data?.role);
+    const { userId, role } = response.data;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("role", role);
+      localStorage.setItem("isAuthenticated", "true");
+    }
     return response.data;
   } catch (error: any) {
     return rejectWithValue(error.response?.data || error.message);
@@ -123,9 +128,23 @@ const userSlice = createSlice({
       state.isAuthenticated = false;
       state.status = StatusCode.IDLE;
       state.error = null;
-      localStorage.removeItem("userId");
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("role");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("userId");
+        localStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("role");
+      }
+    },
+    setUserFromLocalStorage: (state) => {
+      if (typeof window !== "undefined") {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("role");
+        const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+
+        if (userId && role && isAuthenticated) {
+          state.isAuthenticated = true;
+          state.user = { userId, role } as User; // Adjust the structure as per your User object
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -158,9 +177,11 @@ const userSlice = createSlice({
         state.status = StatusCode.SUCCEEDED;
         state.user = action.payload;
         state.isAuthenticated = true;
-        localStorage.setItem("userId", action.payload.userId);
-        localStorage.setItem("role", action.payload.role);
-        localStorage.setItem("isAuthenticated", "true");
+        if (typeof window !== "undefined") {
+          localStorage.setItem("userId", action.payload.userId);
+          localStorage.setItem("role", action.payload.role);
+          localStorage.setItem("isAuthenticated", "true");
+        }
       })
       .addCase(
         loginUser.rejected,
@@ -205,7 +226,7 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, setUserFromLocalStorage } = userSlice.actions;
 
 export const selectUser = (state: { user: UserState }) => state.user.user;
 export const selectIsAuthenticated = (state: { user: UserState }) =>

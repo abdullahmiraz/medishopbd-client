@@ -49,7 +49,16 @@ const Checkout = () => {
   const [currentDeliveryFee, setCurrentDeliveryFee] = useState(0);
   const [deliveryFees, setDeliveryFees] = useState([]); // New state for delivery fees
   const [isProcessing, setIsProcessing] = useState(false);
-  const prescriptionRequired = localStorage.getItem("prescription");
+
+  const [prescriptionRequired, setPrescriptionRequired] = useState(false);
+
+  useEffect(() => {
+    // Ensure this code runs only on the client side
+    if (typeof window !== "undefined") {
+      const storedPrescription = localStorage.getItem("prescription");
+      setPrescriptionRequired(storedPrescription === "true");
+    }
+  }, []);
 
   const user = useSelector(selectUser);
 

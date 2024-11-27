@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { serverUrl } from "../../../api";
@@ -19,7 +19,13 @@ const Payment = () => {
   const invoiceNumber = useSelector(selectInvoiceNumber);
   const checkoutAmount = useSelector(selectOrderCheckoutAmount);
   const user = useSelector(selectUser);
-  const userId = localStorage.getItem("userId");
+
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
 
   useEffect(() => {
     if (orderDetails && invoiceNumber && checkoutAmount && userId) {
