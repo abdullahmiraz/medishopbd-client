@@ -3,17 +3,18 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 const SuccessPayPageById = ({}) => {
-  const searchParams = useSearchParams();
-  const oid = searchParams.get("oid");
+  // const searchParams = useSearchParams();
+  // const oid = searchParams.get("oid");
 
-  console.log(oid);
+  // console.log(oid);
 
   return (
     <div>
       <div className="text-center my-24 space-y-8">
         <div>
           Your payment is successful for the , order id:{" "}
-          <span className="font-bold">{oid}</span>
+          <span>OID</span>
+          {/* <span className="font-bold">{oid}</span> */}
         </div>
         <div>
           Go to the &#39;Confirmation&#39; page to print the Invoice{" "}
